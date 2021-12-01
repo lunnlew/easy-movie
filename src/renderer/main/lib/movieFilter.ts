@@ -20,6 +20,7 @@ export const type_filters = ref<any[]>([]);
 export const movie_lib = ref({
     lib_id: "",
     lib_name: "",
+    lib_path: "",
 });
 
 /**

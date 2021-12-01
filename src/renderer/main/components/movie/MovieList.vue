@@ -83,6 +83,7 @@
 import {
   computed,
   defineComponent,
+  onMounted,
   watch
 } from "vue";
 import empty_poster from "@/assets/empty_poster.png";
@@ -157,6 +158,9 @@ export default defineComponent({
       if (val) {
         onScrollEndChange()
       }
+    })
+    onMounted(() => {
+      onFilterChange()
     })
     return {
       empty_poster,

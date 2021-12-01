@@ -74,21 +74,22 @@ const getLib = async (req: any, res: any, next: any) => {
 const scanLib = async (req: any, res: any, next: any) => {
     let path = req.body.lib_path;
     let type = req.body.type;
-    let name = req.body.name;
-    if (name === 'all') {
+    let lib_name = req.body.name;
+    let lib_id = req.body.lib_id;
+    if (lib_name === 'all') {
         return res.json(buildErrResult('跳过默认库的扫描', 500))
     }
     try {
         if (path && type) {
-            let data = await libs.getByName(req.body.name).catch(err => { throw err })
-            libs.updateByName(req.body.name, {
+            let data = await libs.getByName(lib_name).catch(err => { throw err })
+            libs.updateByName(lib_name, {
                 ...data,
                 scan_loading: true
             })
             if (type === 'tv') {
-                tvScan.scan(path, req.body.id || '', true)
+                tvScan.scan(path, lib_id || '', true)
             } else if (type === 'movie') {
-                movieScan.scan(path, req.body.id || '', true)
+                movieScan.scan(path, lib_id || '', true)
             }
             res.json(buildResult({}, 200, '提交扫描中'))
         } else {

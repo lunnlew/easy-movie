@@ -41,16 +41,18 @@ export default {
         async addLib({ commit }: any, lib: any) {
             const res = await saveLib({
                 ...lib,
-                lib_path: lib.path.replace(/\\/g, '/')
+                path: lib.path.replace(/\\/g, '/')
             })
             if (res.data.code === 200) {
                 lib = {
                     ...lib,
+                    lib_path: lib.path.replace(/\\/g, '/'),
                     lib_id: res.data.data.pop(),
                 }
                 commit('addLib', lib)
                 commit('libScanView/SET_LIB_SCAN_STATE', lib)
                 commit('libMenuView/SET_LIB_MENU', lib)
+                return lib
             } else {
                 ElMessage({
                     message: res.data.message,

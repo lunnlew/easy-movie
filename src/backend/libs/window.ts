@@ -138,7 +138,7 @@ class WindowControl {
                     if (win.isVisible()) {
                         win.show()
                     }
-                    win.focus()
+                    // win.focus()
                     return win
                 }
             }
@@ -186,7 +186,7 @@ class WindowControl {
 
         win.once('ready-to-show', () => {
             win.show()
-            win.focus()
+            // win.focus()
             if (options.isMain && options.enableDevTools) {
                 win.webContents.openDevTools()
             }

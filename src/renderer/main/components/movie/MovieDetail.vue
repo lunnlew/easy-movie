@@ -79,7 +79,12 @@
                         <p class="group-content desc-content">{{ movieInfo.summary }}</p>
                         <div class="group-title">演职员</div>
                         <p class="group-content actor-list">
-                            <el-image v-for="item of actors" :key="item.id" :src="item.avatar"></el-image>
+                            <el-image
+                                v-for="item of actors"
+                                :key="item.id"
+                                :src="item.avatar"
+                                :alt="item.name"
+                            ></el-image>
                         </p>
                     </div>
                 </div>

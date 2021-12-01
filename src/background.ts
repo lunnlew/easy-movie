@@ -1,19 +1,17 @@
 "use strict";
 
-import { app, Menu, Tray, MenuItem, protocol, BrowserWindow } from "electron";
+import { app, Menu, protocol, BrowserWindow } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import windowControl from './backend/libs/window'
+import TrayControl from './backend/libs/tray'
 import UpdateControl from './backend/libs/update'
-import path from 'path'
+import './backend/libs/protocol'
 
 type globalWin = BrowserWindow | null
-declare const __static: string
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-let isQuit = false
+let tray: TrayControl | null = null
 let _globalWin: globalWin
-
-
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -41,7 +39,7 @@ async function createWindow() {
   })
 
   win.on('close', (e: { preventDefault: () => void; }) => {
-    if (isQuit) {
+    if (tray?.isQuit) {
       win = null
     } else {
       e.preventDefault()
@@ -51,44 +49,12 @@ async function createWindow() {
 
   win.on('closed', () => {
     win = null
-    tray = null
+    tray?.destroy()
   })
 
   _globalWin = win
 
   return win
-}
-
-let tray = null
-function createTray() {
-  tray = new Tray(path.resolve(__static, 'icon.png')) // 设置托盘图标
-  const menus = []
-  if (isDevelopment) {
-    menus.push({
-      label: 'Toggle DevTools',
-      click: function () {
-        _globalWin?.show();
-        _globalWin?.webContents.toggleDevTools();
-      }
-    })
-  }
-  menus.push(new MenuItem({
-    label: '退出程序',
-    click: () => {
-      isQuit = true
-      app.exit()
-    }
-  }))
-  const contextMenu = Menu.buildFromTemplate(menus)
-  tray.setToolTip('影视管理');
-  tray.setContextMenu(contextMenu) // 设置右键菜单
-  tray.on('click', () => { // 托盘点击事件    
-    if (_globalWin?.isVisible()) {
-      _globalWin?.focus()
-    } else {
-      _globalWin?.show()
-    }
-  })
 }
 
 // 设置菜单栏
@@ -146,7 +112,7 @@ app.on("ready", async () => {
     }
   }
   createWindow().then(() => {
-    createTray()
+    tray = new TrayControl(_globalWin)
     createMenu()
     createBackendService()
     if (!isDevelopment) {
@@ -154,7 +120,6 @@ app.on("ready", async () => {
     }
   });
 });
-
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

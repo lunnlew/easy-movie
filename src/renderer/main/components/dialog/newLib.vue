@@ -5,11 +5,7 @@
                 <el-input v-model="libform.name"></el-input>
             </el-form-item>
             <el-form-item label="目标文件夹">
-                <el-input
-                    :disabled="true"
-                    v-model="libform.path"
-                    placeholder="请选择文件夹"
-                >
+                <el-input :disabled="true" v-model="libform.path" placeholder="请选择文件夹">
                     <template #append>
                         <el-button type="primary" @click="onSelectDirectory">选择</el-button>
                     </template>
@@ -36,6 +32,7 @@ import {
 } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from 'vuex';
+import { libMenuClick } from '@/lib/sideMenu';
 export default defineComponent({
     name: "newLibDialog",
     emits: ["hide"],
@@ -49,18 +46,12 @@ export default defineComponent({
         })
 
         const store = useStore()
-        const router = useRouter()
 
         async function onSubmit() {
-            store.dispatch('addLib', libform).then(() => {
+            store.dispatch('addLib', libform).then((lib) => {
                 dialogVisible.value = false
                 emit('hide')
-                router.push({
-                    name: 'libitem',
-                    params: {
-                        name: libform.name
-                    }
-                })
+                libMenuClick(lib)
             })
         }
         async function onSelectDirectory() {
