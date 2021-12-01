@@ -16,6 +16,7 @@ export function createContextMenu(event: any, params: any) {
                     width: 800,
                     height: 600,
                     show: false,
+                    readyShow: true,
                     title: '偏好设置',
                     route: 'setting.html'
                 }

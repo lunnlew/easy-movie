@@ -5,7 +5,7 @@
                 <span>偏好设置</span>
                 <div class="btn-group-right">
                     <div class="icon-btn-group" :style="{ width: '40px', textAlign: 'right' }">
-                        <el-icon @click.stop="closeWindow">
+                        <el-icon @click.stop="hideWindow">
                             <close />
                         </el-icon>
                     </div>
@@ -65,9 +65,9 @@ export default defineComponent({
     components: { Close, Filter, Notification },
     setup: (props, { emit }) => {
         console.log('setup')
-        function closeWindow() {
-            console.log('closeWindow')
-            windowControl('close')
+        function hideWindow() {
+            console.log('hideWindow')
+            windowControl('hide')
         }
         const themes = [
             {
@@ -87,7 +87,7 @@ export default defineComponent({
             }
         ]
         return {
-            closeWindow,
+            hideWindow,
             themes
         }
     }

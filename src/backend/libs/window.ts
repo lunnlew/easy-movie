@@ -100,6 +100,9 @@ class WindowControl {
             case 'show':
                 this.showBrowserWindow(event, params, handler)
                 break;
+            case 'hide':
+                this.hideBrowserWindow(event, params, handler)
+                break;
             case 'mini':
                 this.miniBrowserWindow(event, params, handler)
                 break;
@@ -121,6 +124,26 @@ class WindowControl {
         }
     }
     /**
+     * 预创建的窗口
+     */
+    preCreateWindow() {
+        let mainWin = this.windowList.find(w => w.isMain)
+        this.createBrowserWindow(null, {
+            options: {
+                parentId: mainWin?.id,
+                multi: false,
+                backgroundColor: "#545454",
+                skipTaskbar: false,
+                width: 800,
+                height: 600,
+                show: false,
+                readyShow: false,
+                title: '偏好设置',
+                route: 'setting.html'
+            }
+        })
+    }
+    /**
      * 创建窗口
      * @param event 
      * @param params 
@@ -136,9 +159,10 @@ class WindowControl {
                 if (w.route === (options.route || '')) {
                     let win = BrowserWindow.fromId(w.id) as BrowserWindow
                     if (win.isVisible()) {
+                        win.focus()
+                    } else {
                         win.show()
                     }
-                    // win.focus()
                     return win
                 }
             }
@@ -185,10 +209,12 @@ class WindowControl {
         })
 
         win.once('ready-to-show', () => {
-            win.show()
-            // win.focus()
-            if (options.isMain && options.enableDevTools) {
-                win.webContents.openDevTools()
+            if (options.readyShow || options.isMain) {
+                win.show()
+            }
+            if (options.isMain) {
+                this.preCreateWindow()
+                options.enableDevTools && win.webContents.openDevTools()
             }
         })
 
@@ -196,10 +222,10 @@ class WindowControl {
 
         return win
     }
-    getFromWindow(event: any, wid: number): BrowserWindow {
+    getFromWindow(event: any, wid: number): BrowserWindow | null {
         return wid
             ? BrowserWindow.fromId(wid) as BrowserWindow
-            : BrowserWindow.fromWebContents(event.sender) as BrowserWindow
+            : (event ? BrowserWindow.fromWebContents(event.sender) as BrowserWindow : null)
     }
     /**
      * 关闭窗口
@@ -208,7 +234,7 @@ class WindowControl {
      * @param handler 
      */
     async closeBrowserWindow(event: any, params: any, handler: any = null) {
-        let win = this.getFromWindow(event, params.options.wid)?.close()
+        this.getFromWindow(event, params.options.wid)?.close()
         handler && handler()
     }
     /**
@@ -235,6 +261,16 @@ class WindowControl {
         handler && handler()
     }
     /**
+     * 隐藏窗口
+     * @param event 
+     * @param params 
+     * @param handler 
+     */
+    async hideBrowserWindow(event: any, params: any, handler: any = null) {
+        this.getFromWindow(event, params.options.wid)?.hide()
+        handler && handler()
+    }
+    /**
      * 最小化窗口
      */
     async miniBrowserWindow(event: any, params: any, handler: any = null) {
@@ -253,7 +289,7 @@ class WindowControl {
      */
     async toggleSizeBrowserWindow(event: any, params: any, handler: any = null) {
         let win = this.getFromWindow(event, params.options.wid)
-        win.isMaximized() ? win.unmaximize() : win.maximize()
+        win?.isMaximized() ? win?.unmaximize() : win?.maximize()
         handler && handler()
     }
     /**
