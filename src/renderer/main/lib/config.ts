@@ -5,7 +5,7 @@ import store from '@/store'
  * @returns 
  */
 export async function loadConfig(options: any) {
-    return await store.dispatch('invokeNativeAction', {
+    return await store.dispatch('invokeMainAction', {
         action: 'loadConfig',
         options
     })

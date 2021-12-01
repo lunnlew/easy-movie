@@ -35,7 +35,7 @@ export function toggleFilterTool() {
  * @param data 
  */
 export async function changeFilter(data: any) {
-    store.dispatch('invokeNativeAction', {
+    store.dispatch('invokeMainAction', {
         action: 'setFilterData',
         options: data
     })

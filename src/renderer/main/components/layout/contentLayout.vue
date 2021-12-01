@@ -31,6 +31,7 @@
     <div class="layout-content__main">
       <slot></slot>
     </div>
+    <update-tip v-if="showUpdateTip && !showUpdateCancel && needUpdateAlert"></update-tip>
   </div>
 </template>
 <script lang="ts">
@@ -44,14 +45,17 @@ import {
 } from "vue";
 import movieSearch from '@/components/movieSearch/index.vue'
 import { isShowFilter, toggleFilterTool } from '@/lib/movieFilter'
+import UpdateTip from '@/components/dialog/updateTip.vue';
 import { windowControl } from '@/lib/native'
+import { showUpdateTip, showUpdateCancel, needUpdateAlert } from '@/lib/update'
 export default defineComponent({
   name: "ContentLayout",
   components: {
     movieSearch,
     Back,
     Filter,
-    Close
+    Close,
+    UpdateTip
   },
   setup: () => {
     function closeWindow() {
@@ -60,6 +64,9 @@ export default defineComponent({
     return {
       isShowFilter,
       toggleFilterTool,
+      showUpdateCancel,
+      showUpdateTip,
+      needUpdateAlert,
       closeWindow
     }
   }

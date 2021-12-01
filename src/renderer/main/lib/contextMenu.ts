@@ -6,7 +6,7 @@ import store from '@/store'
  * @returns 
  */
 export async function showContextMenu(event: any) {
-    return await store.dispatch('invokeNativeAction', {
+    return await store.dispatch('invokeMainAction', {
         action: 'showContextMenu',
         options: {
             point: {
@@ -24,7 +24,7 @@ export async function showContextMenu(event: any) {
  * @returns 
  */
 export async function showSearchAreaMenu(event: any) {
-    return await store.dispatch('invokeNativeAction', {
+    return await store.dispatch('invokeMainAction', {
         action: 'showSearchAreaMenu',
         options: {
             point: {

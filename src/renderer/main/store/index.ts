@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import NativeAction from "./modules/NativeAction";
+import InvokeAction from "./modules/invokeAction";
 import Libs from "./modules/Libs";
 import scraper from "./modules/scraper";
 import Movie from "./modules/Movie";
@@ -12,7 +12,7 @@ const store = createStore({
     actions: {},
     modules: {
         scraper,
-        NativeAction,
+        InvokeAction,
         Libs,
         Movie,
         libMenuView,
@@ -20,6 +20,6 @@ const store = createStore({
     }
 });
 
-store.dispatch('initElectronEvent')
+store.dispatch('initActionEvent')
 
 export default store;

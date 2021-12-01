@@ -1,6 +1,6 @@
 import store from "@/store";
 export async function windowControl(command: string, options: any = {}) {
-    store.dispatch('invokeNativeAction', {
+    store.dispatch('invokeMainAction', {
         action: 'windowControl',
         command,
         options

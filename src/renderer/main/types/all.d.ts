@@ -106,3 +106,37 @@ export type Lib = {
 
 
 export default MovieInfo;
+
+
+
+/**
+ * 有效的消息动作名称
+ */
+const invokeRenderActions = [] as const;
+
+/**
+ * 消息动作联合类型定义
+ */
+export type invokeRenderActionType = typeof invokeRenderActions[number]
+
+/**
+ * 渲染线程消息参数
+ */
+export interface invokeRenderActionParams {
+    /**
+     * 消息动作名称
+     */
+    action: invokeRenderActionType
+    /**
+     * 消息动作名称
+     */
+    command: string
+    /**
+     * 消息唯一编码
+     */
+    uuid: string,
+    /**
+     * 消息动作参数
+     */
+    options: any
+}

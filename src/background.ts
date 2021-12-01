@@ -4,7 +4,8 @@ import { app, Menu, protocol, BrowserWindow } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import windowControl from './backend/libs/window'
 import TrayControl from './backend/libs/tray'
-import UpdateControl from './backend/libs/update'
+import updateControl from './backend/libs/update'
+import invokeAction from "./backend/eventEmitter/invokeAction";
 import './backend/libs/protocol'
 
 type globalWin = BrowserWindow | null
@@ -112,12 +113,13 @@ app.on("ready", async () => {
     }
   }
   createWindow().then(() => {
-    tray = new TrayControl(_globalWin)
+    tray = new TrayControl()
+    invokeAction.init()
     createMenu()
     createBackendService()
-    if (!isDevelopment) {
-      new UpdateControl(_globalWin);
-    }
+    // if (!isDevelopment) {
+    updateControl.init()
+    // }
   });
 });
 

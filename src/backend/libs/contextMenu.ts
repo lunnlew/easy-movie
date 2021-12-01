@@ -2,6 +2,7 @@ import { app, Menu, MenuItem, BrowserWindow } from "electron";
 import path from 'path'
 import dataM from '../database/DataM'
 import windowControl from "./window";
+import updateControl from "./update";
 declare const __static: string
 
 export function createContextMenu(event: any, params: any) {
@@ -24,7 +25,11 @@ export function createContextMenu(event: any, params: any) {
         }
     }))
     menu.append(new MenuItem({ type: 'separator' }))
-    menu.append(new MenuItem({ label: '检查更新' }))
+    menu.append(new MenuItem({
+        label: '检查更新', click: () => {
+            updateControl.checkForUpdates()
+        }
+    }))
     menu.append(new MenuItem({ label: '关于' }))
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({ label: '退出', click: () => { app.exit() } }))

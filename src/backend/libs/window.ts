@@ -124,6 +124,13 @@ class WindowControl {
         }
     }
     /**
+     * 获取主窗口
+     * @returns 
+     */
+    getMainWindow() {
+        return this.getFromWindow(null, this.windowList.find(w => w.isMain)?.id as number)
+    }
+    /**
      * 预创建的窗口
      */
     preCreateWindow() {

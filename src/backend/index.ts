@@ -2,6 +2,5 @@
 
     ;
 (async () => {
-    require('./eventEmitter/electronEvent')
     await require('./expressApp')
 })();

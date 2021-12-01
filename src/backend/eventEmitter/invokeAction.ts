@@ -1,0 +1,138 @@
+
+import { ipcMain, dialog, BrowserWindow } from "electron";
+import { createContextMenu, createSearchAreaMenu } from "../libs/contextMenu"
+import { loadConfig } from "../libs/config"
+import { setFilterData } from "../libs/filter";
+import { invokeMainActionParams } from "../types";
+import windowControl from "../libs/window";
+
+// eslint-disable-next-line
+const empty = () => { }
+
+class InvokeAction {
+    _globalWin: any
+    complete: any
+    resolveIdle: any
+    constructor() {
+        this.complete = {}
+        this.resolveIdle = {}
+    }
+    init() {
+        this._globalWin = windowControl.getMainWindow() as BrowserWindow
+        this.initActionEvent()
+    }
+    /**
+     *  主线程向渲染进程通信模块
+     */
+    invokeRenderAction(params: { action: string; command?: string; timeout?: any; options?: any }, await_complete = true): any {
+        var clear = (uuid: string | number) => {
+            console.log('clear uuid', uuid)
+            delete this.resolveIdle[uuid]
+            delete this.complete[uuid]
+        }
+        var awaitComplete = (uuid: number) => {
+            if (this.complete[uuid]) {
+                return this.complete[uuid]
+            }
+            const timeout = setTimeout(() => {
+                console.log('invokeRenderAction', params.action, '获取超时')
+                this.resolveIdle[uuid]()
+                clear(uuid)
+                this.resolveIdle[uuid] = empty
+            }, (params.timeout || 60) * 1000)
+            return new Promise(resolve => {
+                const existingResolve = this.resolveIdle[uuid];
+                this.resolveIdle[uuid] = () => {
+                    existingResolve();
+                    clearTimeout(timeout)
+                    const result = this.complete[uuid]
+                    setTimeout(() => clear(uuid), 30)
+                    resolve(result);
+                }
+            })
+        }
+        return new Promise((resolve) => {
+            const uuid = Date.now()
+            this.resolveIdle[uuid] = empty
+            this.complete[uuid] = false
+            this._globalWin?.webContents.send("invokeRenderAction", {
+                uuid,
+                action: params.action,
+                command: params.command,
+                options: params.options
+            })
+            if (await_complete) {
+                awaitComplete(uuid).then(resolve)
+            } else {
+                resolve({})
+            }
+        })
+    }
+    /**
+     * 初始化双向交互通道
+     */
+    initActionEvent() {
+        // 渲染进程向主线程通信
+        ipcMain.on("invokeMainAction", (event, params: invokeMainActionParams) => {
+            console.log('invokeMainAction from Render', event.sender.id, params)
+            var replyMessage = function (uuid: any, result: any) {
+                event.sender.send("setMainReplyResult", {
+                    uuid: uuid,
+                    result
+                })
+            }
+            switch (params.action) {
+                case "loadConfig": {
+                    loadConfig(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
+                    break
+                }
+                case "showOpenDialog": {
+                    dialog.showOpenDialog(params.options).then(result => replyMessage(params.uuid, result))
+                    break;
+                }
+                case "showContextMenu": {
+                    createContextMenu(event, params)
+                    replyMessage(params.uuid, 'success')
+                    break
+                }
+                case "setFilterData": {
+                    setFilterData(event, params)
+                    replyMessage(params.uuid, 'success')
+                    break
+                }
+                case "showSearchAreaMenu": {
+                    createSearchAreaMenu(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
+                    break
+                }
+                case "windowControl": {
+                    windowControl.dispatch(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
+                    break
+                }
+                default:
+                    console.log('不支持的消息', params)
+            }
+        })
+        // 渲染进程向主线程设置返回结果
+        ipcMain.on("setRenderReplyResult", (event, data: { uuid: string; result: any }) => {
+            console.log('setRenderReplyResult from Render', event.sender.id)
+            if (data.uuid in this.complete) {
+                console.log('setRenderReplyResult', data)
+                this.complete[data.uuid] = data.result
+                setTimeout(() => {
+                    this.resolveIdle[data.uuid]()
+                    this.resolveIdle[data.uuid] = empty
+                }, 10)
+            } else {
+                console.log('skip setRenderReplyResult for timeout 60s')
+            }
+        })
+    }
+}
+
+export default new InvokeAction()

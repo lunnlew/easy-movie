@@ -4,6 +4,8 @@ import log from 'electron-log'
 import gh from "github-url-to-object"
 import path from 'path'
 import fs from 'fs'
+import windowControl from "./window"
+import invokeAction from "../eventEmitter/invokeAction";
 
 log.transports.file.level = 'debug'
 log.transports.console.level = false
@@ -11,8 +13,11 @@ log.transports.console.level = 'silly'
 
 class UpdateControl {
     _globalWin: BrowserWindow | null
-    constructor(_globalWin: BrowserWindow | null) {
-        this._globalWin = _globalWin
+    needUpdateAlert = false
+    constructor() {
+        this._globalWin = windowControl.getMainWindow() as BrowserWindow
+    }
+    init() {
         const defaults = {
             host: 'https://update.electronjs.org'
         }
@@ -34,37 +39,63 @@ class UpdateControl {
 
         autoUpdater.autoDownload = !1
         autoUpdater.logger = log
-        autoUpdater.setFeedURL(feedUrl);
+        // autoUpdater.setFeedURL(feedUrl);
         autoUpdater.on('error', (error) => {
             log.error(error)
         });
-        autoUpdater.on('checking-for-update', () => { });
-        autoUpdater.on('update-available', (info) => {
-            log.info(info)
+        autoUpdater.on('checking-for-update', () => {
+            if (this.needUpdateAlert) {
+                invokeAction.invokeRenderAction({
+                    action: 'needUpdateAlert'
+                }, false)
+            }
+        });
+        autoUpdater.on('update-available', async (info) => {
+            console.log('update-available', info)
+            if (this.needUpdateAlert) {
+                const result = await invokeAction.invokeRenderAction({
+                    action: 'updateAvailable',
+                })
+                if (result.ok) {
+                    autoUpdater.downloadUpdate()
+                }
+            }
         });
         autoUpdater.on('update-not-available', (info) => {
-            log.info(info)
+            console.log('update-not-available', info)
+            invokeAction.invokeRenderAction({
+                action: 'updateNotAvailable'
+            }, false)
         });
         autoUpdater.on('download-progress', (progress) => {
             log.info(progress)
+            invokeAction.invokeRenderAction({
+                action: 'progressUpdate',
+                options: progress
+            }, false)
         });
-        autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) => {
-            const dialogOpts = {
-                type: 'info',
-                buttons: ['Restart', 'Later'],
-                title: 'Application Update',
-                message: process.platform === 'win32' ? releaseNotes : releaseName,
-                detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+        autoUpdater.on('update-downloaded', async (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) => {
+            if (this.needUpdateAlert) {
+                const result = await invokeAction.invokeRenderAction({
+                    action: 'downloadedAvailable',
+                })
+                if (result.ok) {
+                    autoUpdater.quitAndInstall()
+                    app.exit()
+                    this._globalWin?.destroy()
+                }
             }
-            dialog.showMessageBox(dialogOpts).then((returnValue) => {
-                if (returnValue.response === 0) autoUpdater.quitAndInstall()
-            })
         });
-
-
         autoUpdater.checkForUpdates()
         setInterval(() => { autoUpdater.checkForUpdates() }, 10 * 60 * 1000)
     }
+    checkForUpdates() {
+        this.needUpdateAlert = true
+        autoUpdater.checkForUpdates()
+    }
+    downloadUpdate() {
+        autoUpdater.downloadUpdate()
+    }
 }
 
-export default UpdateControl
+export default new UpdateControl

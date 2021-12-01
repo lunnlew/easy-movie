@@ -55,7 +55,7 @@ export default defineComponent({
             })
         }
         async function onSelectDirectory() {
-            const result = await store.dispatch('invokeNativeAction', {
+            const result = await store.dispatch('invokeMainAction', {
                 action: 'showOpenDialog',
                 options: {
                     title: '选择文件夹',

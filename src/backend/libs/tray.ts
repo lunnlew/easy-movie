@@ -1,13 +1,15 @@
 
 import { app, BrowserWindow, MenuItem, Menu, Tray } from 'electron'
 import path from 'path'
+import windowControl from './window';
 const isDevelopment = process.env.NODE_ENV !== "production";
 declare const __static: string
 
 class TrayControl {
     tray
     isQuit = false
-    constructor(win: BrowserWindow | null) {
+    constructor() {
+        let win = windowControl.getMainWindow() as BrowserWindow
         this.tray = new Tray(path.resolve(__static, 'icon.png')) // 设置托盘图标
         const menus = []
         if (isDevelopment) {

@@ -300,7 +300,7 @@ export interface ScraperDownloadTask {
 /**
  * 有效的消息动作名称
  */
-const InvokeNativeActions = [
+const invokeMainActions = [
     "loadConfig",
     "showOpenDialog",
     'showContextMenu',
@@ -312,16 +312,16 @@ const InvokeNativeActions = [
 /**
  * 消息动作联合类型定义
  */
-export type InvokeNativeActionType = typeof InvokeNativeActions[number]
+export type invokeMainActionType = typeof invokeMainActions[number]
 
 /**
  * 主线程消息参数
  */
-export interface InvokeNativeActionParams {
+export interface invokeMainActionParams {
     /**
      * 消息动作名称
      */
-    action: InvokeNativeActionType
+    action: invokeMainActionType
     /**
      * 消息动作名称
      */
