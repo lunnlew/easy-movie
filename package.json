@@ -1,0 +1,87 @@
+{
+  "name": "easy-movie",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "LunnLew"
+  },
+  "description": "A movie's manager tool",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
+  },
+  "main": "background.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lunnlew/easy-movie.git"
+  },
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "https://update.electronjs.org/lunnlew/easy-movie/"
+    }
+  ],
+  "dependencies": {
+    "@element-plus/icons": "^0.0.11",
+    "animate.css": "^4.1.1",
+    "axios": "^0.24.0",
+    "chokidar": "^3.5.2",
+    "electron-log": "^4.4.1",
+    "electron-updater": "^4.6.1",
+    "element-plus": "^1.2.0-beta.3",
+    "express": "^4.17.1",
+    "express-ws": "^5.0.2",
+    "github-url-to-object": "^4.0.6",
+    "knex": "^0.95.14",
+    "lodash.clonedeep": "^4.5.0",
+    "moviedb-promise": "^3.1.12",
+    "register-service-worker": "^1.7.1",
+    "sqlite3": "^5.0.2",
+    "tslib": "^2.3.1",
+    "tunnel": "^0.0.6",
+    "uuid": "^8.3.2",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.2",
+    "@types/express-ws": "^3.0.1",
+    "@types/github-url-to-object": "^4.0.1",
+    "@types/lodash.clonedeep": "^4.5.6",
+    "@types/tunnel": "^0.0.3",
+    "@types/uuid": "^8.3.3",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-pwa": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.15",
+    "@vue/cli-plugin-typescript": "^4.5.15",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "electron": "^16.0.1",
+    "electron-devtools-installer": "^3.1.0",
+    "electron-icon-builder": "^2.0.1",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.0.0",
+    "less": "^3.0.4",
+    "less-loader": "^5.0.0",
+    "prettier": "^2.2.1",
+    "ts-loader": "8",
+    "typescript": "^4.5.2",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
+    "vue-loader": "^16.8.3",
+    "webpack": "4"
+  }
+}
