@@ -1,5 +1,9 @@
 
 import { Knex } from 'knex'
+import { app } from "electron"
+import fs from 'fs'
+import path from 'path'
+
 export default async function (knex: Knex) {
     console.log('DataM Create Tables');
     // 创建配置表
@@ -212,8 +216,91 @@ export default async function (knex: Knex) {
     });
 
     // 版本号
+    const pkgBuf = fs.readFileSync(path.join(app.getAppPath(), 'package.json'))
+    const pkg = JSON.parse(pkgBuf.toString())
     await knex('config').insert([{
         name: 'version',
-        val: '0.1.0'
+        val: pkg.version
+    }])
+
+    // 搜索
+    await knex('config').insert([{
+        name: '名称',
+        val: 'name',
+        type: 'search_field',
+        state: 1
+    }, {
+        name: '发布年份',
+        val: 'year',
+        type: 'search_field',
+        state: 0
+    }])
+
+    // 筛选-类型
+    await knex('config').insert([{
+        name: '',
+        val: 'Action',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Comedy',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Adventure',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Comedy',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Tragedy',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'War',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Thriller',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Sci-Fi',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Mystery',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Horror',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Fantasy',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'History',
+        type: 'type_filter',
+        state: 0
+    }, {
+        name: '',
+        val: 'Animation',
+        type: 'type_filter',
+        state: 0
     }])
 }

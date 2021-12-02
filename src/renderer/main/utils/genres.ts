@@ -26,7 +26,7 @@ export const dicts: {
     'War': '战争',
     'Western': '西部片',
     'Foreign': '外国片',
-    'tragedy': '悲剧'
+    'Tragedy': '悲剧'
 }
 
 export default function fmt_genres(genres: string) {
