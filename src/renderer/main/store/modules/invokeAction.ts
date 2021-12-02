@@ -1,6 +1,6 @@
 import { invokeRenderActionParams } from "@/types/all"
 import { ipcRenderer } from "electron"
-import { changeShowUpdateTip, needUpdateAlert, progressUpdate, showUpdateCancel } from "@/lib/update"
+import { changeShowUpdateTip, needUpdateAlert, progressUpdate } from "@/lib/update"
 
 // eslint-disable-next-line
 const empty = () => { }

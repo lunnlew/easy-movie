@@ -63,18 +63,17 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: 'true',  // false __dirname error
+      nodeIntegration: 'true',
       experimentalNativeDepCheck: true,
       externals: [],
       "build": {
         "files": [
           "build",
-          "!node_modules",
-          "node_modules/electron-is-dev"
+          "!node_modules"
         ]
       },
       builderOptions: {
-        "appId": "com.electron.easy-movie",
+        "appId": "com.app.easy-movie",
         "artifactName": "${productName}_Setup_${version}_${platform}-${arch}.${ext}",
         win: {
           "target": [{

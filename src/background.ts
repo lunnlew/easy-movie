@@ -6,7 +6,9 @@ import windowControl from './backend/libs/window'
 import TrayControl from './backend/libs/tray'
 import updateControl from './backend/libs/update'
 import invokeAction from "./backend/eventEmitter/invokeAction";
+import path from 'path'
 import './backend/libs/protocol'
+import { __fix_dirname } from "./backend/config";
 
 type globalWin = BrowserWindow | null
 
@@ -31,10 +33,9 @@ async function createWindow() {
       enableDevTools: process.env.WEBPACK_DEV_SERVER_URL && !process.env.IS_TEST,
       // route: 'setting.html',
       webPreferences: {
-        // Use pluginOptions.nodeIntegration, leave this alone
-        // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
         nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION == 'true',
-        contextIsolation: false,
+        contextIsolation: process.env.ELECTRON_NODE_INTEGRATION == 'false',
+        preload: path.join(__dirname, "preload.js")
       },
     }
   })
