@@ -78,7 +78,7 @@ const windowParams = {
     webPreferences: {
         nodeIntegration: 'false',
         contextIsolation: 'true',
-        preload: path.join(__app_path, "dist/preload.js"),
+        preload: isDevelopment ? path.join(__app_path, "public/preload.js") : path.join(__app_path, "dist/preload.js"),
         devTools: true,
         webSecurity: false,
         enableRemoteModule: false,
