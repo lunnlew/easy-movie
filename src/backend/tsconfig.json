@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    // module: To run on Node The main process of must follow CommonJS standard
+    "module": "CommonJS",
+    "strict": false,
+    "noImplicitAny": false,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "lib": ["ESNext", "DOM"],
+    // outDir: Appoint .js File output location
+    "outDir": "../../dist"
+  },
+  "include": ["./"],
+  "exclude": ["node_modules"]
+}

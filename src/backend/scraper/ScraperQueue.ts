@@ -112,7 +112,7 @@ class ScraperQueue {
                     console.log('获取刮削任务失败', err);
                 })
             let old_queues = this.queues.map(item => item.task_uuid);
-            let loaded_tasks = []
+            let loaded_tasks = [] as any
             if (tasks) {
                 for (let task of tasks) {
                     // 不重复加载仍在队列中的任务

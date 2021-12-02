@@ -2,16 +2,16 @@
 import { app, BrowserWindow, MenuItem, Menu, Tray } from 'electron'
 import path from 'path'
 import windowControl from './window';
-const isDevelopment = process.env.NODE_ENV !== "production";
-declare const __static: string
+const isDevelopment = process.env.NODE_ENV == "development";
+import { __app_path } from "../config";
 
 class TrayControl {
     tray
     isQuit = false
     constructor() {
         let win = windowControl.getMainWindow() as BrowserWindow
-        this.tray = new Tray(path.resolve(__static, 'icon.png')) // 设置托盘图标
-        const menus = []
+        this.tray = new Tray(path.resolve(__app_path, 'dist/icon.png')) // 设置托盘图标
+        const menus = [] as any[]
         if (isDevelopment) {
             menus.push({
                 label: 'Toggle DevTools',

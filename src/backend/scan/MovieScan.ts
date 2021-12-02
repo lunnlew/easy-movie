@@ -175,10 +175,10 @@ class MovieScan {
     let dirCount = 0
     let hasPoster = false
     let skip = false
-    let filePaths = []
-    let dirPaths = []
+    let filePaths = [] as string[]
+    let dirPaths = [] as string[]
     for (let file of files) {
-      const _file = path.join(filePath, file);
+      const _file = path.join(filePath, file) as string;
       const stat = fs.statSync(_file);
       if (!stat.isDirectory()) {
         if (baseName(_file).indexOf('cover') === 0 || baseName(_file).indexOf('poster') === 0) {

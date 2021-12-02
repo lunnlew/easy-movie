@@ -1,25 +1,11 @@
-    
-    nvm install 16
-    nvm use 16
-    npm install @vue/cli -g
-    npm install @vue/cli-service -g
-    npm install electron -g
-    vue create esay-movie
-    cd esay-movie
-    vue add electron-builder
-    npm install --save-dev electron-icon-builder
-    npm install node-pre-gyp -g
-    npm install node-gyp -g
-    npm config set msvs_version 2015
-    npm config set python C:/Python27/python.exe
-    npm install --global --production windows-build-tools --vs2015
-    electron -v
-    npm install sqlite3 --build-from-source --runtime=electron --target=16.0.0 --dist-url=https://atom.io/download/electrone
+# Vue 3 + Typescript + Vite
 
-## electron:serve注意事项
-    可以使用webpack5
-## electron:build构建注意事项
+This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-    vue-cli-plugin-electron-builder 只支持 webpack4
-    所以构建时只能使用ts-loader@9以下版本，因为webpack4不支持loaderContext.getOptions()及loaderContext._module
+## Recommended IDE Setup
 
+- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+
+## Type Support For `.vue` Imports in TS
+
+Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.

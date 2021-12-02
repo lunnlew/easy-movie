@@ -7,17 +7,18 @@
   },
   "description": "A movie's manager tool",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
-    "electron:publish": "vue-cli-service electron:build -p always",
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview",
+    "electron-wait": "wait-on tcp:3000 && tsc -p ./src/backend && cross-env NODE_ENV=development electron .",
+    "electron:serve": "concurrently -k \"yarn dev\" \"yarn electron-wait\"",
+    "electron:build": "vite build && tsc -p ./src/backend && electron-builder",
+    "electron:publish": "yarn electron:build && electron-builder -p always",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
-  "main": "background.js",
+  "main": "dist/background.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/lunnlew/easy-movie.git"
@@ -30,9 +31,11 @@
     "animate.css": "^4.1.1",
     "axios": "^0.24.0",
     "chokidar": "^3.5.2",
+    "compression": "^1.7.4",
+    "electron-devtools-installer": "^3.1.0",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.6.1",
-    "element-plus": "^1.2.0-beta.3",
+    "element-plus": "^1.2.0-beta.5",
     "express": "^4.17.1",
     "express-ws": "^5.0.2",
     "github-url-to-object": "^4.0.6",
@@ -56,29 +59,60 @@
     "@types/uuid": "^8.3.3",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-pwa": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.15",
-    "@vue/cli-plugin-typescript": "^4.5.15",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vitejs/plugin-vue": "^1.10.1",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
-    "electron": "^16.0.1",
-    "electron-devtools-installer": "^3.1.0",
+    "concurrently": "^6.4.0",
+    "cross-env": "^7.0.3",
+    "electron": "^16.0.3",
+    "electron-builder": "^22.14.5",
     "electron-icon-builder": "^2.0.1",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
-    "less": "^3.0.4",
-    "less-loader": "^5.0.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
     "prettier": "^2.2.1",
     "ts-loader": "8",
     "typescript": "^4.5.2",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-loader": "^16.8.3",
+    "vite": "^2.6.14",
+    "vue-tsc": "^0.29.8",
+    "wait-on": "^6.0.0",
     "webpack": "4"
+  },
+  "build": {
+    "productName": "EasyMovie",
+    "appId": "com.app.easy-movie",
+    "artifactName": "${productName}_Setup_${version}_${platform}-${arch}.${ext}",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        }
+      ],
+      "rfc3161TimeStampServer": "http://tsa.startssl.com/rfc3161",
+      "signDlls": true,
+      "icon": "./build/icons/256x256.png"
+    },
+    "extraResources": [],
+    "nsis": {
+      "include": "build/installer.nsh",
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "files": [
+      "dist/**"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist_electron"
+    }
   }
 }

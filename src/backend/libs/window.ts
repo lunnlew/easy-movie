@@ -1,7 +1,13 @@
-import { BrowserWindow } from "electron"
-import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
+import { BrowserWindow, Protocol } from "electron"
 import path from 'path'
-declare const __static: string
+import { __app_path } from "../config";
+
+import { protocol } from 'electron'
+import { readFile } from 'fs'
+import { URL } from 'url'
+
+const isDevelopment = process.env.NODE_ENV == "development";
+
 /**
  * 窗口参数
  */
@@ -37,7 +43,7 @@ const windowParams = {
     /**
      * 窗口图标
      */
-    icon: path.join(__static, 'icon.png'),
+    icon: path.join(__app_path, 'dist/icon.png'),
     /**
      * 是否模态窗口
      */
@@ -70,9 +76,10 @@ const windowParams = {
      * 窗口能力
      */
     webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-        devTools: false,
+        nodeIntegration: 'false',
+        contextIsolation: 'true',
+        preload: path.join(__app_path, "dist/preload.js"),
+        devTools: true,
         webSecurity: false,
         enableRemoteModule: false,
     }
@@ -150,6 +157,42 @@ class WindowControl {
             }
         })
     }
+    createProtocol(scheme: string, customProtocol?: Protocol): void {
+        (customProtocol || protocol).registerBufferProtocol(
+            scheme,
+            (request, respond) => {
+                let pathName = new URL(request.url).pathname
+                pathName = decodeURI(pathName) // Needed in case URL contains spaces
+
+                readFile(path.join(__app_path, "dist", pathName), (error, data) => {
+                    if (error) {
+                        console.error(
+                            `Failed to read ${pathName} on ${scheme} protocol`,
+                            error
+                        )
+                    }
+                    const extension = path.extname(pathName).toLowerCase()
+                    let mimeType = ''
+
+                    if (extension === '.js') {
+                        mimeType = 'text/javascript'
+                    } else if (extension === '.html') {
+                        mimeType = 'text/html'
+                    } else if (extension === '.css') {
+                        mimeType = 'text/css'
+                    } else if (extension === '.svg' || extension === '.svgz') {
+                        mimeType = 'image/svg+xml'
+                    } else if (extension === '.json') {
+                        mimeType = 'application/json'
+                    } else if (extension === '.wasm') {
+                        mimeType = 'application/wasm'
+                    }
+
+                    respond({ mimeType, data })
+                })
+            }
+        )
+    }
     /**
      * 创建窗口
      * @param event 
@@ -191,13 +234,13 @@ class WindowControl {
             route: (options.route || "")
         })
 
-        if (process.env.WEBPACK_DEV_SERVER_URL) {
-            console.log(process.env.WEBPACK_DEV_SERVER_URL + (options.route || "index.html"))
+        if (isDevelopment) {
+            console.log('http://localhost:3000/' + (options.route || "index.html"))
             // Load the url of the dev server if in development mode
-            win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + (options.route || "index.html"))
+            win.loadURL('http://localhost:3000/' + (options.route || "index.html"))
         } else {
-            createProtocol("app");
             // Load the index.html when not in development
+            this.createProtocol('app')
             console.log("app://./" + (options.route || "index.html"))
             win.loadURL("app://./" + (options.route || "index.html"))
         }

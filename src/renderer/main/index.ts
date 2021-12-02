@@ -14,7 +14,7 @@ app.config.globalProperties.$http = axios
 app.config.globalProperties.$ws = wsMessage
 app.use(ElementPlus)
 app.component('VideoPlay', VideoPlay)
-app.use(animated)
+app.use(animated as any)
 app.use(store)
 app.use(router)
 app.mount("#app");

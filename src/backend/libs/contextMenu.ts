@@ -3,7 +3,7 @@ import path from 'path'
 import dataM from '../database/DataM'
 import windowControl from "./window";
 import updateControl from "./update";
-declare const __static: string
+import { __app_path } from "../config";
 
 export function createContextMenu(event: any, params: any) {
     const menu = new Menu()
@@ -16,6 +16,7 @@ export function createContextMenu(event: any, params: any) {
                     skipTaskbar: false,
                     width: 800,
                     height: 600,
+                    frame: false,
                     show: false,
                     readyShow: true,
                     title: '偏好设置',
@@ -70,7 +71,7 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
             }
         }
         if (field.state == 1) {
-            option.icon = path.join(__static, 'check.png')
+            option.icon = path.join(__app_path, 'dist/check.png')
         }
         menu.append(new MenuItem(option))
     }

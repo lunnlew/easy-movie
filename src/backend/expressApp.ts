@@ -6,9 +6,9 @@ import bodyParser from 'body-parser'
 import expressWS from 'express-ws'
 import application from './application';
 import RenderMsg from './eventEmitter'
-const routes = require('./routes')
-require('./database/DataM')
-require('./scraper/ScraperQueue')
+import routes from './routes'
+import './database/DataM'
+import './scraper/ScraperQueue'
 
 const app = express()
 expressWS(app)
@@ -35,4 +35,4 @@ app.ws('/ws/:clientid', (ws: any) => new RenderMsg(ws, application.eventEmitter)
 app.listen(6877, () => {
     console.log('Backend service listing on port http://127.0.0.1:6877')
 })
-module.exports = app;
+export default app

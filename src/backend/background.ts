@@ -2,19 +2,18 @@
 
 import { app, Menu, protocol, BrowserWindow } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import windowControl from './backend/libs/window'
-import TrayControl from './backend/libs/tray'
-import updateControl from './backend/libs/update'
-import invokeAction from "./backend/eventEmitter/invokeAction";
-import path from 'path'
-import './backend/libs/protocol'
-import { __fix_dirname } from "./backend/config";
+import windowControl from './libs/window'
+import TrayControl from './libs/tray'
+import updateControl from './libs/update'
+import invokeAction from "./eventEmitter/invokeAction";
+import './libs/protocol'
+import { __app_path, __fix_dirname } from "./config";
 
 type globalWin = BrowserWindow | null
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV == "development";
 let tray: TrayControl | null = null
-let _globalWin: globalWin
+let _globalWin: globalWin | null = null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -30,13 +29,8 @@ async function createWindow() {
       show: false,
       isMain: true,
       skipTaskbar: false,
-      enableDevTools: process.env.WEBPACK_DEV_SERVER_URL && !process.env.IS_TEST,
-      // route: 'setting.html',
-      webPreferences: {
-        nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION == 'true',
-        contextIsolation: process.env.ELECTRON_NODE_INTEGRATION == 'false',
-        preload: path.join(__dirname, "preload.js")
-      },
+      enableDevTools: isDevelopment,
+      // route: 'setting.html'
     }
   })
 
@@ -77,13 +71,13 @@ function createMenu() {
     Menu.setApplicationMenu(menu)
   } else {
     // windows及linux系统
-    Menu.setApplicationMenu(null)
+    // Menu.setApplicationMenu(null)
   }
 }
 
 function createBackendService() {
   // 创建一个服务
-  require('./backend')
+  require('./index')
 }
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

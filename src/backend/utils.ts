@@ -99,7 +99,7 @@ export function minEditDistance(s1: string, s2: string) {
     const len1 = s1.length
     const len2 = s2.length
 
-    let matrix = []
+    let matrix = [] as number[][]
 
     for (let i = 0; i <= len1; i++) {
         // 构造二维数组
