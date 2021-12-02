@@ -22,7 +22,10 @@ export default {
         /**
          *  渲染进程向主线程通信模块
          */
-        async invokeMainAction({ commit, state }: any, params: { action: string; command: string; timeout: any; options: any }, await_complete = true) {
+        async invokeMainAction({ commit, state }: any, params: { action: string; command: string; timeout: any; options: any; await_complete: boolean }) {
+            if (typeof params.await_complete == 'undefined') {
+                params.await_complete = true
+            }
             function clear(uuid: string | number) {
                 console.log('clear uuid', uuid)
                 delete state.resolveIdle[uuid]
@@ -65,9 +68,10 @@ export default {
                     command: params.command,
                     options: params.options
                 })
-                if (await_complete) {
+                if (params.await_complete) {
                     awaitComplete(uuid).then(resolve)
                 } else {
+                    clear(uuid)
                     resolve({})
                 }
             })

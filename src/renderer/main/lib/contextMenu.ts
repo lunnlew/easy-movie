@@ -6,14 +6,15 @@ import store from '@/store'
  * @returns 
  */
 export async function showContextMenu(event: any) {
-    return await store.dispatch('invokeMainAction', {
+   store.dispatch('invokeMainAction', {
         action: 'showContextMenu',
         options: {
             point: {
                 x: event.clientX,
                 y: event.clientY
             }
-        }
+        },
+        await_complete: false
     })
 }
 

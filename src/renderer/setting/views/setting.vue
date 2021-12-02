@@ -15,19 +15,31 @@
         <el-container>
             <el-aside width="200px">
                 <ul class="menus">
-                    <li>
+                    <li
+                        @click="toggle_section('base')"
+                        @mouseenter="toggle_section('base')"
+                        :class="{ active: current_section == 'base' }"
+                    >
                         <el-icon size="22">
                             <close />
                         </el-icon>
                         <span>常用</span>
                     </li>
-                    <li>
+                    <li
+                        @click="toggle_section('notify')"
+                        @mouseenter="toggle_section('notify')"
+                        :class="{ active: current_section == 'notify' }"
+                    >
                         <el-icon size="22">
                             <notification />
                         </el-icon>
                         <span>通知</span>
                     </li>
-                    <li>
+                    <li
+                        @click="toggle_section('filter')"
+                        @mouseenter="toggle_section('filter')"
+                        :class="{ active: current_section == 'filter' }"
+                    >
                         <el-icon size="22">
                             <Filter />
                         </el-icon>
@@ -37,14 +49,8 @@
             </el-aside>
             <el-main>
                 <div class="main">
-                    <div class="item">
-                        主题
-                        <ul class="theme">
-                            <li v-for="(item, index) of themes" :key="index">
-                                <div :style="item.style"></div>
-                            </li>
-                        </ul>
-                    </div>
+                    <base-section v-if="current_section === 'base'"></base-section>
+                    <filter-section v-else-if="current_section === 'filter'"></filter-section>
                 </div>
             </el-main>
         </el-container>
@@ -52,7 +58,7 @@
 </template>
 <script lang="ts">
 import {
-    defineComponent
+    defineComponent, ref
 } from "vue";
 import {
     Close,
@@ -60,35 +66,24 @@ import {
     Notification
 } from '@element-plus/icons'
 import { windowControl } from '@/lib/native'
+import FilterSection from 'setting@/views/filter.vue'
+import BaseSection from 'setting@/views/base.vue'
 export default defineComponent({
     name: "Setting",
-    components: { Close, Filter, Notification },
+    components: { Close, Filter, Notification, BaseSection, FilterSection },
     setup: (props, { emit }) => {
         console.log('setup')
         function hideWindow() {
-            console.log('hideWindow')
             windowControl('hide')
         }
-        const themes = [
-            {
-                style: {
-                    background: '#409EFF'
-                }
-            },
-            {
-                style: {
-                    background: '#ffffff'
-                }
-            },
-            {
-                style: {
-                    background: '#4e5155'
-                }
-            }
-        ]
+        const current_section = ref('base')
+        function toggle_section(section: string) {
+            current_section.value = section
+        }
         return {
             hideWindow,
-            themes
+            toggle_section,
+            current_section
         }
     }
 });
@@ -154,6 +149,9 @@ export default defineComponent({
         &:hover {
             background: #d92424;
         }
+        &.active {
+            background: #d92424;
+        }
         .el-icon {
             margin-right: 10px;
         }
@@ -162,40 +160,7 @@ export default defineComponent({
 .main {
     font-size: 14px;
 }
-.item {
+.section {
     padding: 10px 0;
-}
-.theme {
-    list-style: none;
-    padding: 10px 0;
-    margin: 0;
-    li {
-        display: inline-block;
-        width: 25px;
-        height: 25px;
-        margin: 0;
-        padding: 0;
-        cursor: pointer;
-        border-radius: 3px;
-        margin: 0;
-        padding: 0;
-        cursor: pointer;
-        overflow: hidden;
-        box-sizing: border-box;
-        &:hover {
-            border: 1px solid #66b1ff;
-        }
-        &.active {
-            border: 1px solid #66b1ff;
-        }
-        div {
-            border-radius: 3px;
-            width: 25px;
-            height: 25px;
-        }
-    }
-    li + li {
-        margin-left: 5px;
-    }
 }
 </style>

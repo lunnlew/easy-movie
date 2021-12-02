@@ -64,6 +64,7 @@ class InvokeAction {
             if (await_complete) {
                 awaitComplete(uuid).then(resolve)
             } else {
+                clear(uuid)
                 resolve({})
             }
         })
@@ -94,12 +95,10 @@ class InvokeAction {
                 }
                 case "showContextMenu": {
                     createContextMenu(event, params)
-                    replyMessage(params.uuid, 'success')
                     break
                 }
                 case "setFilterData": {
                     setFilterData(event, params)
-                    replyMessage(params.uuid, 'success')
                     break
                 }
                 case "showSearchAreaMenu": {

@@ -11,7 +11,7 @@
             </el-icon>
         </span>
         <template #dropdown>
-            <el-dropdown-menu>
+            <el-dropdown-menu v-if="type_filters.length">
                 <div class="filter-ui">
                     <div class="filter-ui-item" v-for="item of type_filters" :key="item.key">
                         <el-checkbox

@@ -37,7 +37,8 @@ export function toggleFilterTool() {
 export async function changeFilter(data: any) {
     store.dispatch('invokeMainAction', {
         action: 'setFilterData',
-        options: data
+        options: data,
+        await_complete: false
     })
     type_filters.value = [...type_filters.value]
 }

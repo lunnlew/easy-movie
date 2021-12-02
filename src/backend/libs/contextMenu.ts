@@ -46,7 +46,11 @@ export function createContextMenu(event: any, params: any) {
 
 export async function createSearchAreaMenu(event: any, params: any, handler: any) {
     const menu = new Menu()
+    menu.append(new MenuItem({ label: '搜索范围：' }))
     let fields = await dataM.knexInstance('config').where('type', '=', 'search_field')
+    if (fields.length <= 0) {
+        return handler({})
+    }
     for (let field of fields) {
         let option: any = {
             label: field.name,
@@ -60,6 +64,7 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
                 })
                 handler({
                     field: field.val,
+                    label: field.name,
                     enable: field.state == 0 ? true : false
                 })
             }
