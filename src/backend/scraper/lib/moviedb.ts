@@ -7,6 +7,7 @@ import {
     ScraperMovieRequestPayload, ScraperCastRequestPayload,
     ScraperInitTask, ScraperResultTask
 } from '../../types/index'
+import RequestAdapter from '../../libs/RequestAdapter'
 class MovieDb {
     apikey: string = imdb_apikey;
     apiurl: string = imdb_apiurl; // instead https://empty-thunder-5c2a.karoy.workers.dev/3/
@@ -46,8 +47,9 @@ class MovieDb {
         console.log('scrape fetch_movie_info', task.task_uuid, orign_movie.movie_id, orign_movie.name, orign_movie.year || '');
         try {
             let data = await this.api.searchMovie({ query: orign_movie.name, language: 'zh' }, {
-                proxy: false,
-                httpsAgent: this.app.buildHttpsTunnelAgent()
+                adapter: RequestAdapter as any,
+                // proxy: false,
+                // httpsAgent: this.app.buildHttpsTunnelAgent()
             }).catch(err => {
                 throw err;
             })
@@ -64,8 +66,9 @@ class MovieDb {
             }
             if (imdb_movie && imdb_movie.title) {
                 let imdb_movie_info = await this.api.movieInfo({ id: imdb_movie.id, language: "zh", append_to_response: 'casts' }, {
-                    proxy: false,
-                    httpsAgent: this.app.buildHttpsTunnelAgent()
+                    adapter: RequestAdapter as any,
+                    // proxy: false,
+                    // httpsAgent: this.app.buildHttpsTunnelAgent()
                 }).catch(err => {
                     throw err;
                 })
@@ -142,8 +145,9 @@ class MovieDb {
         console.log('scrape fetch_cast_info', task.task_uuid, orign_cast.imdb_sid, orign_cast.name, orign_cast.imdb_id || '');
         try {
             let data = await this.api.personInfo({ id: orign_cast.imdb_sid as any, language: "zh" }, {
-                proxy: false,
-                httpsAgent: this.app.buildHttpsTunnelAgent()
+                adapter: RequestAdapter as any,
+                // proxy: false,
+                // httpsAgent: this.app.buildHttpsTunnelAgent()
             }).catch(err => {
                 throw err;
             })

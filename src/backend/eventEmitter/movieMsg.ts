@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { MovieInfo, ScraperCastRequestPayload, ScraperInitTask } from '../types/index'
 import { GlobalEventType } from './GlobalEventEmitter'
+import RequestAdapter from '../libs/RequestAdapter'
 class movieMsg {
     eventEmitter
     knex
@@ -113,8 +114,9 @@ class movieMsg {
                 if (!fs.existsSync(poster_path)) {
                     axios.get(poster, {
                         responseType: 'stream',
-                        proxy: false,
-                        httpsAgent: application.buildHttpsTunnelAgent()
+                        adapter: RequestAdapter as any,
+                        // proxy: false,
+                        // httpsAgent: application.buildHttpsTunnelAgent()
                     }).then((response) => {
                         const rs = response.data
                         const ws = fs.createWriteStream(poster_path)
@@ -153,8 +155,9 @@ class movieMsg {
                 if (!fs.existsSync(backdrop_path)) {
                     axios.get(backdrop, {
                         responseType: 'stream',
-                        proxy: false,
-                        httpsAgent: application.buildHttpsTunnelAgent()
+                        adapter: RequestAdapter as any,
+                        // proxy: false,
+                        // httpsAgent: application.buildHttpsTunnelAgent()
                     }).then((response) => {
                         const rs = response.data
                         const ws = fs.createWriteStream(backdrop_path)

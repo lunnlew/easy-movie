@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from "electron"
+import { app, BrowserWindow } from "electron"
 import { autoUpdater } from "electron-updater"
 import log from 'electron-log'
 import gh from "github-url-to-object"

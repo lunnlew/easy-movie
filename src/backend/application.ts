@@ -1,21 +1,52 @@
 import tunnel from 'tunnel'
+import path from "path";
+import fs from "fs";
+import { app } from "electron";
 import globalEventEmitter, { GlobalEventType } from './eventEmitter/GlobalEventEmitter'
+/**
+ * 手动设置请求的相关代理
+ */
+// axios({
+//     url: 'http://www.baidu.com',
+//     proxy: false,
+//     httpsAgent: application.buildHttpsTunnelAgent(),
+//     httpAgent: application.buildHttpTunnelAgent()
+// })
+
+// 建议使用以下方式，由chrome自动管理代理
+// axios({
+//     adapter: RequestAdapter as any,
+// })
+
 export class App {
     proxy;
     eventEmitter: GlobalEventType;
     constructor() {
-        this.proxy = {
-            host: '127.0.0.1',
-            port: 1081,
-            protocol: 'http:',
-            proxyAuth: ''
+        let userProfilePath = path.join(
+            app.getPath("userData"),
+            "user-profile.json"
+        );
+        this.proxy = {}
+        let userProfile = {} as any
+        console.log("load profile", userProfilePath);
+        if (fs.existsSync(userProfilePath)) {
+            userProfile = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
+        }
+        if (userProfile.proxy !== 'none' && userProfile.proxy !== 'system') {
+            let url = new URL(userProfile.proxy);
+            this.proxy = {
+                host: url.hostname,
+                port: url.port,
+                protocol: url.protocol,
+                proxyAuth: url.username + ':' + url.password
+            }
         }
         this.eventEmitter = globalEventEmitter
     }
     buildHttpsTunnelAgent(options?: {
         proxy?: any
     }) {
-        let proxy = this.proxy
+        let proxy = Object.assign({}, this.proxy, options?.proxy)
         let tunnelOptions = {
             ...options,
             proxy: {
@@ -36,7 +67,7 @@ export class App {
     buildHttpTunnelAgent(options?: {
         proxy?: any
     }) {
-        let proxy = this.proxy
+        let proxy = Object.assign({}, this.proxy, options?.proxy)
         let tunnelOptions = {
             ...options,
             proxy: {

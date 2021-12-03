@@ -7,6 +7,7 @@ import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../config';
 import application from '../application';
 import { ScraperInitTask, ScraperMovieRequestPayload } from '../types';
 import movie from '../database/movie';
+import RequestAdapter from '../libs/RequestAdapter';
 
 const router = Router();
 const imdb_api = new MovieDbApi(imdb_apikey, imdb_apiurl);
@@ -15,8 +16,9 @@ const search = async (req: any, res: any, next: any) => {
     let name = req.body.name
     try {
         let data = await imdb_api.searchMovie({ query: name, language: 'zh' }, {
-            proxy: false,
-            httpsAgent: application.buildHttpsTunnelAgent()
+            adapter: RequestAdapter as any,
+            // proxy: false,
+            // httpsAgent: application.buildHttpsTunnelAgent()
         }).catch(err => { throw err })
         res.json(buildResult(data?.results?.map((item: any) => ({ ...item, poster_path: item.poster_path ? imdb_imgbase + item.poster_path : null }))))
     } catch (err: any) {
