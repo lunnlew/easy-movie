@@ -18,9 +18,6 @@
                     <el-option v-for="lib of libs" :label="lib.name" :value="lib.id" :key="lib.id"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="需要重新刮削">
-                <el-switch v-model="libform.need_fetch"></el-switch>
-            </el-form-item>
             <el-form-item style="text-align: right;margin-top: 20px;">
                 <el-button type="primary" :loading="submitloading" @click="onSubmit">更新</el-button>
                 <el-button @click="$emit('hide')">取消</el-button>
