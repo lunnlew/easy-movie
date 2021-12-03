@@ -290,7 +290,7 @@ export default defineComponent({
         }
     }
     .movie-divider {
-        /deep/.el-divider__text {
+        ::v-deep(.el-divider__text) {
             border-radius: 2px;
         }
     }
