@@ -87,7 +87,10 @@ class UpdateControl {
             }
         });
         autoUpdater.checkForUpdates()
-        setInterval(() => { autoUpdater.checkForUpdates() }, 10 * 60 * 1000)
+        setInterval(() => {
+            this.needUpdateAlert = false
+            autoUpdater.checkForUpdates()
+        }, 10 * 60 * 1000)
     }
     checkForUpdates() {
         this.needUpdateAlert = true
