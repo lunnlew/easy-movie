@@ -92,6 +92,12 @@ class WindowControl {
         route: string,
     }> = []
     constructor() { }
+    /**
+     * 分发窗口控制事件
+     * @param event 
+     * @param params 
+     * @param handler 
+     */
     dispatch(event: any, params: any, handler: any = null) {
         switch (params.command) {
             case 'create':
@@ -162,6 +168,11 @@ class WindowControl {
             }
         })
     }
+    /**
+     * 创建自定义协议
+     * @param scheme 
+     * @param customProtocol 
+     */
     createProtocol(scheme: string, customProtocol?: Protocol): void {
         (customProtocol || protocol).registerBufferProtocol(
             scheme,
@@ -281,6 +292,12 @@ class WindowControl {
 
         return win
     }
+    /**
+     * 获取消息来源窗口
+     * @param event 
+     * @param wid 
+     * @returns 
+     */
     getFromWindow(event: any, wid: number): BrowserWindow | null {
         return wid
             ? BrowserWindow.fromId(wid) as BrowserWindow
