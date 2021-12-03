@@ -34,12 +34,8 @@ class UpdateControl {
         return `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
     }
     initUpdater(opts: any) {
-        let feedUrl = this.buildFeedUrl(opts)
-        console.log('feedUrl', feedUrl)
-
         autoUpdater.autoDownload = !1
         autoUpdater.logger = log
-        // autoUpdater.setFeedURL(feedUrl);
         autoUpdater.on('error', (error) => {
             log.error(error)
         });

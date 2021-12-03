@@ -138,6 +138,12 @@ class WindowControl {
         return this.getFromWindow(null, this.windowList.find(w => w.isMain)?.id as number)
     }
     /**
+     * 获取所有窗口
+     */
+    getAllBrowserWindow() {
+        return BrowserWindow.getAllWindows()
+    }
+    /**
      * 预创建的窗口
      */
     preCreateWindow() {
@@ -232,6 +238,10 @@ class WindowControl {
             isMain: options.isMain,
             parentId: options.parentId,
             route: (options.route || "")
+        })
+
+        win.webContents.session.setProxy({
+            mode: "system"
         })
 
         if (isDevelopment) {

@@ -14,13 +14,21 @@ class TrayControl {
         const menus = [] as any[]
         if (isDevelopment) {
             menus.push({
-                role: 'toggleDevTools',
                 label: '开发工具',
                 click: function () {
                     if (!win?.isVisible()) {
                         win?.show();
                     }
                     win?.webContents.toggleDevTools();
+                }
+            })
+            menus.push({
+                label: '强制重载',
+                click: function () {
+                    if (!win?.isVisible()) {
+                        win?.show();
+                    }
+                    win?.webContents.reloadIgnoringCache();
                 }
             })
         }
