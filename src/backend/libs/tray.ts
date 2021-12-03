@@ -2,8 +2,8 @@
 import { app, BrowserWindow, MenuItem, Menu, Tray } from 'electron'
 import path from 'path'
 import windowControl from './window';
-const isDevelopment = process.env.NODE_ENV == "development";
 import { __app_path } from "../config";
+const isDevelopment = process.env.NODE_ENV == "development";
 
 class TrayControl {
     tray
@@ -14,9 +14,12 @@ class TrayControl {
         const menus = [] as any[]
         if (isDevelopment) {
             menus.push({
-                label: 'Toggle DevTools',
+                role: 'toggleDevTools',
+                label: '开发工具',
                 click: function () {
-                    win?.show();
+                    if (!win?.isVisible()) {
+                        win?.show();
+                    }
                     win?.webContents.toggleDevTools();
                 }
             })

@@ -71,7 +71,7 @@ function createMenu() {
     Menu.setApplicationMenu(menu)
   } else {
     // windows及linux系统
-    // Menu.setApplicationMenu(null)
+    Menu.setApplicationMenu(null)
   }
 }
 
