@@ -1,7 +1,7 @@
 'use strict'
 
-import { __fix_dirname, home_dir } from '../config';
-import application from '../application';
+import { __fix_dirname, home_dir } from '../preference';
+import application from '../libs/application';
 import { Knex, knex } from 'knex'
 import createTable from './createTable'
 import { GlobalEventType } from '../eventEmitter/GlobalEventEmitter';

@@ -1,7 +1,7 @@
 'use strict'
 import { MovieDb as MovieDbApi } from 'moviedb-promise'
-import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../../config';
-import { App } from '../../application'
+import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../../preference';
+import { App } from '../../libs/application'
 import {
     MovieInfo, PersonInfo,
     ScraperMovieRequestPayload, ScraperCastRequestPayload,

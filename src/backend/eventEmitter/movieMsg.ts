@@ -1,6 +1,6 @@
 import axios from 'axios'
 import dataM from '../database/DataM'
-import application from '../application'
+import application from '../libs/application'
 import fs from 'fs'
 import path from 'path'
 import { MovieInfo, ScraperCastRequestPayload, ScraperInitTask } from '../types/index'

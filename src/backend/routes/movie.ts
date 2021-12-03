@@ -5,8 +5,8 @@ import movie from '../database/movie'
 import { buildResult, buildErrResult } from '../utils'
 import fs from 'fs'
 import path from 'path'
-import { __fix_dirname } from '../config'
-import application from '../application';
+import { __fix_dirname } from '../preference'
+import application from '../libs/application';
 import movie_files from '../database/movie_files'
 
 const router = Router();

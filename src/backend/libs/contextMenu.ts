@@ -3,8 +3,8 @@ import path from 'path'
 import dataM from '../database/DataM'
 import windowControl from "./window";
 import updateControl from "./update";
-import { __app_path } from "../config";
-const isDevelopment = process.env.NODE_ENV == "development";
+import { __app_path } from "../preference";
+import application from "./application";
 
 export function createContextMenu(event: any, params: any) {
     const menu = new Menu()
@@ -34,7 +34,7 @@ export function createContextMenu(event: any, params: any) {
     }))
     menu.append(new MenuItem({ role: 'about', label: '关于' }))
     menu.append(new MenuItem({ type: 'separator' }))
-    if (isDevelopment) {
+    if (application.isDevelopment) {
         menu.append(new MenuItem({ role: 'toggleDevTools', label: '开发工具' }))
         menu.append(new MenuItem({ role: 'forceReload', label: '强制重载' }))
     }

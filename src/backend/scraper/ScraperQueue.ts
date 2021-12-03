@@ -1,7 +1,7 @@
 'use strict'
 
-import { __fix_dirname } from '../config';
-import application from '../application';
+import { __fix_dirname } from '../preference';
+import application from '../libs/application';
 import scraper from './scraper'
 import dataM from '../database/DataM'
 import { v4 as uuidv4 } from 'uuid'

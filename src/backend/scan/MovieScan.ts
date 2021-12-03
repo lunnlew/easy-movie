@@ -1,7 +1,7 @@
 'use strict'
 
-import { __fix_dirname } from '../config';
-import application from '../application';
+import { __fix_dirname } from '../preference';
+import application from '../libs/application';
 import movie from '../database/movie'
 import movieFile from '../database/movie_files'
 import libs from '../database/libs'

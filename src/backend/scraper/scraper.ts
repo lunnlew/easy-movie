@@ -1,8 +1,8 @@
 'use strict'
 
-import { __fix_dirname } from '../config';
+import { __fix_dirname } from '../preference';
 import Moviedb from './lib/moviedb';
-import application from '../application';
+import application from '../libs/application';
 import { ScraperInitTask } from '../types/index'
 import { GlobalEventType } from '../eventEmitter/GlobalEventEmitter';
 

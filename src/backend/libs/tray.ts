@@ -2,8 +2,9 @@
 import { app, BrowserWindow, MenuItem, Menu, Tray } from 'electron'
 import path from 'path'
 import windowControl from './window';
-import { __app_path } from "../config";
-const isDevelopment = process.env.NODE_ENV == "development";
+import { __app_path } from "../preference";
+import application from './application';
+
 
 class TrayControl {
     tray
@@ -12,7 +13,7 @@ class TrayControl {
         let win = windowControl.getMainWindow() as BrowserWindow
         this.tray = new Tray(path.resolve(__app_path, 'dist/icon.png')) // 设置托盘图标
         const menus = [] as any[]
-        if (isDevelopment) {
+        if (application.isDevelopment) {
             menus.push({
                 label: '开发工具',
                 click: function () {

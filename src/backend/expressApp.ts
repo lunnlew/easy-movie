@@ -4,7 +4,7 @@ import express from 'express'
 import compress from 'compression'
 import bodyParser from 'body-parser'
 import expressWS from 'express-ws'
-import application from './application';
+import application from './libs/application';
 import RenderMsg from './eventEmitter'
 import routes from './routes'
 import './database/DataM'

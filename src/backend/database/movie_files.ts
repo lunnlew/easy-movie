@@ -1,7 +1,7 @@
 'use strict'
 
-import { __fix_dirname } from '../config';
-import application from '../application';
+import { __fix_dirname } from '../preference';
+import application from '../libs/application';
 import dataM from './DataM'
 
 class MovieFile {

@@ -1,27 +1,20 @@
 import path from "path";
-import fs from "fs";
-import { app, BrowserWindow, Menu, protocol, session } from "electron";
+import { app, BrowserWindow, Menu, protocol } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import windowControl from "./libs/window";
 import proxyControl from "./libs/proxy";
 import TrayControl from "./libs/tray";
-const isDevelopment = process.env.NODE_ENV == "development";
-/**
- * 支持的用户配置
- */
-type UserProfile = {
-  proxy: string;
-};
+import application from "./libs/application";
+
 /**
  * 主进程入口
  */
 class EasyMovieApp {
-  userProfile: UserProfile;
   mainWin;
   tray: TrayControl;
   constructor() {
     this.registerProtocol();
-    this.loadUserProfile();
+    application.loadUserProfile();
     this.createApp();
   }
   /**
@@ -41,22 +34,6 @@ class EasyMovieApp {
       app.setAsDefaultProtocolClient("easy-movie", process.execPath, [
         path.resolve(process.argv[1]),
       ]);
-    }
-  }
-  /**
-   * 加载用户配置
-   */
-  loadUserProfile() {
-    let userProfilePath = path.join(
-      app.getPath("userData"),
-      "user-profile.json"
-    );
-    console.log("load profile", userProfilePath);
-    if (fs.existsSync(userProfilePath)) {
-      this.userProfile = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
-    } else {
-      this.userProfile = {} as any;
-      fs.writeFileSync(userProfilePath, JSON.stringify(this.userProfile));
     }
   }
   /**
@@ -100,7 +77,7 @@ class EasyMovieApp {
    */
   createApp() {
     console.log("create app");
-    proxyControl.setAppProxy(this.userProfile.proxy);
+    proxyControl.setAppProxy(application.getProxy());
     this.initDevelopment();
     app.on("ready", async () => {
       console.log("app ready");
@@ -111,7 +88,7 @@ class EasyMovieApp {
       });
     });
     app.on('session-created', session => {
-      proxyControl.setSessionProxy(session, this.userProfile.proxy);
+      proxyControl.setSessionProxy(session, application.getProxy());
     })
 
     // Quit when all windows are closed.
@@ -143,7 +120,7 @@ class EasyMovieApp {
         show: false,
         isMain: true,
         skipTaskbar: false,
-        enableDevTools: isDevelopment,
+        enableDevTools: application.isDevelopment,
         // route: 'setting.html'
       },
     });
@@ -169,7 +146,7 @@ class EasyMovieApp {
   initDevelopment() {
     app.on("ready", async () => {
       console.log("init development");
-      if (isDevelopment) {
+      if (application.isDevelopment) {
         // Install Vue Devtools
         try {
           await installExtension(VUEJS3_DEVTOOLS);
@@ -178,7 +155,7 @@ class EasyMovieApp {
         }
       }
     });
-    if (isDevelopment) {
+    if (application.isDevelopment) {
       if (process.platform === "win32") {
         process.on("message", (data) => {
           if (data === "graceful-exit") {

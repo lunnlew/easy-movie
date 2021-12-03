@@ -3,8 +3,8 @@
 import { Router } from 'express'
 import { MovieDb as MovieDbApi } from 'moviedb-promise'
 import { buildResult, buildErrResult } from '../utils'
-import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../config';
-import application from '../application';
+import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../preference';
+import application from '../libs/application';
 import { ScraperInitTask, ScraperMovieRequestPayload } from '../types';
 import movie from '../database/movie';
 import RequestAdapter from '../libs/RequestAdapter';

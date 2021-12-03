@@ -1,12 +1,11 @@
 import { BrowserWindow, Protocol } from "electron"
 import path from 'path'
-import { __app_path } from "../config";
+import { __app_path } from "../preference";
 
 import { protocol } from 'electron'
 import { readFile } from 'fs'
 import { URL } from 'url'
-
-const isDevelopment = process.env.NODE_ENV == "development";
+import application from "./application";
 
 /**
  * 窗口参数
@@ -78,7 +77,7 @@ const windowParams = {
     webPreferences: {
         nodeIntegration: 'false',
         contextIsolation: 'true',
-        preload: isDevelopment ? path.join(__app_path, "public/preload.js") : path.join(__app_path, "dist/preload.js"),
+        preload: application.isDevelopment ? path.join(__app_path, "public/preload.js") : path.join(__app_path, "dist/preload.js"),
         devTools: true,
         webSecurity: false,
         enableRemoteModule: false,
@@ -244,7 +243,7 @@ class WindowControl {
             mode: "system"
         })
 
-        if (isDevelopment) {
+        if (application.isDevelopment) {
             console.log('http://localhost:3000/' + (options.route || "index.html"))
             // Load the url of the dev server if in development mode
             win.loadURL('http://localhost:3000/' + (options.route || "index.html"))

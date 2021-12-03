@@ -1,52 +1,81 @@
-import tunnel from 'tunnel'
 import path from "path";
 import fs from "fs";
+import tunnel from 'tunnel'
 import { app } from "electron";
-import globalEventEmitter, { GlobalEventType } from './eventEmitter/GlobalEventEmitter'
+import globalEventEmitter, { GlobalEventType } from '../eventEmitter/GlobalEventEmitter'
+
 /**
- * 手动设置请求的相关代理
+ * 支持的用户配置
  */
-// axios({
-//     url: 'http://www.baidu.com',
-//     proxy: false,
-//     httpsAgent: application.buildHttpsTunnelAgent(),
-//     httpAgent: application.buildHttpTunnelAgent()
-// })
+type UserProfile = {
+    proxy: string;
+};
 
-// 建议使用以下方式，由chrome自动管理代理
-// axios({
-//     adapter: RequestAdapter as any,
-// })
+export type App = {
+    userProfile: UserProfile;
+    eventEmitter: GlobalEventType
+}
 
-export class App {
-    proxy;
-    eventEmitter: GlobalEventType;
+class Application {
+    userProfile: UserProfile;
+    eventEmitter: GlobalEventType
+    isDevelopment = process.env.NODE_ENV == "development"
     constructor() {
+        this.eventEmitter = globalEventEmitter
+    }
+    /**
+     * 加载用户配置
+     */
+    loadUserProfile() {
         let userProfilePath = path.join(
             app.getPath("userData"),
             "user-profile.json"
         );
-        this.proxy = {}
-        let userProfile = {} as any
         console.log("load profile", userProfilePath);
         if (fs.existsSync(userProfilePath)) {
-            userProfile = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
+            this.userProfile = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
+        } else {
+            this.userProfile = {} as UserProfile;
+            fs.writeFileSync(userProfilePath, JSON.stringify(this.userProfile));
         }
-        if (userProfile.proxy !== 'none' && userProfile.proxy !== 'system') {
-            let url = new URL(userProfile.proxy);
-            this.proxy = {
+    }
+    /**
+     * 获取代理设置
+     */
+    getProxy() {
+        let proxy = this.userProfile.proxy || ''
+        if (proxy === 'none' || proxy === 'system' || proxy.startsWith('http') || proxy.startsWith('socks')) {
+            return proxy
+        }
+        return ''
+    }
+    /**
+     * 构建代理参数
+     * @param options 
+     * @returns 
+     */
+    buildProxyOption(options) {
+        let proxy = this.getProxy()
+        if (proxy && (proxy.startsWith('http') || proxy.startsWith('socks'))) {
+            let url = new URL(proxy)
+            proxy = {
                 host: url.hostname,
                 port: url.port,
                 protocol: url.protocol,
                 proxyAuth: url.username + ':' + url.password
-            }
+            } as any
         }
-        this.eventEmitter = globalEventEmitter
+        return Object.assign({}, proxy, options?.proxy)
     }
+    /**
+     * 构建https代理
+     * @param options 
+     * @returns 
+     */
     buildHttpsTunnelAgent(options?: {
         proxy?: any
     }) {
-        let proxy = Object.assign({}, this.proxy, options?.proxy)
+        let proxy = this.buildProxyOption(options)
         let tunnelOptions = {
             ...options,
             proxy: {
@@ -64,10 +93,15 @@ export class App {
             throw new Error('unsupported proxy protocol ' + proxy.protocol)
         }
     }
+    /**
+     * 构建http代理
+     * @param options 
+     * @returns 
+     */
     buildHttpTunnelAgent(options?: {
         proxy?: any
     }) {
-        let proxy = Object.assign({}, this.proxy, options?.proxy)
+        let proxy = this.buildProxyOption(options)
         let tunnelOptions = {
             ...options,
             proxy: {
@@ -86,4 +120,4 @@ export class App {
         }
     }
 }
-export default new App();
+export default new Application()
