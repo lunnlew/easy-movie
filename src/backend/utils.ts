@@ -36,7 +36,64 @@ export function buildErrResult(message: string = 'error', code: number = 500, da
  * @returns 
  */
 export function endsWithVideo(file: string) {
-    return file.endsWith('.mkv') || file.endsWith('.mp4') || file.endsWith('.avi')
+    let ext = path.extname(file)
+    let support_exts = [
+        // windows 媒体格式
+        '.asf',
+        '.avi',
+        '.wm',
+        '.wmv',
+        '.wmp',
+        '.wma',
+        // real 媒体格式
+        '.rm',
+        '.rmvb',
+        '.ram',
+        '.ra',
+        // apple 媒体格式
+        '.mov',
+        '.qt',
+        // flash 媒体格式
+        '.flv',
+        '.f4v',
+        '.hlv',
+        // mpeg 媒体格式
+        '.mpg',
+        '.mpeg',
+        '.mpeg4',
+        '.mpe',
+        '.mp2v',
+        '.mp4',
+        '.m4v',
+        '.m1v',
+        '.m2v',
+        '.m2t',
+        '.m2ts',
+        '.ts',
+        '.m4a',
+        '.m4p',
+        '.m4b',
+        '.m4r',
+        '.mp4v',
+        '.mp4s',
+        // 3gp 媒体格式
+        '.3gp',
+        '.3g2',
+        '.3gpp',
+        '.3gpp2',
+        // 其他媒体格式
+        '.mkv',
+        '.mka',
+        '.mk3d',
+        '.mks',
+        '.m3u8',
+        '.m3u',
+        '.m2ts',
+        '.m4u',
+        '.h264',
+        '.h265'
+    ]
+    return support_exts.includes(ext)
 }
 
 /**
