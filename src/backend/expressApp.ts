@@ -15,7 +15,7 @@ expressWS(app)
 app.use(bodyParser.json())
 app.use(compress())
 const allowCors = function (req: { headers: { origin: any }; method: string }, res: { header: (arg0: string, arg1: string | boolean) => void; sendStatus: (arg0: number) => void }, next: () => void) {
-    res.header('Access-Control-Allow-Origin', req.headers.origin)
+    res.header('Access-Control-Allow-Origin', 'localhost')
     res.header('Access-Control-Allow-Credentials', true)
     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With')
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS')
