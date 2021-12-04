@@ -35,17 +35,22 @@ function RequestAdapter(config: any) {
         if (data) {
             req.write(JSON.stringify(data))
         }
-        req.on('response', (res) => {
-            let data = ''
-            res.on('data', (chunk) => {
-                data += chunk
-            })
-            res.on('end', () => {
+        req.on('response', (response) => {
+            if (config.responseType == 'stream') {
                 resolve({
-                    status: res.statusCode,
-                    data: data
+                    data: response
                 })
-            })
+            } else {
+                let res = ''
+                response.on('data', (chunk) => {
+                    res += chunk
+                })
+                response.on('end', () => {
+                    resolve({
+                        data: res
+                    })
+                })
+            }
         })
         req.on('error', (err) => {
             reject(err)
