@@ -133,7 +133,7 @@ export default defineComponent({
     const libInfo = computed(
       () =>
         store.state.Libs.libs.find(
-          (lib: any) => lib.id === movieInfo.value.media_lib_id
+          (lib: any) => lib.id + "" === movieInfo.value.media_lib_id
         ) || {}
     );
 
