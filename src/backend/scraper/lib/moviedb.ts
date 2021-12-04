@@ -73,10 +73,8 @@ class MovieDb {
                     throw err;
                 })
                 let movie_info: MovieInfo = {
-                    movie_id: orign_movie.movie_id,
+                    ...orign_movie,
                     name: imdb_movie.title,
-                    media_lib_id: orign_movie.media_lib_id,
-                    path: orign_movie.path,
                     year: imdb_movie.release_date?.substr(0, 4),
                     summary: imdb_movie.overview?.trim(),
                     release_date: imdb_movie.release_date,
