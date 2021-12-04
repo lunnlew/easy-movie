@@ -254,11 +254,6 @@ export default async function (knex: Knex) {
         state: 0
     }, {
         name: '',
-        val: 'Comedy',
-        type: 'type_filter',
-        state: 0
-    }, {
-        name: '',
         val: 'Tragedy',
         type: 'type_filter',
         state: 0
