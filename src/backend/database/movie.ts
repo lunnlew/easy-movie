@@ -47,6 +47,9 @@ class movie {
             })
             .andWhere(function () {
                 for (let key in filters) {
+                    if (key == 'media_lib_id' && filters[key] == '') {
+                        continue
+                    }
                     if (typeof filters[key] === 'object' && 'length' in filters[key]) {
                         if (filters[key][0] === 'like') {
                             // {genres: ['like', ['动作']]}

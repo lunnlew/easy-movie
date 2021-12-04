@@ -110,7 +110,7 @@ export default defineComponent({
         })
 
         async function onSubmit() {
-            if (!currentRow.value.title) {
+            if (!currentRow.value?.title) {
                 return
             }
             await store.dispatch("scraper_selected", {
