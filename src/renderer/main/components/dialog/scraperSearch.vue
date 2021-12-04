@@ -34,7 +34,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="year" label="发行年份" width="90" />
-                <el-table-column prop="lang" label="语言" />
+                <el-table-column prop="lang" label="语言">
+                    <template #default="scope">{{ fmt_lang(scope.row.lang) }}</template>
+                </el-table-column>
                 <el-table-column label="是否选择">
                     <template #default="scope">
                         <el-icon v-if="scope.row.id === currentRow.id">
@@ -55,6 +57,7 @@
 </template>
 <script lang="ts">
 import store from '@/store';
+import fmt_lang from '@/utils/langs';
 import { Search, Check } from '@element-plus/icons'
 import {
     defineComponent,
@@ -139,6 +142,7 @@ export default defineComponent({
             libform,
             item,
             tableData,
+            fmt_lang,
             search,
             setCurrent,
             currentRow,
