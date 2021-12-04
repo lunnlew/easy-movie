@@ -13,9 +13,21 @@ class EasyMovieApp {
   mainWin;
   tray: TrayControl;
   constructor() {
-    this.registerProtocol();
     application.loadUserProfile();
-    this.createApp();
+    let argv = process.argv.splice(app.isPackaged ? 1 : 2)
+    if (argv.length > 0 && argv[0] === '--AsService') {
+      this.createService()
+    } else {
+      this.registerProtocol();
+      this.createApp();
+    }
+  }
+  /**
+   * 作为服务运行时
+   */
+  createService() {
+    console.log("run as service");
+    require("./service");
   }
   /**
    * 注册协议

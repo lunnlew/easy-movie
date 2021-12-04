@@ -235,10 +235,15 @@ class MovieScan {
     }
     return false
   }
-  async scan(dirname: any, media_lib_id: any, is_top: boolean = false) {
-    const files = fs.readdirSync(dirname);
-    for (const file of files) {
-      const filePath = path.join(dirname, file);
+  async scan(file_path: any, media_lib_id: any, is_top: boolean = false) {
+    const file_stat = fs.statSync(file_path)
+    let files = [] as string[]
+    if (file_stat.isDirectory()) {
+      files = fs.readdirSync(file_path).map(item => path.join(file_path, item).replace(/\\/g, '/'));
+    } else {
+      files = [file_path.replace(/\\/g, '/')]
+    }
+    for (const filePath of files) {
       const stat = fs.statSync(filePath);
       if (stat.isDirectory()) {
         let scanedDirInfo = this.scanDirInfo(filePath);
@@ -335,7 +340,7 @@ class MovieScan {
           console.log('可能的电影名称', movieName)
           this.eventEmitter.emit('scan:item-result', {
             media_lib_id,
-            path: dirname(filePath),
+            path: path.dirname(filePath),
             filePath: filePath,
             movieName,
             isFile: true,
