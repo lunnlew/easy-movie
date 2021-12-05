@@ -27,7 +27,7 @@ class Application {
      * 加载用户配置
      */
     loadUserProfile() {
-        let userProfilePath = path.join(
+        let userProfilePath = process.env.PROFILE_PATH || path.join(
             app.getPath("userData"),
             "user-profile.json"
         );
@@ -43,7 +43,7 @@ class Application {
      * 获取代理设置
      */
     getProxy() {
-        let proxy = this.userProfile.proxy || ''
+        let proxy = process.env.PROXY || this.userProfile.proxy || ''
         if (proxy === 'none' || proxy === 'system' || proxy.startsWith('http') || proxy.startsWith('socks')) {
             return proxy
         }

@@ -13,7 +13,7 @@
     "electron:compile-backend": "tsc -p ./src/backend",
     "electron:vite-wait": "yarn electron:compile-backend && wait-on tcp:3000 && cross-env NODE_ENV=development electron .",
     "electron:serve": "concurrently -k \"yarn dev\" \"yarn electron:vite-wait\"",
-    "electron:watch": "nodemon --watch src/backend --ext js,ts,tsx,mjs,json --exec yarn electron:backend-serve",
+    "electron:watch": "nodemon --watch src/backend --ext js,ts,tsx,mjs,json --exec yarn electron:serve",
     "electron:service-watch": "nodemon --watch src/backend --ext js,ts,tsx,mjs,json --exec yarn electron:service-serve",
     "electron:service-serve": "yarn electron:compile-backend && electron . --AsService",
     "electron:build": "vite build && yarn electron:compile-backend && electron-builder",
@@ -52,7 +52,8 @@
     "uuid": "^8.3.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "winsw-wrapper": "^1.5.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

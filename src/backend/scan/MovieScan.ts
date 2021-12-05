@@ -81,7 +81,7 @@ class MovieScan {
   async save_movie_info(movie_info: any, scanInfo: any) {
     // 查询文件路径是否已存放在数据库中
     console.log('MovieScan movieFile.findByPath', scanInfo.filePath);
-    let fileinfo = await movieFile.getByPath(scanInfo.filePath).catch(e => { throw e })
+    let fileinfo = await movieFile.getByPath(scanInfo.filePath.replace(/\\/g, '/')).catch(e => { throw e })
     let has_main_info = false
     if (fileinfo) {
       console.log('暂时对已存在的不做处理');
@@ -127,7 +127,7 @@ class MovieScan {
     console.log(`${movie_info.name}, ${movie_info.year || ''}, ${scanInfo.filePath} 路径入库`);
     // 保存新的文件路径
     await movieFile.save({
-      path: scanInfo.filePath,
+      path: scanInfo.filePath.replace(/\\/g, '/'),
       name: movie_info.name,
       type: 'movie',
       movie_id: movie_info.movie_id,

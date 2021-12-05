@@ -15,6 +15,7 @@ class EasyMovieApp {
   constructor() {
     application.loadUserProfile();
     let argv = process.argv.splice(app.isPackaged ? 1 : 2)
+    proxyControl.setAppProxy(application.getProxy());
     if (argv.length > 0 && argv[0] === '--AsService') {
       this.createService()
     } else {
@@ -88,8 +89,6 @@ class EasyMovieApp {
    * 准备应用
    */
   createApp() {
-    console.log("create app");
-    proxyControl.setAppProxy(application.getProxy());
     this.initDevelopment();
     app.on("ready", async () => {
       console.log("app ready");

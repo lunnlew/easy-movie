@@ -19,7 +19,7 @@ class DataM {
     if (!fs.existsSync(home_dir)) {
       fs.mkdirSync(home_dir);
     }
-    const filename = path.join(home_dir, 'data.db');
+    const filename = process.env.SQLITE_PATH || path.join(home_dir, 'data.db');
     const config: Knex.Config = {
       client: 'sqlite3',
       connection: { filename },

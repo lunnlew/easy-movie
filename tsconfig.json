@@ -15,7 +15,10 @@
     "baseUrl": ".",
     "outDir": "../../dist/renderer",
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-    "typeRoots": ["node_modules/@types", "src/renderer/types/**.d.ts"],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/renderer/types/**.d.ts"
+    ],
     // "types": ["element-plus/global"],
     "paths": {
       "@/*": ["src/renderer/main/*"],
