@@ -7779,10 +7779,10 @@ widest-line@^3.1.0:
   dependencies:
     string-width "^4.0.0"
 
-winsw-wrapper@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.npmjs.org/winsw-wrapper/-/winsw-wrapper-1.6.4.tgz#d9af8acf82167da8b32bfed0c10f837eadbd8482"
-  integrity sha512-sr7H0vrA86cVut0x34jyxvnIVnDf+wE5+n/CebwfctvpmDVYsdtxTEhZHNm5K6gVMxpnRzBywHfJmJMALmlRyA==
+winsw-wrapper@^1.7.5:
+  version "1.7.5"
+  resolved "https://registry.npmjs.org/winsw-wrapper/-/winsw-wrapper-1.7.5.tgz#b334d0075e529f8be7c596823019a2ca89e43f5c"
+  integrity sha512-UsKETEeRbK0LXzS9876zf+rsgbszZCFKKxRycAn81YdXkCVLV/n2v5LusME5Gk/XI3FNHskl5dvGJzK33m3nnQ==
   dependencies:
     tslib "^2.3.1"
     typescript "^4.5.2"
