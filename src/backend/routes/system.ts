@@ -8,9 +8,9 @@ import application from '../libs/application';
 const router = Router()
 
 const svc = new WinswWrapper({
-    id: 'my-service',
-    name: 'my-service',
-    description: 'My Service',
+    id: 'Easy Movie Manager',
+    name: 'Easy Movie Manager',
+    description: 'a movie information manager',
     executable: process.execPath,
 } as WinswWrapperOptions)
 svc.arguments(app.getAppPath())
