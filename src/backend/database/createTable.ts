@@ -236,7 +236,15 @@ export default async function (knex: Knex) {
         state: 0
     }])
 
-    // 筛选-类型
+    // 筛选-配置-启用项
+    await knex('config').insert([{
+        name: '类型',
+        val: 'type',
+        type: 'filter_setting',
+        state: 1
+    }])
+
+    // 筛选-类型-子项
     await knex('config').insert([{
         name: '',
         val: 'Action',

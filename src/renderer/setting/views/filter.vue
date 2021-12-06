@@ -11,31 +11,50 @@
   </el-checkbox-group>
 </template>
 <script lang="ts">
+import { loadConfig } from "@/lib/config";
 import store from "@/store";
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 export default defineComponent({
   name: "Setting",
   components: {},
   setup: (props, { emit }) => {
+    /**
+     * 启用的筛选配置项
+     */
     const checkList = ref([]);
-    const filterList = ref([
-      {
-        label: "类型",
-        value: "type",
-      },
-      {
-        label: "语言",
-        value: "lang",
-      },
-    ]);
+    /**
+     * 所有筛选配置项
+     */
+    const filterList = ref([]);
     function change(val) {
       store.dispatch("invokeViewAction", {
         name: "mainView",
-        action: "changeFilterSetting",
-        options: val,
+        action: "setFilterSetting",
+        options: filterList.value.map((item) => {
+          return {
+            value: item.value,
+            label: item.label,
+            checked: val.includes(item.value),
+          };
+        }),
         await_complete: false,
       });
     }
+    onMounted(() => {
+      loadConfig({
+        type: "filter_setting",
+      }).then((result) => {
+        const filters = result.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.val,
+            checked: item.state == 1 ? true : false,
+          };
+        });
+        checkList.value = filters.filter((i) => i.checked).map((i) => i.value);
+        filterList.value = filters;
+      });
+    });
     return {
       checkList,
       filterList,

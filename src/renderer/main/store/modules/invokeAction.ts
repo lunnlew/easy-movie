@@ -1,6 +1,6 @@
 import { invokeRenderActionParams } from "@/types/all"
 import { changeShowUpdateTip, needUpdateAlert, progressUpdate } from "@/lib/update"
-import { changeEnabkeFromSetting } from "@/lib/movieFilter"
+import { changeEnableFromSetting } from "@/lib/movieFilter"
 const ipcRenderer = (window as any).ipcRenderer
 // eslint-disable-next-line
 const empty = () => { }
@@ -128,8 +128,8 @@ export default {
                         })
                         break
                     }
-                    case "changeFilterSetting": {
-                        changeEnabkeFromSetting(params.options)
+                    case "setFilterSetting": {
+                        changeEnableFromSetting(params.options)
                         break
                     }
                     default: replyMessage(params.uuid, {})

@@ -13,8 +13,13 @@ export const filter_enables = ref(['type']);
  * 从设置页的结果中更新过滤器
  * @param val 
  */
-export function changeEnabkeFromSetting(val) {
-    filter_enables.value = val;
+export function changeEnableFromSetting(filters) {
+    filter_enables.value = filters.filter(i => i.checked).map(i => i.value);
+    store.dispatch('invokeMainAction', {
+        action: 'setFilterSetting',
+        options: filters,
+        await_complete: false
+    })
 }
 
 /**
@@ -49,7 +54,7 @@ export function toggleFilterTool() {
  */
 export async function changeFilter(data: any) {
     store.dispatch('invokeMainAction', {
-        action: 'setFilterData',
+        action: 'setTypeFilterData',
         options: data,
         await_complete: false
     })
@@ -60,6 +65,7 @@ export async function changeFilter(data: any) {
  * 更新筛选条件展示值
  */
 export async function refresh_filter() {
+    // 类型筛选
     getFilters(movie_lib.value.lib_id, 'type', type_filters.value.map(i => ({
         name: i.name,
         key: i.key
@@ -75,6 +81,18 @@ export async function refresh_filter() {
                 count: res.data?.data[item.val] || 0
             }
         })
+    })
+
+    await loadConfig({
+        type: "filter_setting",
+    }).then(result => {
+        changeEnableFromSetting(result.map((item: any) => {
+            return {
+                label: item.name,
+                value: item.val,
+                checked: item.state == 1 ? true : false
+            }
+        }))
     })
 }
 

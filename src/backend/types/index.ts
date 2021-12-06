@@ -304,10 +304,11 @@ const invokeMainActions = [
     "loadConfig",
     "showOpenDialog",
     'showContextMenu',
-    'setFilterData',
+    'setTypeFilterData',
     'showSearchAreaMenu',
     'windowControl',
-    'invokeViewAction'
+    'invokeViewAction',
+    'setFilterSetting'
 ] as const;
 
 /**
