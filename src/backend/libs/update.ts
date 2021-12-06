@@ -41,7 +41,7 @@ class UpdateControl {
         });
         autoUpdater.on('checking-for-update', () => {
             if (this.needUpdateAlert) {
-                invokeAction.invokeRenderAction({
+                invokeAction.invokeRenderAction('mainView', {
                     action: 'needUpdateAlert'
                 }, false)
             }
@@ -49,7 +49,7 @@ class UpdateControl {
         autoUpdater.on('update-available', async (info) => {
             console.log('update-available', info)
             if (this.needUpdateAlert) {
-                const result = await invokeAction.invokeRenderAction({
+                const result = await invokeAction.invokeRenderAction('mainView', {
                     action: 'updateAvailable',
                 })
                 if (result.ok) {
@@ -59,20 +59,20 @@ class UpdateControl {
         });
         autoUpdater.on('update-not-available', (info) => {
             console.log('update-not-available', info)
-            invokeAction.invokeRenderAction({
+            invokeAction.invokeRenderAction('mainView', {
                 action: 'updateNotAvailable'
             }, false)
         });
         autoUpdater.on('download-progress', (progress) => {
             log.info(progress)
-            invokeAction.invokeRenderAction({
+            invokeAction.invokeRenderAction('mainView', {
                 action: 'progressUpdate',
                 options: progress
             }, false)
         });
         autoUpdater.on('update-downloaded', async (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) => {
             if (this.needUpdateAlert) {
-                const result = await invokeAction.invokeRenderAction({
+                const result = await invokeAction.invokeRenderAction('mainView', {
                     action: 'downloadedAvailable',
                 })
                 if (result.ok) {

@@ -1,5 +1,6 @@
 import { invokeRenderActionParams } from "@/types/all"
 import { changeShowUpdateTip, needUpdateAlert, progressUpdate } from "@/lib/update"
+import { changeEnabkeFromSetting } from "@/lib/movieFilter"
 const ipcRenderer = (window as any).ipcRenderer
 // eslint-disable-next-line
 const empty = () => { }
@@ -18,6 +19,18 @@ export default {
         }
     },
     actions: {
+        /**
+         * 渲染进程间通信
+         * @param param0 
+         * @param params 
+         */
+        async invokeViewAction({ commit, state, dispatch }: any, params: { name: string, action: string; command: string; timeout: any; options: any; await_complete: boolean }) {
+            return dispatch("invokeMainAction", {
+                action: "invokeViewAction",
+                options: params,
+                await_complete: params.await_complete,
+            });
+        },
         /**
          *  渲染进程向主线程通信模块
          */
@@ -113,6 +126,10 @@ export default {
                         changeShowUpdateTip(3, (data: any) => {
                             replyMessage(params.uuid, data)
                         })
+                        break
+                    }
+                    case "changeFilterSetting": {
+                        changeEnabkeFromSetting(params.options)
                         break
                     }
                     default: replyMessage(params.uuid, {})

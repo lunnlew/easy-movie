@@ -87,6 +87,7 @@ const windowParams = {
 class WindowControl {
     windowList: Array<{
         id: number,
+        name: string,
         isMain: boolean,
         parentId: number,
         route: string,
@@ -163,6 +164,7 @@ class WindowControl {
                 height: 600,
                 show: false,
                 readyShow: false,
+                name: "settingView",
                 title: '偏好设置',
                 route: 'setting.html'
             }
@@ -245,6 +247,7 @@ class WindowControl {
         // 存放窗口ID
         this.windowList.push({
             id: win.id,
+            name: options.isMain ? 'mainView' : (options.name || options.title || (options.route || "")),
             isMain: options.isMain,
             parentId: options.parentId,
             route: (options.route || "")
@@ -302,6 +305,15 @@ class WindowControl {
         return wid
             ? BrowserWindow.fromId(wid) as BrowserWindow
             : (event ? BrowserWindow.fromWebContents(event.sender) as BrowserWindow : null)
+    }
+    /**
+     * 根据名称获取窗口
+     * @param name 
+     * @returns 
+     */
+    getViewWindowByName(name: string): BrowserWindow | null {
+        let win = this.windowList.find(w => w.name === name)
+        return win ? BrowserWindow.fromId(win.id) as BrowserWindow : null
     }
     /**
      * 关闭窗口

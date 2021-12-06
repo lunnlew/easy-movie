@@ -306,7 +306,8 @@ const invokeMainActions = [
     'showContextMenu',
     'setFilterData',
     'showSearchAreaMenu',
-    'windowControl'
+    'windowControl',
+    'invokeViewAction'
 ] as const;
 
 /**

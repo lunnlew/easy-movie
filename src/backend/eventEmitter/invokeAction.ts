@@ -10,7 +10,6 @@ import windowControl from "../libs/window";
 const empty = () => { }
 
 class InvokeAction {
-    _globalWin: any
     complete: any
     resolveIdle: any
     constructor() {
@@ -18,13 +17,13 @@ class InvokeAction {
         this.resolveIdle = {}
     }
     init() {
-        this._globalWin = windowControl.getMainWindow() as BrowserWindow
         this.initActionEvent()
     }
     /**
      *  主线程向渲染进程通信模块
      */
-    invokeRenderAction(params: { action: string; command?: string; timeout?: any; options?: any }, await_complete = true): any {
+    invokeRenderAction(viewName: string, params: { action: string; command?: string; timeout?: any; options?: any }, await_complete = true): any {
+        const viewWin = windowControl.getViewWindowByName(viewName)
         var clear = (uuid: string | number) => {
             console.log('clear uuid', uuid)
             delete this.resolveIdle[uuid]
@@ -55,7 +54,7 @@ class InvokeAction {
             const uuid = Date.now()
             this.resolveIdle[uuid] = empty
             this.complete[uuid] = false
-            this._globalWin?.webContents.send("invokeRenderAction", {
+            viewWin?.webContents.send("invokeRenderAction", {
                 uuid,
                 action: params.action,
                 command: params.command,
@@ -83,6 +82,18 @@ class InvokeAction {
                 })
             }
             switch (params.action) {
+                case "invokeViewAction": {
+                    console.log('invokeViewAction', params.options)
+                    this.invokeRenderAction(params.options.name, {
+                        action: params.options.action,
+                        options: params.options.options
+                    }, params.options.await_complete).then(result => {
+                        if (params.options.await_complete) {
+                            replyMessage(params.uuid, result)
+                        }
+                    })
+                    break
+                }
                 case "loadConfig": {
                     loadConfig(event, params, (data: any) => {
                         replyMessage(params.uuid, data)
