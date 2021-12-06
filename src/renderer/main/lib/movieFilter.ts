@@ -5,6 +5,19 @@ import { getFilters } from '@/api/filter'
 import store from "@/store";
 
 /**
+ * 启用的过滤器
+ */
+export const filter_enables = ref(['type']);
+
+/**
+ * 从设置页的结果中更新过滤器
+ * @param val 
+ */
+export function changeEnabkeFromSetting(val) {
+    filter_enables.value = val;
+}
+
+/**
  * 是否启用筛选工具
  */
 export const isShowFilter = ref(false);
