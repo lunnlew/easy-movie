@@ -7,7 +7,7 @@ import store from "@/store";
 /**
  * 启用的过滤器
  */
-export const filter_enables = ref(['type']);
+export const filter_enables = ref(['type_filter']);
 
 /**
  * 从设置页的结果中更新过滤器
@@ -33,6 +33,11 @@ export const isShowFilter = ref(false);
 export const type_filters = ref<any[]>([]);
 
 /**
+ * 主演筛选
+ */
+export const main_star_filters = ref<any[]>([]);
+
+/**
  * 当前的媒体库ID
  */
 export const movie_lib = ref({
@@ -54,11 +59,15 @@ export function toggleFilterTool() {
  */
 export async function changeFilter(data: any) {
     store.dispatch('invokeMainAction', {
-        action: 'setTypeFilterData',
+        action: 'setFilterData',
         options: data,
         await_complete: false
     })
-    type_filters.value = [...type_filters.value]
+    if (data.type == 'type_filter') {
+        type_filters.value = [...type_filters.value]
+    } else if (data.type == 'main_star_filter') {
+        main_star_filters.value = [...main_star_filters.value]
+    }
 }
 
 /**

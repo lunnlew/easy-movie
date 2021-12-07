@@ -5,8 +5,8 @@ import dataM from '../database/DataM'
  * @param event 
  * @param params 
  */
-export function setTypeFilterData(event: any, params: any) {
-    dataM.knexInstance('config').where('type', '=', 'type_filter').where({ val: params.options.name }).update({
+export function setFilterData(event: any, params: any) {
+    dataM.knexInstance('config').where('type', '=', params.options.type).where({ val: params.options.name }).update({
         state: params.options.value ? 1 : 0
     }).on('query', (query: any) => {
         console.log(query.sql)

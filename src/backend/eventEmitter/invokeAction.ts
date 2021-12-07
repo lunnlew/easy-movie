@@ -2,7 +2,7 @@
 import { ipcMain, dialog, BrowserWindow } from "electron";
 import { createContextMenu, createSearchAreaMenu } from "../libs/contextMenu"
 import { loadConfig } from "../libs/config"
-import { setFilterSetting, setTypeFilterData } from "../libs/filter";
+import { setFilterSetting, setFilterData } from "../libs/filter";
 import { invokeMainActionParams } from "../types";
 import windowControl from "../libs/window";
 
@@ -108,8 +108,8 @@ class InvokeAction {
                     createContextMenu(event, params)
                     break
                 }
-                case "setTypeFilterData": {
-                    setTypeFilterData(event, params)
+                case "setFilterData": {
+                    setFilterData(event, params)
                     break
                 }
                 case "setFilterSetting": {

@@ -19,7 +19,7 @@
                             v-model="item.checked"
                             :checked="item.checked"
                             @change="(checked) => $emit('filter', {
-                                type: 'type',
+                                type: 'type_filter',
                                 name: item.key,
                                 value: checked
                             })"
@@ -34,6 +34,9 @@
     </el-dropdown>
 </template>
 <script lang="ts">
+/**
+ * 类型过滤器
+ */
 import {
     defineComponent,
 } from "vue";

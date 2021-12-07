@@ -304,7 +304,7 @@ const invokeMainActions = [
     "loadConfig",
     "showOpenDialog",
     'showContextMenu',
-    'setTypeFilterData',
+    'setFilterData',
     'showSearchAreaMenu',
     'windowControl',
     'invokeViewAction',

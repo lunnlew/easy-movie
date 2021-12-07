@@ -239,7 +239,12 @@ export default async function (knex: Knex) {
     // 筛选-配置-启用项
     await knex('config').insert([{
         name: '类型',
-        val: 'type',
+        val: 'type_filter',
+        type: 'filter_setting',
+        state: 1
+    }, {
+        name: '主演',
+        val: 'main_star_filter',
         type: 'filter_setting',
         state: 1
     }])
