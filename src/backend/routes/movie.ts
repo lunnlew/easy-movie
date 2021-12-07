@@ -93,9 +93,13 @@ const moviePoster = async (req: any, res: any, next: any) => {
             res.sendStatus(404);
         } else {
             const f = path.resolve(path.dirname(data.path), data.poster)
+            const f1 = path.resolve(data.path, data.poster)
             if (fs.existsSync(f)) {
                 res.setHeader('Content-Type', 'image/png');
                 fs.createReadStream(f).pipe(res);
+            } else if (fs.existsSync(f1)) {
+                res.setHeader('Content-Type', 'image/png');
+                fs.createReadStream(f1).pipe(res);
             } else {
                 res.sendStatus(404);
             }

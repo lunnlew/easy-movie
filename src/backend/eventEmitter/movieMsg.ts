@@ -26,6 +26,7 @@ class movieMsg {
                         lib_id: payload.media_lib_id || '',
                         path: payload.path || '',
                         poster: payload.poster || '',
+                        resource_type: payload.resource_type || '',
                     })
                 }
                 if (payload.backdrop) {
@@ -34,20 +35,23 @@ class movieMsg {
                         lib_id: payload.media_lib_id || '',
                         path: payload.path || '',
                         backdrop: payload.backdrop || '',
+                        resource_type: payload.resource_type || '',
                     })
                 }
                 if (payload.casts) {
                     this.eventEmitter.emit('movie:update-casts', {
                         movie_id: movie_id,
                         lib_id: payload.media_lib_id,
-                        casts: payload.casts
+                        casts: payload.casts,
+                        resource_type: payload.resource_type || '',
                     })
                 }
                 if (payload.crews) {
                     this.eventEmitter.emit('movie:update-crews', {
                         movie_id: movie_id,
                         lib_id: payload.media_lib_id,
-                        crews: payload.crews
+                        crews: payload.crews,
+                        resource_type: payload.resource_type || '',
                     })
                 }
                 this.eventEmitter.emit('render:list-view:update', {
@@ -107,8 +111,13 @@ class movieMsg {
          */
         this.eventEmitter.on('movie:download-poster', async (payload) => {
             console.log('movie:download-poster', payload)
-            let { movie_id, lib_id, path: file_path, poster } = payload
-            const poster_path = file_path.replace(/\\/ig, '/') + '.poster.jpg'
+            let { movie_id, lib_id, path: file_path, poster, resource_type } = payload
+            let poster_path = file_path.replace(/\\/ig, '/')
+            if (resource_type === 'origin-disk') {
+                poster_path = poster_path + '/' + path.basename(poster_path) + '.poster.jpg'
+            } else {
+                poster_path = poster_path + '.poster.jpg'
+            }
             if (poster) {
 
                 if (!fs.existsSync(poster_path)) {
@@ -148,8 +157,14 @@ class movieMsg {
          */
         this.eventEmitter.on('movie:download-backdrop', async (payload) => {
             console.log('movie:download-backdrop', payload)
-            let { movie_id, lib_id, path: file_path, backdrop } = payload
-            const backdrop_path = file_path.replace(/\\/ig, '/') + '.backdrop.jpg'
+            let { movie_id, lib_id, path: file_path, backdrop, resource_type } = payload
+
+            let backdrop_path = file_path.replace(/\\/ig, '/')
+            if (resource_type === 'origin-disk') {
+                backdrop_path = backdrop_path + '/' + path.basename(backdrop_path) + '.backdrop.jpg'
+            } else {
+                backdrop_path = backdrop_path + '.poster.jpg'
+            }
 
             if (backdrop) {
                 if (!fs.existsSync(backdrop_path)) {
