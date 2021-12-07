@@ -32,3 +32,11 @@ export async function getMovieActors(params: any) {
         data: params
     })
 }
+
+export async function getActors(params: any) {
+    return axios({
+        url: '/movie/actors-filter',
+        method: 'post',
+        data: params
+    })
+}

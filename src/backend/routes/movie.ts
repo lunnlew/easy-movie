@@ -8,6 +8,7 @@ import path from 'path'
 import { __fix_dirname } from '../preference'
 import application from '../libs/application';
 import movie_files from '../database/movie_files'
+import actors from '../database/actors'
 
 const router = Router();
 
@@ -172,7 +173,19 @@ const movieUpdate = async function (req: any, res: any, next: any) {
         res.json(buildErrResult('movie not found', 404));
     }
 }
+
+const movieActorsFilterList = function (req: any, res: any, next: any) {
+    let page = req.body.page || 1;
+    let size = req.body.size || 10;
+    actors.list((page - 1) * size, size).then((data: any) => {
+        res.json(buildResult(data))
+    }).catch((err: any) => {
+        res.json(buildErrResult(err.message, 500))
+    })
+}
+
 router.post("/list", movieList)
+router.post("/actors-filter", movieActorsFilterList)
 router.post("/actors", actorsList)
 router.post("/detail", movieDetail)
 router.post("/update", movieUpdate)

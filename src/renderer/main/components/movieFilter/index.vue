@@ -1,16 +1,13 @@
 <template>
-  <div
-    class="movie-filter"
-    :style="{
-      height: (isShowFilter ? 40 : 0) + 'px',
-    }"
-  >
+  <div class="movie-filter" :style="{
+    height: (isShowFilter ? 40 : 0) + 'px',
+  }">
     <div class="filter-items">
       <span class="filter-item">
-        <type-filter
-          v-if="filter_enables.includes('type')"
-          @filter="changeFilter"
-        ></type-filter>
+        <type-filter v-if="filter_enables.includes('type_filter')" @filter="changeFilter"></type-filter>
+      </span>
+      <span class="filter-item">
+        <main-star-filter v-if="filter_enables.includes('main_star_filter')" @filter="changeFilter"></main-star-filter>
       </span>
     </div>
   </div>
@@ -33,10 +30,12 @@ import {
   filter_enables,
 } from "@/lib/movieFilter";
 import typeFilter from "./filters/type_filter.vue";
+import mainStarFilter from "./filters/main_star_filter.vue";
 export default defineComponent({
   name: "MovieFilter",
   components: {
     typeFilter,
+    mainStarFilter
   },
   setup: (props) => {
     watch(
@@ -59,11 +58,12 @@ export default defineComponent({
     );
     watch(
       () => filter_enables.value,
-      (val) => {
-        console.log(val);
-        // if (isShowFilter.value) {
-        //   refresh_filter();
-        // }
+      (val, pre) => {
+        if (val.join('') !== pre.join('')) {
+          if (isShowFilter.value) {
+            refresh_filter();
+          }
+        }
       }
     );
     onMounted(async () => {
