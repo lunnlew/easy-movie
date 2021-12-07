@@ -30,7 +30,6 @@ import {
     reactive,
     ref
 } from "vue";
-import { useRouter } from "vue-router";
 import { useStore } from 'vuex';
 import { libMenuClick } from '@/lib/sideMenu';
 export default defineComponent({
