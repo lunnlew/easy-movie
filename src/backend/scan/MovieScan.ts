@@ -57,7 +57,22 @@ class MovieScan {
           media_lib_id: scanInfo.media_lib_id,
           name: newMovieName,
         })
-      } else {
+      } else if (scanInfo.isBDMVDir) {
+        pre_movieInfo.year = this.buildYear(scanInfo.movieName, scanInfo.filePath) || scanInfo.year
+        let newMovieName = parseMovieName(scanInfo.movieName, pre_movieInfo.year)
+        pre_movieInfo.name = newMovieName
+        pre_movieInfo.language = scanInfo.language || 'en'
+        // 电影名称是否含有中文
+        if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
+          pre_movieInfo.language = 'zh'
+        }
+        await this.save_movie_info(pre_movieInfo, {
+          filePath: scanInfo.filePath,
+          media_lib_id: scanInfo.media_lib_id,
+          name: newMovieName,
+          resource_type: 'origin-disk'
+        })
+      } else if (scanInfo.isMultiMovieDir) {
         for (let scanInfo_item of scanInfo.scanedDirInfo.filePaths) {
           pre_movieInfo.year = this.buildYear(scanInfo.movieName, scanInfo_item)
           let newMovieName = parseMovieName(baseName(scanInfo_item).split(' ')[0], pre_movieInfo.year)
@@ -75,6 +90,8 @@ class MovieScan {
             media_lib_id: scanInfo.media_lib_id,
           })
         }
+      } else {
+        console.log('未知文件夹类型')
       }
     })
   }
@@ -132,7 +149,7 @@ class MovieScan {
       type: 'movie',
       movie_id: movie_info.movie_id,
       media_lib_id: scanInfo.media_lib_id,
-      resource_type: 'single'
+      resource_type: scanInfo.resource_type || 'single'
     }).catch(e => { throw e })
 
     // 去刮削影视信息
@@ -146,7 +163,8 @@ class MovieScan {
         movie_id: movie_info.movie_id,
         imdb_id: movie_info.imdb_id,
         media_lib_id: scanInfo.media_lib_id,
-        path: scanInfo.filePath
+        path: scanInfo.filePath,
+        resource_type: scanInfo.resource_type || 'single'
       } as ScraperMovieRequestPayload
     } as ScraperInitTask);
 
@@ -232,6 +250,27 @@ class MovieScan {
   isMultiMovieDir(scanedDirInfo: any) {
     if (scanedDirInfo.videoCount > 1 && scanedDirInfo.dirCount === 0) {
       return true
+    }
+    return false
+  }
+  /**
+   * 是否蓝光原盘目录
+   * @param scanedDirInfo 
+   * @returns 
+   */
+  isBDMVDir(scanedDirInfo: any) {
+    if (scanedDirInfo.videoCount === 0 && scanedDirInfo.dirCount > 0) {
+      let conut = 0
+      for (let dir of scanedDirInfo.dirPaths) {
+        if (dir.indexOf('BDMV') > -1) {
+          conut++
+        } else if (dir.indexOf('CERTIFICATE') > -1) {
+          conut++
+        }
+      }
+      if (conut >= 2) {
+        return true
+      }
     }
     return false
   }
@@ -331,6 +370,19 @@ class MovieScan {
               scanedDirInfo
             });
           }
+        } else if (this.isBDMVDir(scanedDirInfo)) {
+          console.log(`${filePath} BDMV目录`);
+          let movieName = baseName(filePath)
+          console.log('可能的电影名称', movieName)
+          this.eventEmitter.emit('scan:item-result', {
+            media_lib_id,
+            path: filePath,
+            filePath: filePath,
+            movieName,
+            isBDMVDir: true,
+            type: 'movie',
+            scanedDirInfo
+          });
         } else {
           await this.scan(filePath, media_lib_id)
         }
