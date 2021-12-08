@@ -45,7 +45,7 @@ body,
     top: 15px;
   }
   .el-dialog__header {
-    background: #383838;
+    background: #353535;
     padding: 10px;
   }
 }
