@@ -46,11 +46,11 @@
                 </el-table-column>
             </el-table>
             <el-form-item style="text-align: right;margin-top: 20px;">
-                <el-button type="primary" :disabled="!currentRow.title" @click="onSubmit">
+                <el-button size="medium" type="primary" :disabled="!currentRow.title" @click="onSubmit">
                     <span v-if="currentRow.title">已选择({{ currentRow.year || '年份未知' }})</span>
                     <span v-else>未选择</span>
                 </el-button>
-                <el-button @click="$emit('hide')">取消</el-button>
+                <el-button size="medium" @click="$emit('hide')">取消</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>

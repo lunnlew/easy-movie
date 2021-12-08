@@ -21,8 +21,8 @@
                 <el-button @click="cancel">
                     <span>取消</span>
                 </el-button>
-                <el-button type="primary" @click="update" v-if="showUpdateTip == 1">确认更新</el-button>
-                <el-button type="primary" @click="install" v-else-if="showUpdateTip == 3">确认安装</el-button>
+                <el-button size="medium" type="primary" @click="update" v-if="showUpdateTip == 1">确认更新</el-button>
+                <el-button size="medium" type="primary" @click="install" v-else-if="showUpdateTip == 3">确认安装</el-button>
             </span>
         </template>
     </el-dialog>

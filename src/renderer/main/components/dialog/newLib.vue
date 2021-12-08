@@ -29,8 +29,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button @click="$emit('hide')">取消</el-button>
+        <el-button size="medium" type="primary" @click="onSubmit">保存</el-button>
+        <el-button size="medium" @click="$emit('hide')">取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
