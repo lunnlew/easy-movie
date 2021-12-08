@@ -7,7 +7,7 @@ import store from "@/store";
 /**
  * 启用的过滤器
  */
-export const filter_enables = ref(['type_filter']);
+export const filter_enables = ref([]);
 
 /**
  * 从设置页的结果中更新过滤器
@@ -74,23 +74,25 @@ export async function changeFilter(data: any) {
  * 更新筛选条件展示值
  */
 export async function refresh_filter() {
-    // 类型筛选
-    getFilters(movie_lib.value.lib_id, 'type', type_filters.value.map(i => ({
-        name: i.name,
-        key: i.key
-    }))).then(async res => {
+    if (filter_enables.value.indexOf('type_filter') != -1) {
         const result = await loadConfig({
             type: "type_filter",
         })
+        const count_result = await getFilters(movie_lib.value.lib_id, 'type_filter', result.map((item: any) => {
+            return {
+                name: dicts[item.val] || item.name,
+                key: item.val
+            }
+        }))
         type_filters.value = result.map((item: any) => {
             return {
                 name: dicts[item.val] || item.name,
                 key: item.val,
                 checked: item.state == 1 ? true : false,
-                count: res.data?.data[item.val] || 0
+                count: count_result.data?.data[item.val] || 0
             }
         })
-    })
+    }
 
     await loadConfig({
         type: "filter_setting",

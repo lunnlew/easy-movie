@@ -38,7 +38,7 @@
  * 类型过滤器
  */
 import {
-    defineComponent,
+    defineComponent
 } from "vue";
 import {
     ArrowDown,

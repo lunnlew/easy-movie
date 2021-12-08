@@ -13,8 +13,8 @@ class actors {
         this.knex = dataM.knexInstance
         this.tableName = 'actors'
     }
-    async list(offset: any, size: any) {
-        return this.knex(this.tableName).column(['id', 'name']).limit(size).offset(offset).select()
+    async list(name: string, offset: any, size: any) {
+        return this.knex(this.tableName).column(['id', 'name']).where('name', 'like', `%${name}%`).limit(size).offset(offset).select()
     }
 }
 

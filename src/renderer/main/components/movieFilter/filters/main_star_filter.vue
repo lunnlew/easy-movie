@@ -26,6 +26,7 @@
                         </el-input>
                         <ul
                             v-infinite-scroll="loadData"
+                            infinite-scroll-immediate="false"
                             class="infinite-list"
                             style="overflow: auto"
                         >
@@ -47,7 +48,7 @@
  * 主演过滤器
  */
 import {
-    defineComponent, reactive, ref, watch,
+    defineComponent, onMounted, reactive, ref, watch,
 } from "vue";
 import {
     ArrowDown,
@@ -76,13 +77,18 @@ export default defineComponent({
                 size: pagination.size,
                 name: search_main_star.value
             }).then(res => {
-                list.value = res.data.data
+                list.value.push(...res.data.data)
                 pagination.page++
             })
         }
 
         watch(() => search_main_star.value, () => {
             pagination.page = 1
+            list.value = []
+            loadData()
+        })
+
+        onMounted(() => {
             loadData()
         })
 

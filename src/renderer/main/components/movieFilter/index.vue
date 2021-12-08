@@ -1,13 +1,22 @@
 <template>
-  <div class="movie-filter" :style="{
-    height: (isShowFilter ? 40 : 0) + 'px',
-  }">
+  <div
+    class="movie-filter"
+    :style="{
+      height: (isShowFilter ? 40 : 0) + 'px',
+    }"
+  >
     <div class="filter-items">
       <span class="filter-item">
-        <type-filter v-if="filter_enables.includes('type_filter')" @filter="changeFilter"></type-filter>
+        <type-filter
+          v-if="filter_enables.includes('type_filter')"
+          @filter="changeFilter"
+        ></type-filter>
       </span>
       <span class="filter-item">
-        <main-star-filter v-if="filter_enables.includes('main_star_filter')" @filter="changeFilter"></main-star-filter>
+        <main-star-filter
+          v-if="filter_enables.includes('main_star_filter')"
+          @filter="changeFilter"
+        ></main-star-filter>
       </span>
     </div>
   </div>
@@ -35,13 +44,13 @@ export default defineComponent({
   name: "MovieFilter",
   components: {
     typeFilter,
-    mainStarFilter
+    mainStarFilter,
   },
   setup: (props) => {
     watch(
       () => isShowFilter.value,
-      (val) => {
-        if (val) {
+      (val, pre) => {
+        if (val !== pre && val) {
           refresh_filter();
         } else {
           clear_filter();
@@ -59,7 +68,7 @@ export default defineComponent({
     watch(
       () => filter_enables.value,
       (val, pre) => {
-        if (val.join('') !== pre.join('')) {
+        if (val.join("") !== pre.join("")) {
           if (isShowFilter.value) {
             refresh_filter();
           }

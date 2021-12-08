@@ -177,7 +177,8 @@ const movieUpdate = async function (req: any, res: any, next: any) {
 const movieActorsFilterList = function (req: any, res: any, next: any) {
     let page = req.body.page || 1;
     let size = req.body.size || 10;
-    actors.list((page - 1) * size, size).then((data: any) => {
+    let name = req.body.name || '';
+    actors.list(name, (page - 1) * size, size).then((data: any) => {
         res.json(buildResult(data))
     }).catch((err: any) => {
         res.json(buildErrResult(err.message, 500))
