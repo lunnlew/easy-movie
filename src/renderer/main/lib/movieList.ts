@@ -2,7 +2,7 @@
 import { getMovies } from "@/api/movie";
 import { reactive, ref } from "vue";
 import { search_keyword, search_fields } from "./movieSearch";
-import { isShowFilter, type_filters, movie_lib } from "./movieFilter";
+import { isShowFilter, type_filters, movie_lib, main_star_filters } from "./movieFilter";
 import { MovieInfo } from '@/types/all'
 
 /**
@@ -47,6 +47,7 @@ export async function onFilterChange() {
         },
         filters: {
             media_lib_id: movie_lib.value.lib_id,
+            actors: ['in', isShowFilter.value ? main_star_filters.value.map(v => v.id) : []],
             genres: ['like', isShowFilter.value ? type_filters.value.filter(v => v.checked).map(v => v.name) : []]
         },
         sort: {

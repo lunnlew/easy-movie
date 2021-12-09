@@ -37,12 +37,25 @@ class movie {
         return this.knex(this.tableName).where({ id: oldId }).update(data)
     }
     async list(filters: any, search: any, sort: any, offset: any, size: any) {
+
+        // 先从关联表中查询出演员的电影
+        let movieIds = []
+        if (filters.actors && filters.actors[1].length > 0) {
+            movieIds = await this.knex.select('movie_id')
+                .from('actor_movie')
+                .whereIn('actor_id', filters.actors[1])
+                .on('query', function (query: any) {
+                    console.log(query.sql)
+                })
+            movieIds = Array.from(new Set(movieIds.map(item => item.movie_id)))
+        }
+
         let knex = this.knex
             .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name', 'movies.language', 'movies.year', 'movies.poster'])
             .limit(size)
             .offset(offset)
             .from('movie_files')
-            .join('movies', function () {
+            .leftJoin('movies', function () {
                 this.on('movie_files.movie_id', '=', 'movies.id')
             })
             .andWhere(function () {
@@ -51,7 +64,7 @@ class movie {
                         continue
                     }
                     if (typeof filters[key] === 'object' && 'length' in filters[key]) {
-                        if (filters[key][0] === 'like') {
+                        if (filters[key][0] === 'like' && key == 'genres') {
                             // {genres: ['like', ['动作']]}
                             if (filters[key][1].length > 0) {
                                 this.andWhere(function () {
@@ -59,6 +72,11 @@ class movie {
                                         this.orWhere(`movies.${key}`, 'like', `%${name}%`)
                                     }
                                 })
+                            }
+                        } else if (filters[key][0] === 'in' && key == 'actors') {
+                            // {actors: ['in', ['1']]}
+                            if (filters[key][1].length > 0) {
+                                this.andWhere('movies.id', 'in', movieIds)
                             }
                         }
                     } else {

@@ -112,7 +112,12 @@ import { showMovieItemMenu } from "@/lib/contextMenu";
 import MovieEdit from "@/components/dialog/movieEdit.vue";
 import movieFilter from "@/components/movieFilter/index.vue";
 import { useStore } from "vuex";
-import { isShowFilter, type_filters, movie_lib } from "@/lib/movieFilter";
+import {
+  isShowFilter,
+  type_filters,
+  movie_lib,
+  main_star_filters,
+} from "@/lib/movieFilter";
 import { search_keyword, search_fields } from "@/lib/movieSearch";
 import {
   movies,
@@ -207,6 +212,20 @@ export default defineComponent({
         }
       }
     );
+
+    const main_star_filter_checked = computed(() =>
+      main_star_filters.value
+        .map((v) => v.id)
+        .sort((v) => v)
+        .join(",")
+    );
+    watch(
+      () => main_star_filter_checked.value,
+      () => {
+        onFilterChange();
+      }
+    );
+
     onMounted(() => {
       onFilterChange();
     });
