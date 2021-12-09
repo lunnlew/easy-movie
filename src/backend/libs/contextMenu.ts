@@ -52,6 +52,7 @@ export function createContextMenu(event: any, params: any) {
         x: point.x || 0,
         y: point.y || 0
     })
+    menu.on('menu-will-close', () => { })
 }
 
 /**
@@ -98,6 +99,12 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
         x: point.x || 0,
         y: point.y || 0
     })
+    menu.on('menu-will-close', () => {
+        handler({
+            action: 'close',
+            state: 'success',
+        })
+    })
 }
 
 /**
@@ -111,6 +118,23 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     let point = params.options?.point || { x: 0, y: 0 }
     let item = params.options?.item || {}
     menu.append(new MenuItem({ label: item.name.length > 10 ? item.name.substr(0, 10) + '...' : item.name }))
+    menu.append(new MenuItem({ type: 'separator' }))
+    menu.append(new MenuItem({
+        label: '编辑', click: () => {
+            handler({
+                action: 'edit',
+                state: 'success',
+            })
+        }
+    }))
+    menu.append(new MenuItem({
+        label: '重新刮削', click: () => {
+            handler({
+                action: 'scraper',
+                state: 'success',
+            })
+        }
+    }))
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '从媒体库移除', click: () => {
@@ -134,5 +158,11 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
         window: win,
         x: point.x || 0,
         y: point.y || 0
+    })
+    menu.on('menu-will-close', () => {
+        handler({
+            action: 'close',
+            state: 'success',
+        })
     })
 }

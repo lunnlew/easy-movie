@@ -214,6 +214,10 @@ export default defineComponent({
       const result = await showMovieItemMenu(event, item);
       if (result.action == "remove" && result.state == "success") {
         remove_movie(item);
+      } else if (result.action == "edit" && result.state == "success") {
+        show_movie_edit(item);
+      } else if (result.action == "scraper" && result.state == "success") {
+        show_scraper_search(item);
       }
     }
     return {
