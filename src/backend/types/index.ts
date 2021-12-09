@@ -309,7 +309,10 @@ const invokeMainActions = [
     'showMovieItemMenu',
     'windowControl',
     'invokeViewAction',
-    'setFilterSetting'
+    'setFilterSetting',
+    'setProxySetting',
+    'reluanch',
+    'loadProxySetting'
 ] as const;
 
 /**

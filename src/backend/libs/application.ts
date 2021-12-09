@@ -40,6 +40,17 @@ class Application {
         }
     }
     /**
+     * 保存用户配置
+     */
+    saveUserProfile() {
+        let userProfilePath = process.env.PROFILE_PATH || path.join(
+            app.getPath("userData"),
+            "user-profile.json"
+        );
+        console.log("save profile", userProfilePath);
+        fs.writeFileSync(userProfilePath, JSON.stringify(this.userProfile || {}));
+    }
+    /**
      * 获取代理设置
      */
     getProxy() {

@@ -1,10 +1,11 @@
 
-import { ipcMain, dialog, BrowserWindow } from "electron";
+import { ipcMain, dialog, app } from "electron";
 import { createContextMenu, createMovieItemMenu, createSearchAreaMenu } from "../libs/contextMenu"
 import { loadConfig } from "../libs/config"
-import { setFilterSetting, setFilterData } from "../libs/filter";
+import { setFilterSetting, setFilterData, setProxySetting, loadProxySetting } from "../libs/filter";
 import { invokeMainActionParams } from "../types";
 import windowControl from "../libs/window";
+import proxyControl from "../libs/proxy";
 
 // eslint-disable-next-line
 const empty = () => { }
@@ -114,6 +115,21 @@ class InvokeAction {
                 }
                 case "setFilterSetting": {
                     setFilterSetting(event, params)
+                    break
+                }
+                case "setProxySetting": {
+                    setProxySetting(event, params)
+                    break
+                }
+                case "reluanch": {
+                    app.relaunch({ args: process.argv.slice(1).concat([proxyControl.loadProxyArgs()]) })
+                    app.exit(0)
+                    break
+                }
+                case "loadProxySetting": {
+                    loadProxySetting(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
                     break
                 }
                 case "showSearchAreaMenu": {

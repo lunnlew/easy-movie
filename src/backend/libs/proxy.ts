@@ -1,4 +1,5 @@
 import { app } from "electron"
+import application from "./application"
 import windowControl from "./window"
 
 class ProxyControl {
@@ -61,6 +62,16 @@ class ProxyControl {
                 );
                 // app.commandLine.appendSwitch('proxy-bypass-list', '<local>;')
                 break;
+        }
+    }
+    loadProxyArgs() {
+        const proxy = application.userProfile.proxy || ''
+        if (!proxy || proxy === 'none') {
+            return "--no-proxy-server"
+        } else if (proxy === 'system') {
+            return ""
+        } else if (proxy.indexOf('http') === 0 || proxy.indexOf('socks') === 0) {
+            return "--proxy-server " + proxy
         }
     }
 }
