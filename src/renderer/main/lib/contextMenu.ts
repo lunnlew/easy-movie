@@ -6,7 +6,7 @@ import store from '@/store'
  * @returns 
  */
 export async function showContextMenu(event: any) {
-   store.dispatch('invokeMainAction', {
+    store.dispatch('invokeMainAction', {
         action: 'showContextMenu',
         options: {
             point: {
@@ -33,5 +33,32 @@ export async function showSearchAreaMenu(event: any) {
                 y: event.clientY
             }
         }
+    })
+}
+
+/**
+ * 显示列表对象菜单
+ * @param event 
+ * @returns 
+ */
+export async function showMovieItemMenu(event: any, item: any) {
+    return await store.dispatch('invokeMainAction', {
+        action: 'showMovieItemMenu',
+        options: {
+            point: {
+                x: event.clientX,
+                y: event.clientY
+            },
+            item: {
+                id: item.id,
+                fid: item.fid,
+                imdb_id: item.imdb_id,
+                media_lib_id: item.media_lib_id,
+                name: item.name,
+                year: item.year,
+                language: item.language
+            }
+        },
+        await_complete: true
     })
 }

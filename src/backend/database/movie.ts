@@ -38,7 +38,7 @@ class movie {
     }
     async list(filters: any, search: any, sort: any, offset: any, size: any) {
         let knex = this.knex
-            .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name', 'movies.year', 'movies.poster'])
+            .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name', 'movies.language', 'movies.year', 'movies.poster'])
             .limit(size)
             .offset(offset)
             .from('movie_files')

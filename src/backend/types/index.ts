@@ -306,6 +306,7 @@ const invokeMainActions = [
     'showContextMenu',
     'setFilterData',
     'showSearchAreaMenu',
+    'showMovieItemMenu',
     'windowControl',
     'invokeViewAction',
     'setFilterSetting'

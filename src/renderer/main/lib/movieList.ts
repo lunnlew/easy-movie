@@ -181,3 +181,18 @@ export function update_movie(item: any) {
         }
     }
 }
+
+/**
+ * 列表页影视信息更新方法
+ * @param item 
+ * @returns 
+ */
+export function remove_movie(item: any) {
+    if (!item) {
+        return
+    }
+    const index = movies.value.findIndex(m => m.id === item.id)
+    if (index !== -1) {
+        movies.value.splice(index, 1)
+    }
+}

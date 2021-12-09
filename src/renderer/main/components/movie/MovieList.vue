@@ -3,11 +3,16 @@
   <div
     class="movie-list"
     :style="{
-      transform: (isShowFilter ? ' translateY(40px)' : 'translateY(0px)')
+      transform: isShowFilter ? ' translateY(40px)' : 'translateY(0px)',
     }"
   >
     <div class="movie-poster" v-if="movies.length > 0">
-      <div class="movie-poster-item" v-for="(item) of movies" :key="item.id">
+      <div
+        class="movie-poster-item"
+        v-for="item of movies"
+        :key="item.id"
+        @contextmenu.prevent="showMovieItemMenuClick($event, item)"
+      >
         <el-card
           :body-style="cardBodyStyle"
           @click="toDetail(item.id)"
@@ -17,18 +22,31 @@
             lazy
             :src="item.poster"
             :alt="item.name"
-            @error="() => { item.poster = empty_poster }"
+            @error="
+              () => {
+                item.poster = empty_poster;
+              }
+            "
           >
             <template #placeholder>
               <div class="image-slot">
-                <img class="el-image__inner" :src="empty_poster" :alt="item.name" />
+                <img
+                  class="el-image__inner"
+                  :src="empty_poster"
+                  :alt="item.name"
+                />
               </div>
             </template>
           </el-image>
           <div class="op-shade">
             <div class="btn-edit">
               <el-tooltip content="编辑" placement="bottom">
-                <el-button type="text" size="mini" circle @click.stop="show_movie_edit(item)">
+                <el-button
+                  type="text"
+                  size="mini"
+                  circle
+                  @click.stop="show_movie_edit(item)"
+                >
                   <el-icon :color="'#f0f2f5'">
                     <Edit />
                   </el-icon>
@@ -37,7 +55,12 @@
             </div>
             <div class="btn-fetch">
               <el-tooltip content="重新抓取" placement="bottom">
-                <el-button type="text" size="mini" circle @click.stop="show_scraper_search(item)">
+                <el-button
+                  type="text"
+                  size="mini"
+                  circle
+                  @click.stop="show_scraper_search(item)"
+                >
                   <el-icon :color="'#f0f2f5'">
                     <Search />
                   </el-icon>
@@ -80,22 +103,32 @@
   ></movie-edit>
 </template>
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  watch
-} from "vue";
+import { computed, defineComponent, onMounted, watch } from "vue";
 import empty_poster from "@/assets/empty_poster.png";
 import { useRouter } from "vue-router";
-import { Search, Edit } from '@element-plus/icons'
-import ScraperSearch from '@/components/dialog/scraperSearch.vue';
-import MovieEdit from '@/components/dialog/movieEdit.vue';
-import movieFilter from '@/components/movieFilter/index.vue';
+import { Search, Edit } from "@element-plus/icons";
+import ScraperSearch from "@/components/dialog/scraperSearch.vue";
+import { showMovieItemMenu } from "@/lib/contextMenu";
+import MovieEdit from "@/components/dialog/movieEdit.vue";
+import movieFilter from "@/components/movieFilter/index.vue";
 import { useStore } from "vuex";
-import { isShowFilter, type_filters, movie_lib } from '@/lib/movieFilter'
-import { search_keyword, search_fields } from "@/lib/movieSearch"
-import { movies, show_scraper_search, showScraperSearchDialog, edit_item, scraper_search_item, showEditDialog, showEmptyDisplay, show_movie_edit, refresh_movie_edit, update_movie, onFilterChange, onScrollEndChange } from "@/lib/movieList";
+import { isShowFilter, type_filters, movie_lib } from "@/lib/movieFilter";
+import { search_keyword, search_fields } from "@/lib/movieSearch";
+import {
+  movies,
+  show_scraper_search,
+  showScraperSearchDialog,
+  edit_item,
+  scraper_search_item,
+  showEditDialog,
+  showEmptyDisplay,
+  show_movie_edit,
+  refresh_movie_edit,
+  update_movie,
+  onFilterChange,
+  onScrollEndChange,
+  remove_movie,
+} from "@/lib/movieList";
 export default defineComponent({
   name: "MovieList",
   components: {
@@ -103,65 +136,86 @@ export default defineComponent({
     Edit,
     MovieEdit,
     ScraperSearch,
-    movieFilter
+    movieFilter,
   },
   props: {
     libInfo: {
       type: Object,
       default: () => ({
-        name: "all"
-      })
-    }
+        name: "all",
+      }),
+    },
   },
   setup: (props) => {
-    const router = useRouter()
-    const store = useStore()
+    const router = useRouter();
+    const store = useStore();
     const cardBodyStyle = {
-      padding: "0px"
-    }
+      padding: "0px",
+    };
     function toDetail(movieId: any) {
       router.push({
         name: "MovieDetail",
         params: {
-          movieId
-        }
-      })
+          movieId,
+        },
+      });
     }
     watch(
       () => search_keyword.value,
       () => {
-        onFilterChange()
+        onFilterChange();
       }
-    )
+    );
     watch(
       () => search_fields.value,
       () => {
         if (search_keyword.value) {
-          onFilterChange()
+          onFilterChange();
         }
       }
-    )
-    const type_filter_checked = computed(() => type_filters.value.filter(item => item.checked).map(v => v.key).sort(v => v).join(","))
+    );
+    const type_filter_checked = computed(() =>
+      type_filters.value
+        .filter((item) => item.checked)
+        .map((v) => v.key)
+        .sort((v) => v)
+        .join(",")
+    );
     watch(
       () => type_filter_checked.value,
       () => {
-        onFilterChange()
+        onFilterChange();
       }
-    )
-    watch(() => isShowFilter.value, (val) => {
-      onFilterChange()
-    })
-    watch(() => movie_lib.value, () => {
-      onFilterChange()
-    })
-    watch(() => store.state.Libs.is_scroll_bottom_end, (val) => {
-      if (val) {
-        onScrollEndChange()
+    );
+    watch(
+      () => isShowFilter.value,
+      (val) => {
+        onFilterChange();
       }
-    })
+    );
+    watch(
+      () => movie_lib.value,
+      () => {
+        onFilterChange();
+      }
+    );
+    watch(
+      () => store.state.Libs.is_scroll_bottom_end,
+      (val) => {
+        if (val) {
+          onScrollEndChange();
+        }
+      }
+    );
     onMounted(() => {
-      onFilterChange()
-    })
+      onFilterChange();
+    });
+    async function showMovieItemMenuClick(event: MouseEvent, item: any) {
+      const result = await showMovieItemMenu(event, item);
+      if (result.action == "remove" && result.state == "success") {
+        remove_movie(item);
+      }
+    }
     return {
       empty_poster,
       cardBodyStyle,
@@ -175,9 +229,10 @@ export default defineComponent({
       scraper_search_item,
       showEditDialog,
       showEmptyDisplay,
+      showMovieItemMenuClick,
       isShowFilter,
-      update_movie
-    }
+      update_movie,
+    };
   },
 });
 </script>

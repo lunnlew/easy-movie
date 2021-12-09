@@ -6,6 +6,11 @@ import updateControl from "./update";
 import { __app_path } from "../preference";
 import application from "./application";
 
+/**
+ * 左上角上下文菜单
+ * @param event 
+ * @param params 
+ */
 export function createContextMenu(event: any, params: any) {
     const menu = new Menu()
     menu.append(new MenuItem({
@@ -49,7 +54,13 @@ export function createContextMenu(event: any, params: any) {
     })
 }
 
-
+/**
+ * 头部搜索框上下文菜单
+ * @param event 
+ * @param params 
+ * @param handler 
+ * @returns 
+ */
 export async function createSearchAreaMenu(event: any, params: any, handler: any) {
     const menu = new Menu()
     menu.append(new MenuItem({ label: '搜索范围：' }))
@@ -81,6 +92,43 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
         menu.append(new MenuItem(option))
     }
     let point = params.options?.point || { x: 0, y: 0 }
+    const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
+    menu.popup({
+        window: win,
+        x: point.x || 0,
+        y: point.y || 0
+    })
+}
+
+/**
+ * 影视列表上下文菜单
+ * @param event 
+ * @param params 
+ * @param handler 
+ */
+export async function createMovieItemMenu(event: any, params: any, handler: any) {
+    const menu = new Menu()
+    let point = params.options?.point || { x: 0, y: 0 }
+    let item = params.options?.item || {}
+    menu.append(new MenuItem({ label: item.name.length > 10 ? item.name.substr(0, 10) + '...' : item.name }))
+    menu.append(new MenuItem({ type: 'separator' }))
+    menu.append(new MenuItem({
+        label: '从媒体库移除', click: () => {
+            dataM.knexInstance('movie_files').where({ id: item.fid }).delete().then((res) => {
+                console.log(res)
+                handler({
+                    action: 'remove',
+                    state: 'success',
+                })
+            }).catch(err => {
+                console.log(err)
+                handler({
+                    action: 'remove',
+                    state: 'error',
+                })
+            })
+        }
+    }))
     const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
     menu.popup({
         window: win,
