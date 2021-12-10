@@ -1,21 +1,21 @@
 <template>
-  <div class="section">代理</div>
-  <el-radio-group v-model="type" class="item-list">
-    <el-radio :label="'none'">不使用代理</el-radio>
-    <el-radio :label="'system'">使用系统代理</el-radio>
-    <el-radio :label="'custom'"
-      >自定义代理：
-      <el-input
-        :disabled="type !== 'custom'"
-        style="width: 200px"
-        v-model="proxy"
-        size="mini"
-        placeholder=""
-    /></el-radio>
-  </el-radio-group>
-  <div class="section" v-if="changed">
-    * 代理设置需要应用重启后生效
+  <div class="section">
+    代理
+    <el-radio-group v-model="type" class="item-list">
+      <el-radio :label="'none'">不使用代理</el-radio>
+      <el-radio :label="'system'">使用系统代理</el-radio>
+      <el-radio :label="'custom'"
+        >自定义代理：
+        <el-input
+          :disabled="type !== 'custom'"
+          style="width: 200px"
+          v-model="proxy"
+          size="mini"
+          placeholder=""
+      /></el-radio>
+    </el-radio-group>
   </div>
+  <div class="section" v-if="changed">* 代理设置需要应用重启后生效</div>
 </template>
 <script lang="ts">
 import store from "@/store";
@@ -97,11 +97,12 @@ export default defineComponent({
 <style lang="less" scoped>
 .item-list {
   display: table-caption;
+  padding-top: 20px;
   .el-radio {
     height: 25px;
     color: #fff;
     width: 300px;
-    margin: 5px 0;
+    margin: 0;
   }
 }
 </style>

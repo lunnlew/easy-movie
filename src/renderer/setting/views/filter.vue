@@ -1,14 +1,16 @@
 <template>
-  <div class="section">在筛选器显示</div>
-  <el-checkbox-group v-model="checkList" class="filterList" @change="change">
-    <el-checkbox
-      :label="item.value"
-      v-for="item of filterList"
-      :key="item.value"
-    >
-      {{ item.label }}
-    </el-checkbox>
-  </el-checkbox-group>
+  <div class="section">
+    在筛选器显示
+    <el-checkbox-group v-model="checkList" class="filterList" @change="change">
+      <el-checkbox
+        :label="item.value"
+        v-for="item of filterList"
+        :key="item.value"
+      >
+        {{ item.label }}
+      </el-checkbox>
+    </el-checkbox-group>
+  </div>
 </template>
 <script lang="ts">
 import { loadConfig } from "@/lib/config";
@@ -66,6 +68,7 @@ export default defineComponent({
 <style lang="less">
 .filterList {
   display: table-caption;
+  padding-top: 20px;
   .el-checkbox {
     height: 25px;
     color: #fff;
