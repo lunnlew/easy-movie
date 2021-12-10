@@ -49,7 +49,7 @@ export default {
                 }
                 const timeout = setTimeout(() => {
                     console.log('invokeMainAction', params.action, '获取超时')
-                    state.resolveIdle[uuid]()
+                    state.resolveIdle[uuid] && state.resolveIdle[uuid]()
                     clear(uuid)
                     commit('SET_RESOLVE_IDLE', {
                         uuid: uuid, fn: empty
