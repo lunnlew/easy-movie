@@ -64,6 +64,11 @@ const mutations = {
             });
         }
     },
+    /**
+     * 更新电影列表页面数据
+     * @param state 
+     * @param payload 
+     */
     MOVIE_LISTVIEW_UPDATE(state: { libs: any[]; }, payload: { lib_id: any; movie: any; }) {
         let index = state.libs.findIndex((item: { lib_id: any; }) => item.lib_id === parseInt(payload.lib_id));
         if (index > -1) {

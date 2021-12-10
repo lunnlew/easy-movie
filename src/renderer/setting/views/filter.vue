@@ -1,6 +1,6 @@
 <template>
   <div class="section">
-    在筛选器显示
+    <span class="section-title">在筛选器显示</span>
     <el-checkbox-group v-model="checkList" class="filterList" @change="change">
       <el-checkbox
         :label="item.value"
@@ -70,7 +70,7 @@ export default defineComponent({
   display: table-caption;
   padding-top: 20px;
   .el-checkbox {
-    height: 25px;
+    height: 30px;
     color: #fff;
   }
 }

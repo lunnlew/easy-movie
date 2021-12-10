@@ -5,6 +5,7 @@ import WinswWrapper, { WinswWrapperOptions } from 'winsw-wrapper'
 import { __fix_dirname, home_dir } from '../preference';
 import { app } from "electron";
 import application from '../libs/application';
+import { setServiceState } from '../libs/filter';
 const router = Router()
 
 const svc = new WinswWrapper({
@@ -40,6 +41,11 @@ const ServiceInstall = async (req, res, next) => {
     svc.once('start', function (data) {
         if (data.state == 'success') {
             console.log('Service started');
+            setServiceState(null, {
+                options: {
+                    serviceState: 'Started'
+                }
+            })
             res.end('Service started')
         } else {
             console.log('Service start error');
@@ -69,6 +75,11 @@ const ServiceUninstall = async (req, res, next) => {
     svc.once('uninstall', function (data) {
         if (data.state == 'success') {
             console.log('Service uninstalled');
+            setServiceState(null, {
+                options: {
+                    serviceState: 'Stopped'
+                }
+            })
             res.end('Service uninstalled')
         } else {
             console.log('Service uninstall error');

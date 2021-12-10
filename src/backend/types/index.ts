@@ -312,7 +312,8 @@ const invokeMainActions = [
     'setFilterSetting',
     'setProxySetting',
     'reluanch',
-    'loadProxySetting'
+    'loadProxySetting',
+    'loadServiceState'
 ] as const;
 
 /**

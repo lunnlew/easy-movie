@@ -2,7 +2,7 @@
 import { ipcMain, dialog, app } from "electron";
 import { createContextMenu, createMovieItemMenu, createSearchAreaMenu } from "../libs/contextMenu"
 import { loadConfig } from "../libs/config"
-import { setFilterSetting, setFilterData, setProxySetting, loadProxySetting } from "../libs/filter";
+import { setFilterSetting, setFilterData, setProxySetting, loadProxySetting, loadServiceState } from "../libs/filter";
 import { invokeMainActionParams } from "../types";
 import windowControl from "../libs/window";
 import proxyControl from "../libs/proxy";
@@ -128,6 +128,12 @@ class InvokeAction {
                 }
                 case "loadProxySetting": {
                     loadProxySetting(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
+                    break
+                }
+                case "loadServiceState": {
+                    loadServiceState(event, params, (data: any) => {
                         replyMessage(params.uuid, data)
                     })
                     break

@@ -1,6 +1,6 @@
 <template>
   <div class="section">
-    代理
+    <span class="section-title">代理</span>
     <el-radio-group v-model="type" class="item-list">
       <el-radio :label="'none'">不使用代理</el-radio>
       <el-radio :label="'system'">使用系统代理</el-radio>
@@ -99,7 +99,7 @@ export default defineComponent({
   display: table-caption;
   padding-top: 20px;
   .el-radio {
-    height: 25px;
+    height: 30px;
     color: #fff;
     width: 300px;
     margin: 0;

@@ -8,7 +8,14 @@ import globalEventEmitter, { GlobalEventType } from '../eventEmitter/GlobalEvent
  * 支持的用户配置
  */
 type UserProfile = {
+    /**
+     * 代理设置
+     */
     proxy: string;
+    /**
+     * 服务状态
+     */
+    serviceState: 'Started' | 'Stopped';
 };
 
 export type App = {

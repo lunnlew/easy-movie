@@ -18,17 +18,17 @@
     <el-container>
       <el-aside width="200px">
         <ul class="menus">
-          <!-- <li
+          <li
             @click="toggle_section('base')"
             @mouseenter="() => {}"
             :class="{ active: current_section == 'base' }"
           >
             <el-icon size="22">
-              <close />
+              <Management />
             </el-icon>
-            <span>常用</span>
+            <span>常规</span>
           </li>
-          <li
+          <!-- <li
             @click="toggle_section('notify')"
             @mouseenter="() => {}"
             :class="{ active: current_section == 'notify' }"
@@ -76,7 +76,13 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { Close, Filter, Notification, Operation } from "@element-plus/icons";
+import {
+  Close,
+  Filter,
+  Notification,
+  Operation,
+  Management,
+} from "@element-plus/icons";
 import { windowControl } from "@/lib/native";
 import FilterSection from "setting@/views/filter.vue";
 import BaseSection from "setting@/views/base.vue";
@@ -91,6 +97,7 @@ export default defineComponent({
     Operation,
     FilterSection,
     ProxySection,
+    Management,
   },
   setup: (props, { emit }) => {
     console.log("setup");
@@ -182,6 +189,22 @@ export default defineComponent({
   font-size: 14px;
 }
 .section {
-  padding: 10px 0 0 20px;
+  padding: 40px 0 0 60px;
+  .item-list {
+    .el-radio {
+      margin-right: 10px;
+    }
+    &.inline {
+      .el-radio {
+        height: 16px;
+      }
+    }
+  }
+}
+.section-title {
+  font-size: 14px;
+  color: #fff;
+  display: inline-block;
+  margin-right: 20px;
 }
 </style>

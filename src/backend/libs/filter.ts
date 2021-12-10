@@ -59,3 +59,26 @@ export function loadProxySetting(event: any, params: any, handler: any) {
         handler(application.userProfile.proxy);
     }
 }
+
+/**
+ * 加载服务状态
+ * @param event 
+ * @param params 
+ * @param handler 
+ */
+export function loadServiceState(event: any, params: any, handler: any) {
+    if (handler) {
+        handler(application.userProfile.serviceState);
+    }
+}
+
+/**
+ * 保存服务状态
+ * @param event 
+ * @param params 
+ */
+export function setServiceState(event: any, params: any) {
+    application.loadUserProfile();
+    application.userProfile.serviceState = params.options.serviceState;
+    application.saveUserProfile();
+}

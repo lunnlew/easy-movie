@@ -5,6 +5,7 @@ import scraper from "./modules/scraper";
 import Movie from "./modules/Movie";
 import libScanView from "./modules/libScanView";
 import libMenuView from "./modules/libMenuView";
+import setting from "./modules/setting";
 const store = createStore({
     state: {},
     mutations: {},
@@ -15,6 +16,7 @@ const store = createStore({
         InvokeAction,
         Libs,
         Movie,
+        setting,
         libMenuView,
         libScanView
     }
