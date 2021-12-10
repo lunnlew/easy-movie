@@ -37,10 +37,11 @@ export default defineComponent({
     const type = ref("none");
     const proxy = ref("");
     const changed = ref(true);
+    const load_proxy_state = ref(false);
     watch(
       () => type.value,
       () => {
-        if (type.value !== "custom") {
+        if (type.value !== "custom" && load_proxy_state.value) {
           store.dispatch("invokeMainAction", {
             action: "setProxySetting",
             options: {
@@ -55,14 +56,16 @@ export default defineComponent({
     watch(
       () => proxy.value,
       () => {
-        store.dispatch("invokeMainAction", {
-          action: "setProxySetting",
-          options: {
-            type: type.value,
-            proxy: type.value === "custom" ? proxy.value : type.value,
-          },
-          await_complete: false,
-        });
+        if (load_proxy_state.value) {
+          store.dispatch("invokeMainAction", {
+            action: "setProxySetting",
+            options: {
+              type: type.value,
+              proxy: type.value === "custom" ? proxy.value : type.value,
+            },
+            await_complete: false,
+          });
+        }
       }
     );
     onMounted(async () => {
@@ -76,6 +79,9 @@ export default defineComponent({
       } else {
         type.value = result;
       }
+      setTimeout(() => {
+        load_proxy_state.value = true;
+      }, 1000);
     });
     function reluanch() {
       store.dispatch("invokeMainAction", {
