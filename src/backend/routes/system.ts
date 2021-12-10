@@ -14,7 +14,11 @@ const svc = new WinswWrapper({
     description: 'a movie information manager',
     executable: process.execPath,
 } as WinswWrapperOptions)
-svc.arguments(app.getAppPath())
+svc.setWrapperBinPath(path.join(process.resourcesPath, 'app.asar.unpacked/node_modules/winsw-wrapper/bin'))
+svc.setWrapperSaveDir(path.dirname(app.getPath('exe')))
+if (application.isDevelopment) {
+    svc.arguments(app.getAppPath())
+}
 svc.arguments('--AsService')
 svc.env('SQLITE_PATH', path.join(home_dir, 'data.db'))
 svc.env('PROFILE_PATH', path.join(
@@ -30,6 +34,7 @@ const ServiceInstall = async (req, res, next) => {
     // Listen for the "install" event, which indicates the
     // process is available as a service.
     svc.once('install', function (data) {
+        console.log(data);
         if (data.state == 'success') {
             console.log('Service installed');
             svc.start();
@@ -39,6 +44,7 @@ const ServiceInstall = async (req, res, next) => {
         }
     });
     svc.once('start', function (data) {
+        console.log(data);
         if (data.state == 'success') {
             console.log('Service started');
             setServiceState(null, {
@@ -52,9 +58,8 @@ const ServiceInstall = async (req, res, next) => {
             res.end('Service start error')
         }
     });
-    svc.once('error', function () {
-        console.log('Service error');
-        res.end('Service error')
+    svc.once('error', function (data) {
+        console.log('Service error', data);
     });
 
     svc.install();
@@ -64,6 +69,7 @@ const ServiceInstall = async (req, res, next) => {
 const ServiceUninstall = async (req, res, next) => {
     // Listen for the "uninstall" event
     svc.once('stop', function (data) {
+        console.log(data);
         if (data.state == 'success') {
             console.log('Service stopped');
             svc.uninstall();
@@ -73,6 +79,7 @@ const ServiceUninstall = async (req, res, next) => {
         }
     });
     svc.once('uninstall', function (data) {
+        console.log(data);
         if (data.state == 'success') {
             console.log('Service uninstalled');
             setServiceState(null, {
@@ -86,9 +93,8 @@ const ServiceUninstall = async (req, res, next) => {
             res.end('Service uninstall error')
         }
     })
-    svc.once('error', function () {
-        console.log('Service error');
-        res.end('Service error')
+    svc.once('error', function (data) {
+        console.log('Service error', data);
     });
 
     svc.stop();
@@ -96,6 +102,7 @@ const ServiceUninstall = async (req, res, next) => {
 
 const ServiceStatus = async (req, res, next) => {
     svc.once('status', function (data) {
+        console.log(data);
         if (data.state == 'success') {
             console.log('Service status: ' + data.data);
             res.end(data.data)

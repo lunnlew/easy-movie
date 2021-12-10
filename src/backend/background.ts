@@ -1,6 +1,13 @@
 import path from "path";
 import { app, BrowserWindow, Menu, protocol } from "electron";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import log from 'electron-log'
+console.log = log.info
+log.transports.file.level = 'debug'
+log.transports.console.level = false
+log.transports.console.level = 'silly'
+log.transports.file.resolvePath = () => path.resolve(app.getPath('userData'), 'log.txt')
+
 import windowControl from "./libs/window";
 import proxyControl from "./libs/proxy";
 import TrayControl from "./libs/tray";

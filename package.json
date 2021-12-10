@@ -53,7 +53,7 @@
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
-    "winsw-wrapper": "^1.7.9"
+    "winsw-wrapper": "^1.8.1"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
@@ -91,6 +91,9 @@
     "appId": "com.app.easy-movie",
     "artifactName": "${productName}_Setup_${version}_${platform}-${arch}.${ext}",
     "win": {
+      "asarUnpack": [
+        "**/node_modules/winsw-wrapper/**/*"
+      ],
       "target": [
         {
           "target": "nsis",
@@ -102,7 +105,8 @@
       ],
       "rfc3161TimeStampServer": "http://tsa.startssl.com/rfc3161",
       "signDlls": true,
-      "icon": "./build/icons/256x256.png"
+      "icon": "./build/icons/256x256.png",
+      "requestedExecutionLevel": "highestAvailable"
     },
     "extraResources": [],
     "nsis": {
