@@ -13,6 +13,7 @@ interface LibMenuItem {
     lib_id: number
     name: string,
     path: string,
+    scan_loading?: boolean,
     meta: {
         [key: string]: any
     }
@@ -54,6 +55,7 @@ const mutations = {
             return {
                 lib_id: lib.lib_id,
                 name: lib.name,
+                scan_loading: lib.scan_loading || false,
                 path: `/lib/` + encodeURIComponent(lib.name),
                 meta: {
                     title: lib.meta?.title || (lib.name === 'all' ? '全部' : lib.name),
@@ -72,22 +74,26 @@ const mutations = {
     SET_LIB_MENU(state: LibMenuViewState, lib: Lib) {
         const menu = state.menus.find(menu => menu.lib_id === lib.lib_id);
         if (menu) {
-            menu.name = lib.name;
-            menu.name = `/lib/` + encodeURIComponent(lib.name),
-                menu.meta = {
-                    title: lib.meta?.title || (lib.name === 'all' ? '全部' : lib.name),
-                    sort: lib.sort || 1,
-                    icon: shallowRef(getIcon(lib.type)),
-                    keepAlive: true
-                }
+            menu.name = lib.name || menu.name;
+            menu.name = `/lib/` + encodeURIComponent(menu.name);
+            menu.scan_loading = lib.scan_loading || menu.scan_loading;
+            menu.meta = {
+                title: lib.meta?.title || menu.meta?.title || (menu.name === 'all' ? '全部' : menu.name),
+                sort: lib.sort || menu.meta?.sort || 1,
+                type: lib.type || menu.meta?.type,
+                icon: shallowRef(getIcon(lib.type || menu.meta?.type)),
+                keepAlive: true
+            }
         } else {
             state.menus.push({
                 lib_id: lib.lib_id,
                 name: lib.name,
+                scan_loading: lib.scan_loading || false,
                 path: `/lib/` + encodeURIComponent(lib.name),
                 meta: {
                     title: lib.meta?.title || (lib.name === 'all' ? '全部' : lib.name),
                     sort: lib.sort || 1,
+                    type: lib.type || '',
                     icon: shallowRef(getIcon(lib.type)),
                     keepAlive: true
                 }

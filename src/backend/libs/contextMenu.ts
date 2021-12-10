@@ -209,6 +209,13 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                         scan_loading: true,
                     }
                 }, false)
+                invokeAction.invokeRenderAction('mainView', {
+                    action: 'libMenuView/SET_LIB_MENU',
+                    options: {
+                        lib_id: data.id,
+                        scan_loading: true,
+                    }
+                }, false)
                 handler({
                     action: 'scan',
                     state: 'success',

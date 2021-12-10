@@ -40,6 +40,9 @@
         </el-icon>
         <span>{{ lib.meta.title || lib.name }}</span>
         <div class="icon-btn-group">
+          <!-- <el-icon v-if="lib.scan_loading" class="icon-btn-remove">
+            <Loading />
+          </el-icon> -->
           <el-icon
             v-if="lib.name !== 'all'"
             class="icon-btn-remove"
@@ -58,7 +61,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
-import { Close, Plus, Operation } from "@element-plus/icons";
+import { Close, Plus, Operation, Loading } from "@element-plus/icons";
 import newLib from "@/components/dialog/newLib.vue";
 import { useStore } from "vuex";
 import {
@@ -73,6 +76,7 @@ export default defineComponent({
   components: {
     Plus,
     Close,
+    Loading,
     Operation,
     newLib,
   },
