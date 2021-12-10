@@ -8,6 +8,7 @@ import application from "./application";
 import libs from "../database/libs";
 import tvScan from '../scan/TvScan'
 import movieScan from '../scan/MovieScan'
+import invokeAction from "../eventEmitter/invokeAction";
 
 /**
  * 左上角上下文菜单
@@ -201,6 +202,13 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                 } else if (data.type === 'movie') {
                     movieScan.scan(data.path, data.id || '', true)
                 }
+                invokeAction.invokeRenderAction('mainView', {
+                    action: 'libScanView/SET_LIB_SCAN_STATE',
+                    options: {
+                        lib_id: data.id,
+                        scan_loading: true,
+                    }
+                })
                 handler({
                     action: 'scan',
                     state: 'success',

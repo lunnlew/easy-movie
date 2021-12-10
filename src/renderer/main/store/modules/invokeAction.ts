@@ -132,7 +132,11 @@ export default {
                         changeEnableFromSetting(params.options)
                         break
                     }
-                    default: replyMessage(params.uuid, {})
+                    default: {
+                        commit(params.action, params.options)
+                        replyMessage(params.uuid, {})
+                    }
+
                 }
             })
             // 主线程向渲染进程设置返回结果
@@ -142,7 +146,7 @@ export default {
                     console.log('setMainReplyResult', data)
                     state.complete[data.uuid] = data.result
                     setTimeout(() => {
-                        state.resolveIdle[data.uuid]()
+                        state.resolveIdle[data.uuid] && state.resolveIdle[data.uuid]()
                         commit('SET_RESOLVE_IDLE', {
                             uuid: data.uuid, fn: empty
                         });
