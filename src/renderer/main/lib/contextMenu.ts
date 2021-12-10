@@ -62,3 +62,25 @@ export async function showMovieItemMenu(event: any, item: any) {
         await_complete: true
     })
 }
+/**
+ * 库菜单元素上下文菜单
+ * @param event 
+ * @param item 
+ * @returns 
+ */
+export async function showLibMenu(event: any, item: any) {
+    return await store.dispatch('invokeMainAction', {
+        action: 'showLibMenu',
+        options: {
+            point: {
+                x: event.clientX,
+                y: event.clientY
+            },
+            item: {
+                id: item.id,
+                name: item.name,
+            }
+        },
+        await_complete: true
+    })
+}

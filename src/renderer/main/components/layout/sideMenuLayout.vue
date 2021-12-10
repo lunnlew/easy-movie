@@ -14,9 +14,13 @@
       :default-active="$route.path"
       text-color="#fff"
     >
-      <el-menu-item @click="libMenuClick({
-        name: 'all',
-      })">
+      <el-menu-item
+        @click="
+          libMenuClick({
+            name: 'all',
+          })
+        "
+      >
         <span>影片库</span>
         <div class="icon-btn-group">
           <el-icon class="icon-btn-plus" @click.stop="showNewLibDialog">
@@ -25,10 +29,11 @@
         </div>
       </el-menu-item>
       <el-menu-item
-        v-for="(lib) of currentLibs"
+        v-for="lib of currentLibs"
         @click="libMenuClick(lib)"
         :key="lib.id"
         :index="lib.path"
+        @contextmenu.prevent="showLibMenuClick($event, lib)"
       >
         <el-icon>
           <component :is="lib.meta.icon" />
@@ -46,48 +51,53 @@
       </el-menu-item>
     </el-menu>
   </div>
-  <new-lib v-if="isShowNewLibDialog" @hide="isShowNewLibDialog = false"></new-lib>
+  <new-lib
+    v-if="isShowNewLibDialog"
+    @hide="isShowNewLibDialog = false"
+  ></new-lib>
 </template>
 <script lang="ts">
+import { computed, defineComponent, onMounted } from "vue";
+import { Close, Plus, Operation } from "@element-plus/icons";
+import newLib from "@/components/dialog/newLib.vue";
+import { useStore } from "vuex";
 import {
-  computed,
-  defineComponent,
-  onMounted
-} from "vue";
-import {
-  Close,
-  Plus,
-  Operation
-} from '@element-plus/icons'
-import newLib from '@/components/dialog/newLib.vue'
-import { useStore } from 'vuex';
-import { isShowNewLibDialog, showNewLibDialog, removeLibConfirm } from '@/lib/lib';
-import { showContextMenu } from '@/lib/contextMenu';
-import { libMenuClick } from '@/lib/sideMenu';
+  isShowNewLibDialog,
+  showNewLibDialog,
+  removeLibConfirm,
+} from "@/lib/lib";
+import { showContextMenu, showLibMenu } from "@/lib/contextMenu";
+import { libMenuClick } from "@/lib/sideMenu";
 export default defineComponent({
   name: "SideMenuLayout",
   components: {
     Plus,
     Close,
     Operation,
-    newLib
+    newLib,
   },
   setup: () => {
-    const store = useStore()
+    const store = useStore();
 
     onMounted(() => {
-      store.dispatch('loadLibs')
+      store.dispatch("loadLibs");
     });
 
-    const currentLibs = computed(() => store.state.libMenuView.menus)
+    const currentLibs = computed(() => store.state.libMenuView.menus);
+
+    async function showLibMenuClick(event: MouseEvent, item: any) {
+      const result = await showLibMenu(event, item);
+      console.log(result);
+    }
 
     return {
       libMenuClick,
       currentLibs,
       showNewLibDialog,
       removeLibConfirm,
+      showLibMenuClick,
       isShowNewLibDialog,
-      showContextMenu
+      showContextMenu,
     };
   },
 });

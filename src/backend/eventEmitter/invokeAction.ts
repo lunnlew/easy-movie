@@ -1,6 +1,6 @@
 
 import { ipcMain, dialog, app } from "electron";
-import { createContextMenu, createMovieItemMenu, createSearchAreaMenu } from "../libs/contextMenu"
+import { createContextMenu, createLibMenu, createMovieItemMenu, createSearchAreaMenu } from "../libs/contextMenu"
 import { loadConfig } from "../libs/config"
 import { setFilterSetting, setFilterData, setProxySetting, loadProxySetting, loadServiceState } from "../libs/filter";
 import { invokeMainActionParams } from "../types";
@@ -146,6 +146,12 @@ class InvokeAction {
                 }
                 case "showMovieItemMenu": {
                     createMovieItemMenu(event, params, (data: any) => {
+                        replyMessage(params.uuid, data)
+                    })
+                    break
+                }
+                case "showLibMenu": {
+                    createLibMenu(event, params, (data: any) => {
                         replyMessage(params.uuid, data)
                     })
                     break

@@ -5,6 +5,9 @@ import windowControl from "./window";
 import updateControl from "./update";
 import { __app_path } from "../preference";
 import application from "./application";
+import libs from "../database/libs";
+import tvScan from '../scan/TvScan'
+import movieScan from '../scan/MovieScan'
 
 /**
  * 左上角上下文菜单
@@ -165,4 +168,70 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
             state: 'success',
         })
     })
+}
+
+/**
+ * 库列表上下文菜单
+ * @param event 
+ * @param params 
+ * @param handler 
+ */
+export async function createLibMenu(event: any, params: any, handler: any) {
+    let point = params.options?.point || { x: 0, y: 0 }
+    let item = params.options?.item || {}
+    if (item.name !== 'all') {
+        const menu = new Menu()
+        menu.append(new MenuItem({
+            label: '编辑', click: () => {
+                handler({
+                    action: 'edit',
+                    state: 'success',
+                })
+            }
+        }))
+        menu.append(new MenuItem({
+            label: '扫描', click: async () => {
+                let data = await libs.getByName(item.name).catch(err => { throw err })
+                libs.updateByName(item.name, {
+                    ...data,
+                    scan_loading: true
+                })
+                if (data.type === 'tv') {
+                    tvScan.scan(data.path, data.id || '', true)
+                } else if (data.type === 'movie') {
+                    movieScan.scan(data.path, data.id || '', true)
+                }
+                handler({
+                    action: 'scan',
+                    state: 'success',
+                })
+            }
+        }))
+        menu.append(new MenuItem({ type: 'separator' }))
+        menu.append(new MenuItem({
+            label: '移除', click: () => {
+                handler({
+                    action: 'remove',
+                    state: 'success',
+                })
+            }
+        }))
+        const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
+        menu.popup({
+            window: win,
+            x: point.x || 0,
+            y: point.y || 0
+        })
+        menu.on('menu-will-close', () => {
+            handler({
+                action: 'close',
+                state: 'success',
+            })
+        })
+    } else {
+        handler({
+            action: 'skip',
+            state: 'success',
+        })
+    }
 }

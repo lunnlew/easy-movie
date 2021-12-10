@@ -2,7 +2,7 @@
     <div class="content-scroll-wrapper" ref="content" style="position: absolute;top:0">
         <div class="content-scroll">
             <div class="page-view">
-                <div class="top-btns" v-if="libInfo.name !== 'all'">
+                <!-- <div class="top-btns" v-if="libInfo.name !== 'all'">
                     <el-button
                         plain
                         size="small"
@@ -10,7 +10,7 @@
                         @click.stop="scanLib(libInfo)"
                     >{{ scanTip }}</el-button>
                     <span class="lib-path" v-if="libInfo.name !== 'all'">位置: {{ libInfo.lib_path }}</span>
-                </div>
+                </div> -->
                 <movie-list ref="movie_list" :libInfo="libInfo"></movie-list>
             </div>
         </div>
