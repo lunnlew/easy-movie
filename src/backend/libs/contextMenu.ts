@@ -208,7 +208,7 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                         lib_id: data.id,
                         scan_loading: true,
                     }
-                })
+                }, false)
                 handler({
                     action: 'scan',
                     state: 'success',
