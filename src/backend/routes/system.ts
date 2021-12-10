@@ -14,17 +14,17 @@ const svc = new WinswWrapper({
     description: 'a movie information manager',
     executable: process.execPath,
 } as WinswWrapperOptions)
-svc.setWrapperBinPath(path.join(process.resourcesPath, 'app.asar.unpacked/node_modules/winsw-wrapper/bin'))
 svc.setWrapperSaveDir(path.dirname(app.getPath('exe')))
 if (application.isDevelopment) {
     svc.arguments(app.getAppPath())
+    svc.env('SQLITE_PATH', path.join(__dirname, 'data.db'))
+    svc.env('PROFILE_PATH', path.join(__dirname, "user-profile.json"))
+} else {
+    svc.setWrapperBinPath(path.join(process.resourcesPath, 'app.asar.unpacked/node_modules/winsw-wrapper/bin'))
+    svc.env('SQLITE_PATH', path.join(home_dir, 'data.db'))
+    svc.env('PROFILE_PATH', path.join(home_dir, "user-profile.json"))
 }
 svc.arguments('--AsService')
-svc.env('SQLITE_PATH', path.join(home_dir, 'data.db'))
-svc.env('PROFILE_PATH', path.join(
-    app.getPath("userData"),
-    "user-profile.json"
-))
 // 注意: 服务模式下好像不能使用默认的系统代理，只能使用自定义的代理
 svc.env('PROXY', application.getProxy())
 
