@@ -92,7 +92,7 @@ export default class MediaNFO implements MediaNFOType {
      * @param year 
      * @returns 
      */
-    setReleaseYear(year: number) {
+    setReleaseYear(year: string) {
         this._xml.push({
             'year': year
         })

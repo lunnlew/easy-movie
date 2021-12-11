@@ -25,7 +25,7 @@ export interface MediaNFOType {
      * @param year 
      * @returns 
      */
-    setReleaseYear(year: number): this;
+    setReleaseYear(year: string): this;
 
     /**
      * 设置电影发布日期
