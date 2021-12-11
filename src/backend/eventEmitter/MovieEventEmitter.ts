@@ -5,6 +5,7 @@ import Downloader from '../utils/downloader'
 import { ApplicationType } from '@/types/Application'
 import { MovieFields } from '@/types/Movie'
 import { MovieEventEmitterType } from '@/types/MovieEventEmitterType'
+import { CastFields } from '@/types/Cast'
 
 /**
  * 演员相关消息事件
@@ -180,32 +181,32 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             }
         })
         /**
-         * 更新电影演职员信息
+         * 更新电影演员信息
          */
         this.app.event.on('movie:update-casts', async (payload) => {
             for (let cast of payload.casts) {
                 this.update_movie_actor(payload, {
                     ...cast,
                     job: "Actor"
-                })
+                } as any)
             }
         })
         /**
-         * 更新电影演职员信息
+         * 更新电影职员信息
          */
         this.app.event.on('movie:update-crews', async (payload) => {
             for (let crew of payload.crews) {
                 this.update_movie_actor(payload, {
                     ...crew,
                     character: ''
-                })
+                } as any)
             }
         })
     }
     /**
      * 更新电影演职员信息
      */
-    async update_movie_actor(payload: any, actorInfo: any) {
+    async update_movie_actor(payload: any, actorInfo: CastFields) {
         console.log('update-actors', actorInfo.id, actorInfo.name, actorInfo.character, actorInfo.department, actorInfo.job)
         // 查询是否已经存在
         let actor = await this.app.knex('actors').where({
@@ -220,14 +221,14 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             }).update({
                 name: actorInfo.name,
                 gender: actorInfo.gender,
-                avatar: actorInfo.profile_path
+                avatar: actorInfo.avatar
             }).catch(err => console.log('更新演职员错误', err))
         } else {
             let ids = await this.app.knex('actors').insert({
                 imdb_sid: actorInfo.id,
                 name: actorInfo.name,
                 gender: actorInfo.gender,
-                avatar: actorInfo.profile_path
+                avatar: actorInfo.avatar
             }).catch(err => console.log('新增演职员错误', err))
             if (ids) {
                 actor_id = ids[0] as number
@@ -243,8 +244,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     payload: {
                         name: actorInfo.name,
                         actor_id: actor_id,
-                        imdb_sid: actorInfo.id,
-                        imdb_id: ''
+                        imdb_sid: actorInfo.id
                     }
                 });
             }

@@ -91,11 +91,11 @@ class MovieDb {
                     language: imdb_movie.original_language,
                     casts: (imdb_movie_info as any).casts.cast.map((item: { profile_path: string; }) => ({
                         ...item,
-                        profile_path: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
+                        avatar: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
                     })),
                     crews: (imdb_movie_info as any).casts.crew.map((item: { profile_path: string; }) => ({
                         ...item,
-                        profile_path: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
+                        avatar: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
                     })),
                 }
                 this.app.event.emit('scraper-queue:submit-task', {

@@ -51,6 +51,18 @@ export type CastInfo = {
      * 演员的IMDB评分人数
      */
     imdb_votes?: number
+    /**
+     * 角色
+     */
+    character?: string
+    /**
+     * 部门
+     */
+    department?: string
+    /**
+     * 职位
+     */
+    job?: string
 }
 
 /**
