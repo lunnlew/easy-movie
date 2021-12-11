@@ -1,4 +1,4 @@
-'use strict'
+
 
 import { __fix_dirname } from '../preference';
 import application from '../libs/application';
@@ -6,13 +6,13 @@ import movie from '../database/movie'
 import movieFile from '../database/movie_files'
 import libs from '../database/libs'
 import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance } from '../utils'
-import { ScraperInitTask, ScraperMovieRequestPayload } from '../types';
+import { GlobalEventEmitterType } from '@/types/EventEmitter';
 const path = require('path');
 const fs = require('fs');
 class MovieScan {
-  eventEmitter;
+  event: GlobalEventEmitterType;
   constructor() {
-    this.eventEmitter = application.eventEmitter
+    this.event = application.event
     this.initialize();
   }
   buildYear(movieName: string, file_path: string) {
@@ -35,7 +35,7 @@ class MovieScan {
   async initialize() {
     console.log('MovieScan initialize');
     // 接受扫描单项结果
-    this.eventEmitter.on('scan:item-result', async (scanInfo: any) => {
+    this.event.on('scan:item-result', async (scanInfo) => {
       let pre_movieInfo = {
         movie_id: 0,
         imdb_id: '',
@@ -153,7 +153,7 @@ class MovieScan {
     }).catch(e => { throw e })
 
     // 去刮削影视信息
-    this.eventEmitter.emit('scraper-queue:add-task', {
+    this.event.emit('scraper-queue:add-task', {
       task_event: 'scraper:start:fetch-movie',
       task_priority: 1,
       payload: {
@@ -165,11 +165,11 @@ class MovieScan {
         media_lib_id: scanInfo.media_lib_id,
         path: scanInfo.filePath,
         resource_type: scanInfo.resource_type || 'single'
-      } as ScraperMovieRequestPayload
-    } as ScraperInitTask);
+      }
+    });
 
     // 页面上显示
-    this.eventEmitter.emit('render:list-view:update', {
+    this.event.emit('render:list-view:update', {
       lib_id: scanInfo.media_lib_idd,
       movie: {
         id: movie_info.movie_id,
@@ -177,7 +177,7 @@ class MovieScan {
         year: movie_info.year,
         language: movie_info.language,
         movie_id: movie_info.movie_id,
-        imdb_id: movie_info.imdb_id
+        imdb_ID: movie_info.imdb_id
       }
     })
   }
@@ -292,9 +292,9 @@ class MovieScan {
         }
         if (this.isSingleMovieDir(scanedDirInfo)) {
           console.log(`${filePath} 单文件电影目录`);
-          this.eventEmitter.emit('scan:item-result', {
+          this.event.emit('scan:item-result', {
             media_lib_id,
-            path: filePath,
+            scanPath: filePath,
             filePath: scanedDirInfo.filePaths[0],
             movieName: baseName(filePath),
             isSingleMovieDir: true,
@@ -320,9 +320,9 @@ class MovieScan {
               let movieName = baseName(scanedDirInfo.filePaths[0])
               // 同一个电影
               console.log('可能的电影名称', movieName)
-              this.eventEmitter.emit('scan:item-result', {
+              this.event.emit('scan:item-result', {
                 media_lib_id,
-                path: filePath,
+                scanPath: filePath,
                 movieName: movieName,
                 isMultiMovieDir: true,
                 dirType: 1, // 同系列
@@ -334,9 +334,9 @@ class MovieScan {
               scanedDirInfo.filePaths.forEach(_filePath => {
                 let movieName = baseName(_filePath)
                 console.log('可能的电影名称', movieName)
-                this.eventEmitter.emit('scan:item-result', {
+                this.event.emit('scan:item-result', {
                   media_lib_id,
-                  path: filePath,
+                  scanPath: filePath,
                   filePath: _filePath,
                   movieName: movieName,
                   isMultiMovieDir: true,
@@ -360,9 +360,9 @@ class MovieScan {
               movieName = baseName(path.dirname(commonPathPrefix))
             }
             console.log('可能的电影名称', movieName)
-            this.eventEmitter.emit('scan:item-result', {
+            this.event.emit('scan:item-result', {
               media_lib_id,
-              path: filePath,
+              scanPath: filePath,
               movieName: movieName,
               isMultiMovieDir: true,
               dirType: 1, // 同系列
@@ -374,9 +374,9 @@ class MovieScan {
           console.log(`${filePath} BDMV目录`);
           let movieName = baseName(filePath)
           console.log('可能的电影名称', movieName)
-          this.eventEmitter.emit('scan:item-result', {
+          this.event.emit('scan:item-result', {
             media_lib_id,
-            path: filePath,
+            scanPath: filePath,
             filePath: filePath,
             movieName,
             isBDMVDir: true,
@@ -390,9 +390,9 @@ class MovieScan {
         if (endsWithVideo(filePath)) {
           let movieName = baseName(filePath)
           console.log('可能的电影名称', movieName)
-          this.eventEmitter.emit('scan:item-result', {
+          this.event.emit('scan:item-result', {
             media_lib_id,
-            path: path.dirname(filePath),
+            scanPath: path.dirname(filePath),
             filePath: filePath,
             movieName,
             isFile: true,
@@ -420,7 +420,7 @@ class MovieScan {
           scan_loading: false
         })
       })
-      this.eventEmitter.emit('render:list-view:scan-end', {
+      this.event.emit('render:list-view:scan-end', {
         lib_id: media_lib_id,
         is_complete: true,
         scan_loading: false

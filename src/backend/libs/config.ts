@@ -1,4 +1,4 @@
-import dataM from '../database/DataM'
+import app from './application'
 
 /**
  * 加载配置
@@ -7,6 +7,6 @@ import dataM from '../database/DataM'
  * @param handler 
  */
 export async function loadConfig(event: any, params: any, handler: any) {
-    let fields = await dataM.knexInstance('config').where('type', '=', params.options.type)
+    let fields = await app.knex('config').where('type', '=', params.options.type)
     handler(fields)
 }

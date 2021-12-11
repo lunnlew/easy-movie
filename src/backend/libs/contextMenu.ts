@@ -1,6 +1,5 @@
 import { app, Menu, MenuItem, BrowserWindow } from "electron";
 import path from 'path'
-import dataM from '../database/DataM'
 import windowControl from "./window";
 import updateControl from "./update";
 import { __app_path } from "../preference";
@@ -69,7 +68,7 @@ export function createContextMenu(event: any, params: any) {
 export async function createSearchAreaMenu(event: any, params: any, handler: any) {
     const menu = new Menu()
     menu.append(new MenuItem({ label: '搜索范围：' }))
-    let fields = await dataM.knexInstance('config').where('type', '=', 'search_field')
+    let fields = await application.knex('config').where('type', '=', 'search_field')
     if (fields.length <= 0) {
         return handler({})
     }
@@ -77,7 +76,7 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
         let option: any = {
             label: field.name,
             click: () => {
-                dataM.knexInstance('config').where({ id: field.id }).update({
+                application.knex('config').where({ id: field.id }).update({
                     state: field.state == 0 ? 1 : 0
                 }).on('query', (query: any) => {
                     console.log(query.sql)
@@ -142,7 +141,7 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '从媒体库移除', click: () => {
-            dataM.knexInstance('movie_files').where({ id: item.fid }).delete().then((res) => {
+            application.knex('movie_files').where({ id: item.fid }).delete().then((res) => {
                 console.log(res)
                 handler({
                     action: 'remove',

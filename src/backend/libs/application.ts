@@ -1,34 +1,33 @@
 import path from "path";
 import fs from "fs";
 import tunnel from 'tunnel'
+import EventEmitter from 'events'
 import { app } from "electron";
-import globalEventEmitter, { GlobalEventType } from '../eventEmitter/GlobalEventEmitter'
+import { GlobalEventEmitterType } from "@/types/EventEmitter";
+import { AppConfigType, ApplicationType } from '@/types/Application'
+import dataM from '../database/DataM'
+import { Knex } from "knex";
 
 /**
- * 支持的用户配置
+ * 全局事件实例
  */
-type UserProfile = {
-    /**
-     * 代理设置
-     */
-    proxy: string;
-    /**
-     * 服务状态
-     */
-    serviceState: 'Started' | 'Stopped';
-};
-
-export type App = {
-    userProfile: UserProfile;
-    eventEmitter: GlobalEventType
+class GlobalEventEmitter extends EventEmitter {
+    constructor() {
+        super();
+    }
 }
 
-class Application {
-    userProfile: UserProfile;
-    eventEmitter: GlobalEventType
+/**
+ * 应用程序类
+ */
+class Application implements ApplicationType {
+    config: AppConfigType;
+    event: GlobalEventEmitterType;
+    knex: Knex<any, unknown[]>;
     isDevelopment = process.env.NODE_ENV == "development"
     constructor() {
-        this.eventEmitter = globalEventEmitter
+        this.event = new GlobalEventEmitter() as unknown as GlobalEventEmitterType
+        this.knex = dataM.knexInstance
     }
     /**
      * 加载用户配置
@@ -40,10 +39,10 @@ class Application {
         );
         console.log("load profile", userProfilePath);
         if (fs.existsSync(userProfilePath)) {
-            this.userProfile = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
+            this.config = JSON.parse(fs.readFileSync(userProfilePath, "utf-8"));
         } else {
-            this.userProfile = {} as UserProfile;
-            fs.writeFileSync(userProfilePath, JSON.stringify(this.userProfile));
+            this.config = {} as AppConfigType;
+            fs.writeFileSync(userProfilePath, JSON.stringify(this.config));
         }
     }
     /**
@@ -55,13 +54,13 @@ class Application {
             "user-profile.json"
         );
         console.log("save profile", userProfilePath);
-        fs.writeFileSync(userProfilePath, JSON.stringify(this.userProfile || {}));
+        fs.writeFileSync(userProfilePath, JSON.stringify(this.config || {}));
     }
     /**
      * 获取代理设置
      */
     getProxy() {
-        let proxy = process.env.PROXY || this.userProfile.proxy || ''
+        let proxy = process.env.PROXY || this.config.proxy || ''
         if (proxy === 'none' || proxy === 'system' || proxy.startsWith('http') || proxy.startsWith('socks')) {
             return proxy
         }

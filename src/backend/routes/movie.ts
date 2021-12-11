@@ -1,4 +1,4 @@
-'use strict'
+
 
 import { Router } from 'express'
 import movie from '../database/movie'
@@ -9,6 +9,7 @@ import { __fix_dirname } from '../preference'
 import application from '../libs/application';
 import movie_files from '../database/movie_files'
 import actors from '../database/actors'
+import { MovieFields, MovieFileFields } from '@/types/Movie'
 
 const router = Router();
 
@@ -77,19 +78,21 @@ const moviePoster = async (req: any, res: any, next: any) => {
         if (!data.poster && !data.poster_url) {
             res.sendStatus(404);
         } else if (data.poster && data.poster.indexOf('http') === 0) {
-            application.eventEmitter.emit('movie:download-poster', {
-                movie_id: data.id,
-                lib_id: data.media_lib_id || '',
+            application.event.emit('movie:download-poster', {
+                id: data.id,
+                media_lib_id: data.media_lib_id || '',
                 path: data.path || '',
-                poster: data.poster || ''
+                poster: data.poster || '',
+                resource_type: data.resource_type || ''
             })
             res.sendStatus(404);
         } else if (!data.poster && data.poster_url.indexOf('http') === 0) {
-            application.eventEmitter.emit('movie:download-poster', {
-                movie_id: data.id,
-                lib_id: data.media_lib_id || '',
+            application.event.emit('movie:download-poster', {
+                id: data.id,
+                media_lib_id: data.media_lib_id || '',
                 path: data.path || '',
-                poster: data.poster_url || ''
+                poster: data.poster_url || '',
+                resource_type: data.resource_type || ''
             })
             res.sendStatus(404);
         } else {
@@ -117,19 +120,21 @@ const movieBackdrop = async (req: any, res: any, next: any) => {
         if (!data.backdrop && !data.backdrop_url) {
             res.sendStatus(404);
         } else if (data.backdrop && data.backdrop.indexOf('http') === 0) {
-            application.eventEmitter.emit('movie:download-backdrop', {
-                movie_id: data.id,
-                lib_id: data.media_lib_id || '',
+            application.event.emit('movie:download-backdrop', {
+                id: data.id,
+                media_lib_id: data.media_lib_id || '',
                 path: data.path || '',
-                backdrop: data.backdrop || ''
+                backdrop: data.backdrop || '',
+                resource_type: data.resource_type
             })
             res.sendStatus(404);
         } else if (!data.backdrop && data.backdrop_url.indexOf('http') === 0) {
-            application.eventEmitter.emit('movie:download-backdrop', {
-                movie_id: data.id,
-                lib_id: data.media_lib_id || '',
+            application.event.emit('movie:download-backdrop', {
+                id: data.id,
+                media_lib_id: data.media_lib_id || '',
                 path: data.path || '',
-                backdrop: data.backdrop_url || ''
+                backdrop: data.backdrop_url || '',
+                resource_type: data.resource_type
             })
             res.sendStatus(404);
         } else {

@@ -1,18 +1,14 @@
-'use strict'
+
 
 import { __fix_dirname, home_dir } from '../preference';
-import application from '../libs/application';
 import { Knex, knex } from 'knex'
 import createTable from './createTable'
-import { GlobalEventType } from '../eventEmitter/GlobalEventEmitter';
 const path = require('path');
 const fs = require('fs');
 class DataM {
-  eventEmitter: GlobalEventType;
   knexInstance!: Knex<any, unknown[]>;
   inited: boolean = false;
   constructor() {
-    this.eventEmitter = application.eventEmitter
     this.initialize();
   }
   async initialize() {

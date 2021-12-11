@@ -1,4 +1,4 @@
-'use strict'
+
 import { app } from "electron";
 const preference = {
     home_dir: app.getPath('userData'),

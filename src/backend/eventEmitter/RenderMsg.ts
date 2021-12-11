@@ -1,10 +1,10 @@
+import { GlobalEventEmitterType } from '@/types/EventEmitter'
 import { buildWsMessage } from '../utils'
-import { GlobalEventType } from './GlobalEventEmitter'
 class RenderMsg {
-    eventEmitter
+    event: GlobalEventEmitterType
     ws
-    constructor(ws: any, eventEmitter: GlobalEventType) {
-        this.eventEmitter = eventEmitter
+    constructor(ws: any, event: GlobalEventEmitterType) {
+        this.event = event
         this.ws = ws
         this.initialize()
     }
@@ -15,10 +15,10 @@ class RenderMsg {
         }))
         this.ws.on('message', function () { })
         this.ws.on('close', function () { })
-        this.eventEmitter.on('render:list-view:update', (payload) => {
+        this.event.on('render:list-view:update', (payload) => {
             this.ws.send(buildWsMessage('render:list-view:update', payload))
         })
-        this.eventEmitter.on('render:list-view:scan-end', (payload) => {
+        this.event.on('render:list-view:scan-end', (payload) => {
             this.ws.send(buildWsMessage('render:list-view:scan-end', payload))
         })
     }

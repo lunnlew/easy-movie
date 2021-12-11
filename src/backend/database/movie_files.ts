@@ -1,16 +1,16 @@
-'use strict'
+
 
 import { __fix_dirname } from '../preference';
 import application from '../libs/application';
-import dataM from './DataM'
+import { GlobalEventEmitterType } from '@/types/EventEmitter';
 
 class MovieFile {
-    eventEmitter;
+    event: GlobalEventEmitterType;
     knex;
     tableName;
     constructor() {
-        this.eventEmitter = application.eventEmitter
-        this.knex = dataM.knexInstance
+        this.event = application.event
+        this.knex = application.knex
         this.tableName = 'movie_files'
     }
     async save(movieInfo: any) {

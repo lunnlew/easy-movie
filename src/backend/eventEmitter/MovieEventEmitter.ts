@@ -1,72 +1,77 @@
-import dataM from '../database/DataM'
+
 import fs from 'fs'
 import path from 'path'
-import { MovieInfo, ScraperCastRequestPayload, ScraperInitTask } from '../types/index'
-import { GlobalEventType } from './GlobalEventEmitter'
 import Downloader from '../utils/downloader'
-class movieMsg {
-    eventEmitter
-    knex
-    constructor(eventEmitter: GlobalEventType) {
-        this.eventEmitter = eventEmitter
-        this.knex = dataM.knexInstance
+import { ApplicationType } from '@/types/Application'
+import { MovieFields } from '@/types/Movie'
+import { MovieEventEmitterType } from '@/types/MovieEventEmitterType'
+
+/**
+ * 演员相关消息事件
+ */
+export default class MovieEventEmitter implements MovieEventEmitterType {
+    app: ApplicationType
+    constructor(app: ApplicationType) {
+        console.log('MovieEventEmitter')
+        this.app = app
         this.initialize()
     }
     async initialize() {
         /**
          * 保存影视信息
          */
-        this.eventEmitter.on('movie:save-info', async (payload) => {
+        this.app.event.on('movie:save-info', async (payload) => {
             var afterUpdate = (movie_id: number) => {
                 if (payload.poster) {
-                    this.eventEmitter.emit('movie:download-poster', {
-                        movie_id: movie_id,
-                        lib_id: payload.media_lib_id || '',
+                    this.app.event.emit('movie:download-poster', {
+                        id: movie_id,
+                        media_lib_id: payload.media_lib_id || '',
                         path: payload.path || '',
                         poster: payload.poster || '',
-                        resource_type: payload.resource_type || '',
+                        resource_type: payload.resource_type,
                     })
                 }
                 if (payload.backdrop) {
-                    this.eventEmitter.emit('movie:download-backdrop', {
-                        movie_id: movie_id,
-                        lib_id: payload.media_lib_id || '',
+                    this.app.event.emit('movie:download-backdrop', {
+                        id: movie_id,
+                        media_lib_id: payload.media_lib_id || '',
                         path: payload.path || '',
                         backdrop: payload.backdrop || '',
-                        resource_type: payload.resource_type || '',
+                        resource_type: payload.resource_type,
                     })
                 }
                 if (payload.casts) {
-                    this.eventEmitter.emit('movie:update-casts', {
-                        movie_id: movie_id,
-                        lib_id: payload.media_lib_id,
+                    this.app.event.emit('movie:update-casts', {
+                        id: movie_id,
+                        media_lib_id: payload.media_lib_id,
                         casts: payload.casts,
-                        resource_type: payload.resource_type || '',
+                        resource_type: payload.resource_type,
                     })
                 }
                 if (payload.crews) {
-                    this.eventEmitter.emit('movie:update-crews', {
-                        movie_id: movie_id,
-                        lib_id: payload.media_lib_id,
+                    this.app.event.emit('movie:update-crews', {
+                        id: movie_id,
+                        media_lib_id: payload.media_lib_id,
                         crews: payload.crews,
-                        resource_type: payload.resource_type || '',
+                        resource_type: payload.resource_type,
                     })
                 }
-                this.eventEmitter.emit('render:list-view:update', {
+                this.app.event.emit('render:list-view:update', {
                     lib_id: payload.media_lib_id,
                     movie: {
                         ...new_movie,
-                        id: movie_id
+                        id: movie_id,
+                        movie_id: movie_id,
                     }
                 })
             }
-            let movie_id = payload.movie_id
-            let old_movie = await this.knex('movies').where({
+            let movie_id = payload.id
+            let old_movie = await this.app.knex('movies').where({
                 id: movie_id
             }).first().catch(err => {
                 console.log('入库时未查询到信息', movie_id, payload.name, err);
             })
-            let new_movie: MovieInfo = {
+            let new_movie: MovieFields = {
                 is_scraped: true,
                 is_scraped_at: new Date(),
                 name: payload.name,
@@ -78,17 +83,18 @@ class movieMsg {
                 summary: payload.summary,
                 release_date: payload.release_date,
                 language: payload.language,
-                spoken_languages: payload.spoken_languages,
+                spoken_language: payload.spoken_language,
+                original_language: payload.original_language,
                 country: payload.country,
                 original_title: payload.original_title,
-                imdb_id: payload.imdb_id,
+                imdb_ID: payload.imdb_ID,
                 imdb_sid: payload.imdb_sid,
                 imdb_url: payload.imdb_url,
                 imdb_rating: payload.imdb_rating,
                 imdb_votes: payload.imdb_votes
             }
             if (old_movie) {
-                await this.knex('movies').where({
+                await this.app.knex('movies').where({
                     id: movie_id
                 }).update(new_movie).then((res) => {
                     afterUpdate(movie_id)
@@ -96,7 +102,7 @@ class movieMsg {
                     console.log('更新失败', movie_id, payload.name, err);
                 })
             } else {
-                await this.knex('movies').insert(new_movie).then((res) => {
+                await this.app.knex('movies').insert(new_movie).then((res) => {
                     movie_id = res[0]
                     afterUpdate(movie_id)
                 }).catch(err => {
@@ -107,9 +113,9 @@ class movieMsg {
         /**
          * 下载海报并保存海报信息
          */
-        this.eventEmitter.on('movie:download-poster', async (payload) => {
+        this.app.event.on('movie:download-poster', async (payload) => {
             console.log('movie:download-poster', payload)
-            let { movie_id, lib_id, path: file_path, poster, resource_type } = payload
+            let { id, media_lib_id, path: file_path, poster, resource_type } = payload
             let poster_path = file_path.replace(/\\/ig, '/')
             if (resource_type === 'origin-disk') {
                 poster_path = poster_path + '/' + path.basename(poster_path) + '.poster.jpg'
@@ -120,23 +126,23 @@ class movieMsg {
 
                 if (!fs.existsSync(poster_path)) {
                     new Downloader().download(poster, poster_path).then(() => {
-                        this.eventEmitter.emit('render:list-view:update', {
-                            lib_id,
+                        this.app.event.emit('render:list-view:update', {
+                            lib_id: media_lib_id,
                             movie: {
-                                poster: 'http://127.0.0.1:6877/api/movie/poster/' + movie_id + '?v=' + Date.now(),
-                                id: movie_id
-                            }
+                                poster: 'http://127.0.0.1:6877/api/movie/poster/' + id + '?v=' + Date.now(),
+                                id: id
+                            } as any
                         })
                     }).catch(err => {
                         console.log('下载海报失败', err)
                     })
                 }
 
-                this.knex('movies').update({
+                this.app.knex('movies').update({
                     poster: path.basename(poster_path),
                     poster_url: poster
                 }).where({
-                    id: movie_id
+                    id: id
                 }).catch(err => {
                     console.log('更新海报失败', err)
                 })
@@ -145,9 +151,9 @@ class movieMsg {
         /**
          * 下载海报并保存海报信息
          */
-        this.eventEmitter.on('movie:download-backdrop', async (payload) => {
+        this.app.event.on('movie:download-backdrop', async (payload) => {
             console.log('movie:download-backdrop', payload)
-            let { movie_id, lib_id, path: file_path, backdrop, resource_type } = payload
+            let { id, media_lib_id, path: file_path, backdrop, resource_type } = payload
 
             let backdrop_path = file_path.replace(/\\/ig, '/')
             if (resource_type === 'origin-disk') {
@@ -163,11 +169,11 @@ class movieMsg {
                     })
                 }
 
-                this.knex('movies').update({
+                this.app.knex('movies').update({
                     backdrop: path.basename(backdrop_path),
                     backdrop_url: backdrop
                 }).where({
-                    id: movie_id
+                    id: id
                 }).catch(err => {
                     console.log('更新幕布失败', err)
                 })
@@ -176,7 +182,7 @@ class movieMsg {
         /**
          * 更新电影演职员信息
          */
-        this.eventEmitter.on('movie:update-casts', async (payload: any) => {
+        this.app.event.on('movie:update-casts', async (payload) => {
             for (let cast of payload.casts) {
                 this.update_movie_actor(payload, {
                     ...cast,
@@ -187,7 +193,7 @@ class movieMsg {
         /**
          * 更新电影演职员信息
          */
-        this.eventEmitter.on('movie:update-crews', async (payload: any) => {
+        this.app.event.on('movie:update-crews', async (payload) => {
             for (let crew of payload.crews) {
                 this.update_movie_actor(payload, {
                     ...crew,
@@ -202,13 +208,13 @@ class movieMsg {
     async update_movie_actor(payload: any, actorInfo: any) {
         console.log('update-actors', actorInfo.id, actorInfo.name, actorInfo.character, actorInfo.department, actorInfo.job)
         // 查询是否已经存在
-        let actor = await this.knex('actors').where({
+        let actor = await this.app.knex('actors').where({
             imdb_sid: actorInfo.id
         }).first().catch(err => console.log('查询演职员错误', err))
         let actor_id = 0
         if (actor) {
             actor_id = actor.id
-            await this.knex('actors').where({
+            await this.app.knex('actors').where({
                 id: actor_id,
                 imdb_sid: actorInfo.id
             }).update({
@@ -217,7 +223,7 @@ class movieMsg {
                 avatar: actorInfo.profile_path
             }).catch(err => console.log('更新演职员错误', err))
         } else {
-            let ids = await this.knex('actors').insert({
+            let ids = await this.app.knex('actors').insert({
                 imdb_sid: actorInfo.id,
                 name: actorInfo.name,
                 gender: actorInfo.gender,
@@ -231,7 +237,7 @@ class movieMsg {
         if (actor_id && ['Actor', 'Director', 'Writer', 'Editor'].indexOf(actorInfo.job) > -1) {
             if (!(actor || {}).is_scraped) {
                 // 去刮削演职员信息
-                this.eventEmitter.emit('scraper-queue:add-task', {
+                this.app.event.emit('scraper-queue:add-task', {
                     task_event: 'scraper:start:fetch-cast',
                     task_priority: 5,
                     payload: {
@@ -239,17 +245,17 @@ class movieMsg {
                         actor_id: actor_id,
                         imdb_sid: actorInfo.id,
                         imdb_id: ''
-                    } as ScraperCastRequestPayload
-                } as ScraperInitTask);
+                    }
+                });
             }
             // 查询是否已经存在对应关系
-            let actor_movie = await this.knex('actor_movie').where({
+            let actor_movie = await this.app.knex('actor_movie').where({
                 actor_id,
                 movie_id: payload.movie_id,
                 job: actorInfo.job
             }).first().catch(err => console.log('查询影视-演职员关系错误', err))
             if (!actor_movie) {
-                await this.knex('actor_movie').insert({
+                await this.app.knex('actor_movie').insert({
                     actor_id,
                     movie_id: payload.movie_id,
                     department: actorInfo.department,
@@ -260,4 +266,3 @@ class movieMsg {
         }
     }
 }
-export default movieMsg

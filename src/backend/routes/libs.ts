@@ -1,4 +1,4 @@
-'use strict'
+
 
 import { Router } from 'express'
 import libs from '../database/libs'

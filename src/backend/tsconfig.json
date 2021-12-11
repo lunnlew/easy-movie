@@ -16,7 +16,10 @@
     "baseUrl": ".",
     "lib": ["ESNext", "DOM"],
     // outDir: Appoint .js File output location
-    "outDir": "../../dist"
+    "outDir": "../../dist",
+    "paths": {
+      "@/*": ["*"],
+    }
   },
   "include": ["./"],
   "exclude": ["node_modules"]

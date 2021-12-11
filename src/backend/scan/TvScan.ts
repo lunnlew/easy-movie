@@ -1,13 +1,11 @@
-'use strict'
+
 
 import { __fix_dirname } from '../preference';
 import application from '../libs/application';
-const path = require('path');
-const fs = require('fs');
 class TvScan {
-  eventEmitter;
+  event;
   constructor() {
-    this.eventEmitter = application.eventEmitter
+    this.event = application.event
     this.initialize();
   }
   async initialize() {

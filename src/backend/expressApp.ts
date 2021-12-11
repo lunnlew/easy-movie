@@ -1,4 +1,4 @@
-'use strict'
+
 
 import express from 'express'
 import compress from 'compression'
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api', routes);
 // @ts-ignore
-app.ws('/ws/:clientid', (ws: any) => new RenderMsg(ws, application.eventEmitter))
+app.ws('/ws/:clientid', (ws: any) => new RenderMsg(ws, application.event))
 app.listen(6877, () => {
     console.log('Backend service listing on port http://127.0.0.1:6877')
 })

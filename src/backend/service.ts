@@ -1,7 +1,7 @@
-'use strict'
+
 
 import chokidar from 'chokidar'
-import dataM from './database/DataM'
+import application from './libs/application'
 import tvScan from './scan/TvScan'
 import movieScan from './scan/MovieScan'
 import './libs/application';
@@ -12,7 +12,7 @@ import './scraper/ScraperQueue'
     ;
 (async () => {
     
-    let list = await dataM.knexInstance('media_libs').select('*')
+    let list = await application.knex('media_libs').select('*')
     let watch_dirs = list.map(item => item.path)
     const watcher = chokidar.watch(watch_dirs, {
         ignored: /^(?=.*(\.\w+)$)(?!.*(?:\.mkv|\.flv)$).*$/,

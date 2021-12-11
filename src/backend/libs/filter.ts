@@ -1,4 +1,3 @@
-import dataM from '../database/DataM'
 import proxyControl from "./proxy";
 import application from './application'
 
@@ -8,7 +7,7 @@ import application from './application'
  * @param params 
  */
 export function setFilterData(event: any, params: any) {
-    dataM.knexInstance('config').where('type', '=', params.options.type).where({ val: params.options.name }).update({
+    application.knex('config').where('type', '=', params.options.type).where({ val: params.options.name }).update({
         state: params.options.value ? 1 : 0
     }).on('query', (query: any) => {
         console.log(query.sql)
@@ -24,7 +23,7 @@ export function setFilterData(event: any, params: any) {
  */
 export function setFilterSetting(event: any, params: any) {
     for (let item of params.options) {
-        dataM.knexInstance('config').where('type', '=', 'filter_setting').where({ val: item.value }).update({
+        application.knex('config').where('type', '=', 'filter_setting').where({ val: item.value }).update({
             state: item.checked ? 1 : 0
         }).on('query', (query: any) => {
             console.log(query.sql)
@@ -42,7 +41,7 @@ export function setFilterSetting(event: any, params: any) {
  */
 export function setProxySetting(event: any, params: any) {
     application.loadUserProfile();
-    application.userProfile.proxy = params.options.proxy;
+    application.config.proxy = params.options.proxy;
     // 设置会话代理
     proxyControl.setAllSessionProxy(params.options.proxy);
     application.saveUserProfile();
@@ -56,7 +55,7 @@ export function setProxySetting(event: any, params: any) {
  */
 export function loadProxySetting(event: any, params: any, handler: any) {
     if (handler) {
-        handler(application.userProfile.proxy);
+        handler(application.config.proxy);
     }
 }
 
@@ -68,7 +67,7 @@ export function loadProxySetting(event: any, params: any, handler: any) {
  */
 export function loadServiceState(event: any, params: any, handler: any) {
     if (handler) {
-        handler(application.userProfile.serviceState);
+        handler(application.config.serviceState);
     }
 }
 
@@ -79,6 +78,6 @@ export function loadServiceState(event: any, params: any, handler: any) {
  */
 export function setServiceState(event: any, params: any) {
     application.loadUserProfile();
-    application.userProfile.serviceState = params.options.serviceState;
+    application.config.serviceState = params.options.serviceState;
     application.saveUserProfile();
 }

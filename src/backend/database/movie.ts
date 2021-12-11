@@ -1,15 +1,15 @@
-'use strict'
+
 
 import { __fix_dirname } from '../preference';
 import application from '../libs/application';
-import dataM from '../database/DataM'
+import { GlobalEventEmitterType } from '@/types/EventEmitter';
 class movie {
-    eventEmitter;
+    event: GlobalEventEmitterType;
     knex;
     tableName;
     constructor() {
-        this.eventEmitter = application.eventEmitter
-        this.knex = dataM.knexInstance
+        this.event = application.event
+        this.knex = application.knex
         this.tableName = 'movies'
     }
     async getByName(name: any) {

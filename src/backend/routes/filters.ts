@@ -1,8 +1,8 @@
-'use strict'
+
 
 import { Router } from 'express'
 import { buildResult, buildErrResult } from '../utils'
-import dataM from '../database/DataM'
+import application from '../libs/application'
 
 
 const router = Router();
@@ -13,7 +13,7 @@ const list = async (req: any, res: any, next: any) => {
     try {
         let result: any = {}
         for (let item of list) {
-            let count = await dataM.knexInstance('movie_files')
+            let count = await application.knex('movie_files')
                 .join('movies', function () {
                     this.on('movie_files.movie_id', '=', 'movies.id')
                 })

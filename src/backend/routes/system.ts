@@ -1,4 +1,4 @@
-'use strict'
+
 import Router from 'express'
 import path from 'path'
 import WinswWrapper, { WinswWrapperOptions } from 'winsw-wrapper'

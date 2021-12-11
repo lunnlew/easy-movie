@@ -1,11 +1,10 @@
-'use strict'
+
 
 import { Router } from 'express'
 import { MovieDb as MovieDbApi } from 'moviedb-promise'
 import { buildResult, buildErrResult } from '../utils'
 import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../preference';
 import application from '../libs/application';
-import { ScraperInitTask, ScraperMovieRequestPayload } from '../types';
 import movie from '../database/movie';
 import RequestAdapter from '../libs/RequestAdapter';
 
@@ -33,7 +32,7 @@ const bind = async (req: any, res: any, next: any) => {
         let data = await movie.getById(current.id).catch(err => { throw err })
         if (data.id) {
             // 去刮削影视信息
-            application.eventEmitter.emit('scraper-queue:add-task', {
+            application.event.emit('scraper-queue:add-task', {
                 task_event: 'scraper:start:fetch-movie',
                 task_priority: 1,
                 payload: {
@@ -44,8 +43,8 @@ const bind = async (req: any, res: any, next: any) => {
                     imdb_id: data.imdb_id,
                     media_lib_id: data.media_lib_id,
                     path: data.path
-                } as ScraperMovieRequestPayload
-            } as ScraperInitTask);
+                }
+            });
             res.json(buildResult(''))
         } else {
             res.json(buildErrResult('movie not found', 500))

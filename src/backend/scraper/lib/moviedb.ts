@@ -1,31 +1,27 @@
-'use strict'
+
 import { MovieDb as MovieDbApi } from 'moviedb-promise'
 import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../../preference';
-import { App } from '../../libs/application'
-import {
-    MovieInfo, PersonInfo,
-    ScraperMovieRequestPayload, ScraperCastRequestPayload,
-    ScraperInitTask, ScraperResultTask
-} from '../../types/index'
+import { ApplicationType } from '@/types/Application'
 import RequestAdapter from '../../libs/RequestAdapter'
+import { CastInfoScraperResult, MovieInfoScraperResult, ScraperCastTask, ScraperMovieTask } from '@/types/ScraperEventEmitterType';
 class MovieDb {
     apikey: string = imdb_apikey;
     apiurl: string = imdb_apiurl; // instead https://empty-thunder-5c2a.karoy.workers.dev/3/
     imgbase: string = imdb_imgbase;
     api: MovieDbApi;
-    app: App
+    app: ApplicationType
     scraper_id: string = 'moviedb';
-    constructor(app: App) {
+    constructor(app: ApplicationType) {
         this.app = app
         this.api = new MovieDbApi(this.apikey, this.apiurl);
         this.initialize();
     }
     async initialize() {
         console.log('moviedb scraper initialize');
-        this.app.eventEmitter.on('scraper:' + this.scraper_id + ':fetch-movie', (task: ScraperInitTask) => {
+        this.app.event.on('scraper:' + this.scraper_id + ':fetch-movie' as 'scraper-app:fetch-movie', (task) => {
             this.fetch_movie_info(task);
         })
-        this.app.eventEmitter.on('scraper:' + this.scraper_id + ':fetch-cast', (task: ScraperInitTask) => {
+        this.app.event.on('scraper:' + this.scraper_id + ':fetch-cast' as 'scraper-app:fetch-cast', (task) => {
             this.fetch_cast_info(task);
         })
     }
@@ -33,15 +29,15 @@ class MovieDb {
      * 抓取电影信息
      * @param task 
      */
-    async fetch_movie_info(task: ScraperInitTask) {
-        let orign_movie = task.payload as ScraperMovieRequestPayload;
+    async fetch_movie_info(task: ScraperMovieTask) {
+        let orign_movie = task.payload
         if (!orign_movie.name) {
-            this.app.eventEmitter.emit('scraper-queue:submit-task', {
+            this.app.event.emit('scraper-queue:submit-task', {
                 task_uuid: task.task_uuid,
                 task_state: 'fail',
                 task_type: 'fetch_movie',
                 task_msg: '搜索名称为空',
-            } as ScraperResultTask)
+            })
             return;
         }
         console.log('scrape fetch_movie_info', task.task_uuid, orign_movie.movie_id, orign_movie.name, orign_movie.year || '');
@@ -72,8 +68,9 @@ class MovieDb {
                 }).catch(err => {
                     throw err;
                 })
-                let movie_info: MovieInfo = {
+                let movie_info: MovieInfoScraperResult = {
                     ...orign_movie,
+                    id: orign_movie.movie_id,
                     name: imdb_movie.title,
                     year: imdb_movie.release_date?.substr(0, 4),
                     summary: imdb_movie.overview?.trim(),
@@ -82,11 +79,11 @@ class MovieDb {
                     duration: imdb_movie_info.runtime || 0,
                     genres: imdb_movie_info.genres?.map(item => item.name).join(',') || '',
                     country: imdb_movie_info.production_countries?.map(item => item.iso_3166_1).join(',') || '',
-                    spoken_languages: imdb_movie_info.spoken_languages?.map(item => item.iso_639_1).join(',') || '',
+                    spoken_language: imdb_movie_info.spoken_languages?.map(item => item.iso_639_1).join(',') || '',
                     backdrop: this.imgbase + imdb_movie.backdrop_path,
                     imdb_rating: imdb_movie.vote_average,
                     imdb_votes: imdb_movie.vote_count,
-                    imdb_id: imdb_movie_info.imdb_id || '',
+                    imdb_ID: imdb_movie_info.imdb_id || '',
                     imdb_sid: imdb_movie_info.id || '' as any,
                     imdb_url: imdb_movie_info.homepage || '',
                     original_language: imdb_movie.original_language,
@@ -101,43 +98,43 @@ class MovieDb {
                         profile_path: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
                     })),
                 }
-                this.app.eventEmitter.emit('scraper-queue:submit-task', {
+                this.app.event.emit('scraper-queue:submit-task', {
                     task_event: 'movie:save-info',
                     task_uuid: task.task_uuid,
                     task_state: 'success',
                     task_type: 'fetch_movie',
                     payload: movie_info,
-                } as ScraperResultTask)
+                })
             } else {
-                this.app.eventEmitter.emit('scraper-queue:submit-task', {
+                this.app.event.emit('scraper-queue:submit-task', {
                     task_uuid: task.task_uuid,
                     task_state: 'fail',
                     task_type: 'fetch_movie',
                     task_msg: 'not found',
-                } as ScraperResultTask)
+                })
             }
         } catch (e) {
             console.log(e)
-            this.app.eventEmitter.emit('scraper-queue:submit-task', {
+            this.app.event.emit('scraper-queue:submit-task', {
                 task_uuid: task.task_uuid,
                 task_type: 'fetch_movie',
                 task_state: 'error',
-            } as ScraperResultTask)
+            })
         }
     }
     /**
      * 抓取演职员信息
      * @param task 
      */
-    async fetch_cast_info(task: ScraperInitTask) {
-        let orign_cast = task.payload as ScraperCastRequestPayload;
+    async fetch_cast_info(task: ScraperCastTask) {
+        let orign_cast = task.payload;
         if (!orign_cast.name) {
-            this.app.eventEmitter.emit('scraper-queue:submit-task', {
+            this.app.event.emit('scraper-queue:submit-task', {
                 task_uuid: task.task_uuid,
                 task_state: 'fail',
                 task_type: 'fetch_cast',
                 task_msg: '搜索名称为空',
-            } as ScraperResultTask)
+            })
             return;
         }
         console.log('scrape fetch_cast_info', task.task_uuid, orign_cast.imdb_sid, orign_cast.name, orign_cast.imdb_id || '');
@@ -150,12 +147,13 @@ class MovieDb {
                 throw err;
             })
             if (data) {
-                let person_info: PersonInfo = {
-                    actor_id: orign_cast.actor_id,
+                let person_info: CastInfoScraperResult = {
+                    ...orign_cast,
+                    id: orign_cast.actor_id,
                     imdb_sid: data.id,
                     name: data.name || '',
                     gender: data.gender || 0,
-                    imdb_id: data.imdb_id || '',
+                    imdb_ID: data.imdb_id || '',
                     imdb_url: data.homepage || '',
                     avatar: data.profile_path ? this.imgbase + data.profile_path : data.profile_path || '',
                     birthday: data.birthday || '',
@@ -163,28 +161,28 @@ class MovieDb {
                     place_of_birth: data.place_of_birth || '',
                     also_known_as: data.also_known_as?.join(',') || '',
                 }
-                this.app.eventEmitter.emit('scraper-queue:submit-task', {
+                this.app.event.emit('scraper-queue:submit-task', {
                     task_event: 'cast:save-info',
                     task_uuid: task.task_uuid,
                     task_state: 'success',
                     task_type: 'fetch_cast',
                     payload: person_info,
-                } as ScraperResultTask)
+                })
             } else {
-                this.app.eventEmitter.emit('scraper-queue:submit-task', {
+                this.app.event.emit('scraper-queue:submit-task', {
                     task_uuid: task.task_uuid,
                     task_state: 'fail',
                     task_type: 'fetch_cast',
                     task_msg: 'not found',
-                } as ScraperResultTask)
+                })
             }
         } catch (e) {
             console.log(e)
-            this.app.eventEmitter.emit('scraper-queue:submit-task', {
+            this.app.event.emit('scraper-queue:submit-task', {
                 task_uuid: task.task_uuid,
                 task_type: 'fetch_cast',
                 task_state: 'error',
-            } as ScraperResultTask)
+            })
         }
     }
 }

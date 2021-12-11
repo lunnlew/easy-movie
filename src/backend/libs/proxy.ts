@@ -65,7 +65,7 @@ class ProxyControl {
         }
     }
     loadProxyArgs() {
-        const proxy = application.userProfile.proxy || ''
+        const proxy = application.config.proxy || ''
         if (!proxy || proxy === 'none') {
             return "--no-proxy-server"
         } else if (proxy === 'system') {

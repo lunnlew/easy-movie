@@ -1,4 +1,10 @@
 import { net } from 'electron'
+/**
+ * 组装get请求
+ * @param url 
+ * @param params 
+ * @returns 
+ */
 function buildGetRequest(url: string, params: any) {
     let url_p = new URL(url)
     let has_params = {}

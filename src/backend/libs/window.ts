@@ -1,7 +1,6 @@
 import { BrowserWindow, Protocol } from "electron"
 import path from 'path'
 import { __app_path } from "../preference";
-
 import { protocol } from 'electron'
 import { readFile } from 'fs'
 import { URL } from 'url'
@@ -283,7 +282,7 @@ class WindowControl {
 
         win.once('ready-to-show', () => {
             if (options.readyShow || options.isMain) {
-                win.show()
+                // win.show()
             }
             if (options.isMain) {
                 this.preCreateWindow()
