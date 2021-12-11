@@ -3,6 +3,9 @@ import { MovieInfo, MovieFileFields } from './Movie'
 import { GlobalOnEventType } from './EventEmitter'
 import { CastFields, CastInfo } from './Cast';
 
+/**
+ * 刮削任务
+ */
 type ScraperTask = {
     /**
      * 传递的下一个任务事件名称
@@ -35,6 +38,9 @@ type ScraperTask = {
 }
 
 
+/**
+ * 刮削器基类类型
+ */
 export interface IScraper {
     /**
      * 刮削器识别ID
@@ -111,22 +117,41 @@ export type ScraperCastRequestPayload = {
     path?: string;
 }
 
+/**
+ * 刮削电影任务请求数据
+ */
 type ScraperMovieTask = Omit<ScraperTask, 'payload'> & {
     payload: ScraperMovieRequestPayload
 }
 
+/**
+ * 刮削演员任务请求数据
+ */
 type ScraperCastTask = Omit<ScraperTask, 'payload'> & {
     payload: ScraperCastRequestPayload
 }
 
+/**
+ * 刮削结果数据
+ */
 type ScraperSubmitTaskMap = {
     'fetch_movie': MovieInfoScraperResult
     'fetch_tv': null
     'fetch_cast': CastInfoScraperResult
 }
+/**
+ * 刮削结果类型
+ */
 type ScraperSubmitTaskType = keyof ScraperSubmitTaskMap
+
+/**
+ * 刮削结果数据
+ */
 type SubmitTaskPayload<T extends ScraperSubmitTaskType> = ScraperSubmitTaskMap[T];
 
+/**
+ * 刮削结果任务
+ */
 type ScraperSubmitTask = {
     [K in ScraperSubmitTaskType]: Omit<ScraperTask, 'task_type' | 'payload'> & {
         /**

@@ -5,6 +5,9 @@ import EventEmitter from 'events'
 import application from '../libs/application'
 import { ApplicationType } from './Application'
 
+/**
+ * 单项扫描结果
+ */
 type ScanItemResult = {
     /**
      * 是否单独电影目录

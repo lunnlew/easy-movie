@@ -3,8 +3,8 @@ import { MovieDb as MovieDbApi } from 'moviedb-promise'
 import { imdb_apikey, imdb_apiurl, imdb_imgbase } from '../../preference';
 import { ApplicationType } from '@/types/Application'
 import RequestAdapter from '../../libs/RequestAdapter'
-import { CastInfoScraperResult, MovieInfoScraperResult, ScraperCastTask, ScraperMovieTask } from '@/types/ScraperEventEmitterType';
-class MovieDb {
+import { CastInfoScraperResult, IScraper, MovieInfoScraperResult, ScraperCastTask, ScraperMovieTask } from '@/types/ScraperEventEmitterType';
+class MovieDb implements IScraper {
     apikey: string = imdb_apikey;
     apiurl: string = imdb_apiurl; // instead https://empty-thunder-5c2a.karoy.workers.dev/3/
     imgbase: string = imdb_imgbase;
