@@ -5,7 +5,7 @@ import { Knex } from 'knex'
 /**
  * 应用配置
  */
-type AppConfigType = {
+export type AppConfigType = {
     /**
      * 代理设置
      */

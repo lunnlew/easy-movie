@@ -6,11 +6,13 @@ import { MovieEventMap } from './MovieEventEmitterType'
 import { ScraperEventMap } from './ScraperEventEmitterType'
 import { ViewEventMap } from './ViewEventEmitterType'
 import { ScanEventMap } from './ScanEventEmitterType'
+import { GenNFOEventMap } from './GenNFOEventType'
+import { CommonEvent } from './Common'
 
 /**
  * 类型合并定义
  */
-type AllEventMap = CastEventMap & MovieEventMap & ScraperEventMap & ViewEventMap & ScanEventMap
+type AllEventMap = CastEventMap & MovieEventMap & ScraperEventMap & ViewEventMap & ScanEventMap & GenNFOEventMap & CommonEvent
 
 /**
  * on事件类型
