@@ -177,7 +177,7 @@ class MovieScan {
         year: movie_info.year,
         language: movie_info.language,
         movie_id: movie_info.movie_id,
-        imdb_ID: movie_info.imdb_id
+        imdb_id: movie_info.imdb_id
       }
     })
   }

@@ -87,7 +87,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 original_language: payload.original_language,
                 country: payload.country,
                 original_title: payload.original_title,
-                imdb_ID: payload.imdb_ID,
+                imdb_id: payload.imdb_id,
                 imdb_sid: payload.imdb_sid,
                 imdb_url: payload.imdb_url,
                 imdb_rating: payload.imdb_rating,

@@ -68,7 +68,7 @@ export interface ScraperMovieRequestPayload {
      */
     movie_id: number,
     /**
-     * 电影在imdb中的imdb_ID
+     * 电影在imdb中的imdb_id
      */
     imdb_id: string,
     /**

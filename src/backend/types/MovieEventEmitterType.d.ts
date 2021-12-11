@@ -11,7 +11,7 @@ import { MovieFields, MovieFileFields, MovieInfo } from './Movie'
  */
 export type MovieOnEventPayload = Pick<
     MovieInfo,
-    'name' | 'summary' | 'poster' | 'year' | 'backdrop' | 'casts' | 'crews' | 'duration' | 'genres' | 'release_date' | 'language' | 'spoken_language' | 'country' | 'original_title' | 'original_language' | 'imdb_ID' | 'imdb_sid' | 'imdb_url' | 'imdb_rating' | 'imdb_votes'
+    'name' | 'summary' | 'poster' | 'year' | 'backdrop' | 'casts' | 'crews' | 'duration' | 'genres' | 'release_date' | 'language' | 'spoken_language' | 'country' | 'original_title' | 'original_language' | 'imdb_id' | 'imdb_sid' | 'imdb_url' | 'imdb_rating' | 'imdb_votes'
 > & Pick<MovieFields, 'id'> & Pick<MovieFileFields, 'path' | 'media_lib_id' | 'resource_type'>
 
 /**

@@ -67,7 +67,7 @@ export type MovieInfo = {
     /**
      * 电影的IMDB_ID
      */
-    imdb_ID: string
+    imdb_id: string
     /**
      * 电影的IMDN_URL
      */

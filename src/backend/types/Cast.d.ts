@@ -38,7 +38,7 @@ export type CastInfo = {
     /**
      * 演员的IMDB_ID
      */
-    imdb_ID: string
+    imdb_id: string
     /**
      * 演员的IMDN_URL
      */
