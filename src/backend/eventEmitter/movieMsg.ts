@@ -1,11 +1,9 @@
-import axios from 'axios'
 import dataM from '../database/DataM'
-import application from '../libs/application'
 import fs from 'fs'
 import path from 'path'
 import { MovieInfo, ScraperCastRequestPayload, ScraperInitTask } from '../types/index'
 import { GlobalEventType } from './GlobalEventEmitter'
-import RequestAdapter from '../libs/RequestAdapter'
+import Downloader from '../utils/downloader'
 class movieMsg {
     eventEmitter
     knex
@@ -121,15 +119,7 @@ class movieMsg {
             if (poster) {
 
                 if (!fs.existsSync(poster_path)) {
-                    axios.get(poster, {
-                        responseType: 'stream',
-                        adapter: RequestAdapter as any,
-                        // proxy: false,
-                        // httpsAgent: application.buildHttpsTunnelAgent()
-                    }).then((response) => {
-                        const rs = response.data
-                        const ws = fs.createWriteStream(poster_path)
-                        rs.pipe(ws)
+                    new Downloader().download(poster, poster_path).then(() => {
                         this.eventEmitter.emit('render:list-view:update', {
                             lib_id,
                             movie: {
@@ -139,7 +129,7 @@ class movieMsg {
                         })
                     }).catch(err => {
                         console.log('下载海报失败', err)
-                    });
+                    })
                 }
 
                 this.knex('movies').update({
@@ -168,18 +158,9 @@ class movieMsg {
 
             if (backdrop) {
                 if (!fs.existsSync(backdrop_path)) {
-                    axios.get(backdrop, {
-                        responseType: 'stream',
-                        adapter: RequestAdapter as any,
-                        // proxy: false,
-                        // httpsAgent: application.buildHttpsTunnelAgent()
-                    }).then((response) => {
-                        const rs = response.data
-                        const ws = fs.createWriteStream(backdrop_path)
-                        rs.pipe(ws)
-                    }).catch(err => {
-                        console.log('下载背景图失败', err)
-                    });
+                    new Downloader().download(backdrop, backdrop_path).catch(err => {
+                        console.log('下载幕布失败', err)
+                    })
                 }
 
                 this.knex('movies').update({
@@ -188,7 +169,7 @@ class movieMsg {
                 }).where({
                     id: movie_id
                 }).catch(err => {
-                    console.log('更新背景图失败', err)
+                    console.log('更新幕布失败', err)
                 })
             }
         })
