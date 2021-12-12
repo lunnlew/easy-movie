@@ -1,7 +1,7 @@
-import application from "@/libs/application"
+import application from "../libs/application"
+import MediaNFO from "../libs/mediaNFO"
 import path from 'path'
 import fs from 'fs'
-import MediaNFO from "@/libs/mediaNFO"
 import { MovieFields } from "@/types/Movie"
 
 /**

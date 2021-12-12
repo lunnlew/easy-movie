@@ -1,12 +1,12 @@
 
 import fs from 'fs'
 import path from 'path'
-import Downloader from '../utils/downloader'
 import { ApplicationType } from '@/types/Application'
 import { MovieFields } from '@/types/Movie'
 import { MovieEventEmitterType } from '@/types/MovieEventEmitterType'
 import { CastFields } from '@/types/Cast'
-import gennfo from '@/utils/gennfo'
+import Downloader from '../utils/downloader'
+import gennfo from '../utils/gennfo'
 
 /**
  * 演员相关消息事件
