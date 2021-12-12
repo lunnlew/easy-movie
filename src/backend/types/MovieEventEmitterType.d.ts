@@ -33,6 +33,19 @@ export type MovieCastsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource
 export type MovieCrewsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource_type'> & Pick<MovieFields, 'id'> & Pick<MovieInfo, 'crews'>
 
 /**
+ * NFO生成任务数据
+ */
+export type MovieGenNFOPayload = {
+    /**
+     * 电影ID
+     */
+    movie_id: number,
+    /**
+     * 电影文件位置
+     */
+    file_path: string,
+}
+/**
  *电影相关事件数据MAP
  */
 interface MovieEventMap {
@@ -41,6 +54,7 @@ interface MovieEventMap {
     "movie:download-backdrop": MovieDownloadBackdropPayload,
     "movie:update-casts": MovieCastsPayload,
     "movie:update-crews": MovieCrewsPayload,
+    "movie:generate-nfo": MovieGenNFOPayload
 }
 
 /**

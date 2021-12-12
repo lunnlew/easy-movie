@@ -6,6 +6,7 @@ import { ApplicationType } from '@/types/Application'
 import { MovieFields } from '@/types/Movie'
 import { MovieEventEmitterType } from '@/types/MovieEventEmitterType'
 import { CastFields } from '@/types/Cast'
+import gennfo from '@/utils/gennfo'
 
 /**
  * 演员相关消息事件
@@ -202,6 +203,10 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 } as any)
             }
         })
+        /**
+         * 生成NFO信息
+         */
+        this.app.event.on('movie:generate-nfo', (payload) => new gennfo().generate(payload))
     }
     /**
      * 更新电影演职员信息

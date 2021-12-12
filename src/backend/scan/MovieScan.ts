@@ -141,6 +141,12 @@ class MovieScan {
       movie_info.movie_id = ids[0]
     }
 
+    // 去生成影视nfo信息
+    this.event.emit('movie:generate-nfo', {
+      movie_id: movie_info.movie_id,
+      file_path: scanInfo.filePath.replace(/\\/g, '/'),
+    });
+
     console.log(`${movie_info.name}, ${movie_info.year || ''}, ${scanInfo.filePath} 路径入库`);
     // 保存新的文件路径
     await movieFile.save({
