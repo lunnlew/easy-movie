@@ -71,12 +71,13 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             let old_movie = await this.app.knex('movies').where({
                 id: movie_id
             }).first().catch(err => {
-                console.log('入库时未查询到信息', movie_id, payload.name, err);
+                console.log('入库时未查询到信息', movie_id, payload.name_cn, err);
             })
             let new_movie: MovieFields = {
                 is_scraped: true,
                 is_scraped_at: new Date(),
-                name: payload.name,
+                name_cn: payload.name_cn,
+                name_en: payload.name_en,
                 year: payload.year,
                 duration: payload.duration,
                 poster: payload.poster,
@@ -101,14 +102,14 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 }).update(new_movie).then((res) => {
                     afterUpdate(movie_id)
                 }).catch(err => {
-                    console.log('更新失败', movie_id, payload.name, err);
+                    console.log('更新失败', movie_id, payload.name_cn, err);
                 })
             } else {
                 await this.app.knex('movies').insert(new_movie).then((res) => {
                     movie_id = res[0]
                     afterUpdate(movie_id)
                 }).catch(err => {
-                    console.log('新增失败', payload.name, err);
+                    console.log('新增失败', payload.name_cn, err);
                 })
             }
         })
@@ -212,7 +213,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
      * 更新电影演职员信息
      */
     async update_movie_actor(payload: any, actorInfo: CastFields) {
-        console.log('update-actors', actorInfo.id, actorInfo.name, actorInfo.character, actorInfo.department, actorInfo.job)
+        console.log('update-actors', actorInfo.id, actorInfo.name_cn || actorInfo.name_en, actorInfo.character, actorInfo.department, actorInfo.job)
         // 查询是否已经存在
         let actor = await this.app.knex('actors').where({
             imdb_sid: actorInfo.id
@@ -224,14 +225,16 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 id: actor_id,
                 imdb_sid: actorInfo.id
             }).update({
-                name: actorInfo.name,
+                name_cn: actorInfo.name_cn,
+                name_en: actorInfo.name_en,
                 gender: actorInfo.gender,
                 avatar: actorInfo.avatar
             }).catch(err => console.log('更新演职员错误', err))
         } else {
             let ids = await this.app.knex('actors').insert({
                 imdb_sid: actorInfo.id,
-                name: actorInfo.name,
+                name_cn: actorInfo.name_cn,
+                name_en: actorInfo.name_en,
                 gender: actorInfo.gender,
                 avatar: actorInfo.avatar
             }).catch(err => console.log('新增演职员错误', err))
@@ -247,7 +250,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     task_event: 'scraper:start:fetch-cast',
                     task_priority: 5,
                     payload: {
-                        name: actorInfo.name,
+                        name: actorInfo.name_en || actorInfo.name_cn,
                         actor_id: actor_id,
                         imdb_sid: actorInfo.id
                     }
@@ -256,13 +259,13 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             // 查询是否已经存在对应关系
             let actor_movie = await this.app.knex('actor_movie').where({
                 actor_id,
-                movie_id: payload.movie_id,
+                movie_id: payload.id,
                 job: actorInfo.job
             }).first().catch(err => console.log('查询影视-演职员关系错误', err))
             if (!actor_movie) {
                 await this.app.knex('actor_movie').insert({
                     actor_id,
-                    movie_id: payload.movie_id,
+                    movie_id: payload.id,
                     department: actorInfo.department,
                     character: actorInfo.character,
                     job: actorInfo.job

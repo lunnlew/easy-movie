@@ -120,7 +120,7 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     const menu = new Menu()
     let point = params.options?.point || { x: 0, y: 0 }
     let item = params.options?.item || {}
-    menu.append(new MenuItem({ label: item.name.length > 10 ? item.name.substr(0, 10) + '...' : item.name }))
+    menu.append(new MenuItem({ label: item.name_cn.length > 10 ? item.name_cn.substr(0, 10) + '...' : item.name_cn }))
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '编辑', click: () => {

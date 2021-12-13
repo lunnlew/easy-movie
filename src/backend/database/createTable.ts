@@ -39,7 +39,8 @@ export default async function (knex: Knex) {
     // 创建电影信息表
     await knex.schema.createTable('movies', (table) => {
         table.increments('id').comment('自增ID');
-        table.string('name').comment('电影名称');
+        table.string('name_cn').comment('电影中文名称');
+        table.string('name_en').comment('电影英文名称');
         table.string('original_title').comment('别名');
         table.text('path').comment('电影路径');
         table.string('poster').comment('电影封面');
@@ -57,7 +58,8 @@ export default async function (knex: Knex) {
         table.string('year').comment('电影年份');
         table.string('country').comment('电影国家');
         table.string('language').comment('电影语言');
-        table.string('spoken_languages').comment('电影配音');
+        table.string('original_language').comment('原始语言');
+        table.string('spoken_language').comment('电影配音');
         table.string('director').comment('电影导演');
         table.string('writer').comment('电影编剧');
         table.string('starring').comment('电影主演');
@@ -122,7 +124,8 @@ export default async function (knex: Knex) {
         table.string('year').comment('电视剧年份');
         table.string('country').comment('电视剧国家');
         table.string('language').comment('电视剧语言');
-        table.string('spoken_languages').comment('电视剧配音');
+        table.string('original_language').comment('原始语言');
+        table.string('spoken_language').comment('电视剧配音');
         table.string('director').comment('电视剧导演');
         table.string('writer').comment('电视剧编剧');
         table.string('starring').comment('电视剧主演');
@@ -160,7 +163,8 @@ export default async function (knex: Knex) {
     // 创建演职员表
     await knex.schema.createTable('actors', (table) => {
         table.increments('id').comment('自增ID');
-        table.string('name').comment('演职员名称');
+        table.string('name_cn').comment('演职员名称');
+        table.string('name_en').comment('演职员名称');
         table.string('avatar').comment('演职员头像');
         table.string('gender').comment('演职员性别');
         table.string('imdb_id').comment('演职员imdb_id');
@@ -170,7 +174,7 @@ export default async function (knex: Knex) {
         table.string('birthday').comment('演职员生日');
         table.string('deathday').comment('演职员忌日');
         table.string('place_of_birth').comment('演职员出生地');
-        table.string('also_known_as').comment('演职员曾用名');
+        table.string('also_known_as').comment('演员亦称');
         table.string('desc').comment('演职员简介');
         table.boolean('is_scraped').comment('是否已爬取');
         table.boolean('is_scraped_at').comment('爬取时间');

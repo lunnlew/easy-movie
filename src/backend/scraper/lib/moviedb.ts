@@ -71,7 +71,8 @@ class MovieDb implements IScraper {
                 let movie_info: MovieInfoScraperResult = {
                     ...orign_movie,
                     id: orign_movie.movie_id,
-                    name: imdb_movie.title,
+                    name_cn: imdb_movie.title,
+                    name_en: imdb_movie.original_title,
                     year: imdb_movie.release_date?.substr(0, 4),
                     summary: imdb_movie.overview?.trim(),
                     release_date: imdb_movie.release_date,
@@ -89,12 +90,14 @@ class MovieDb implements IScraper {
                     original_language: imdb_movie.original_language,
                     original_title: imdb_movie.original_title,
                     language: imdb_movie.original_language,
-                    casts: (imdb_movie_info as any).casts.cast.map((item: { profile_path: string; }) => ({
+                    casts: (imdb_movie_info as any).casts.cast.map((item: { profile_path: string; name: string }) => ({
                         ...item,
+                        name_en: item.name,
                         avatar: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
                     })),
-                    crews: (imdb_movie_info as any).casts.crew.map((item: { profile_path: string; }) => ({
+                    crews: (imdb_movie_info as any).casts.crew.map((item: { profile_path: string; name: string }) => ({
                         ...item,
+                        name_en: item.name,
                         avatar: item.profile_path ? this.imgbase + item.profile_path : item.profile_path,
                     })),
                 }
@@ -137,7 +140,7 @@ class MovieDb implements IScraper {
             })
             return;
         }
-        console.log('scrape fetch_cast_info', task.task_uuid, orign_cast.imdb_sid, orign_cast.name, orign_cast.imdb_id || '');
+        console.log('scrape fetch_cast_info', task.task_uuid, orign_cast.actor_id, orign_cast.name, orign_cast.imdb_sid, orign_cast.imdb_id || '');
         try {
             let data = await this.api.personInfo({ id: orign_cast.imdb_sid as any, language: "zh" }, {
                 adapter: RequestAdapter as any,
@@ -151,7 +154,8 @@ class MovieDb implements IScraper {
                     ...orign_cast,
                     id: orign_cast.actor_id,
                     imdb_sid: data.id,
-                    name: data.name || '',
+                    name_cn: data.also_known_as.find(v => /.*[\u4e00-\u9fa5]+.*$/.test(v)) || data.name || '',
+                    name_en: data.name || '',
                     gender: data.gender || 0,
                     imdb_id: data.imdb_id || '',
                     imdb_url: data.homepage || '',

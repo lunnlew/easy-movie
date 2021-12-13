@@ -169,7 +169,7 @@ const movieUpdate = async function (req: any, res: any, next: any) {
         }
 
         await movie.update(old_data.id, {
-            name: new_data.name,
+            name_cn: new_data.name_cn,
             year: new_data.year,
         }).catch(err => { throw err });
 

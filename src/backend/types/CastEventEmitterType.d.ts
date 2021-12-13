@@ -11,7 +11,7 @@ import { CastFields, CastInfo } from './Cast'
  */
 export type CastOnEventPayload = Pick<
     CastInfo,
-    'name' | 'avatar' | 'gender' | 'birthday' | 'deathday' | 'place_of_birth' | 'also_known_as' | 'imdb_sid' | 'imdb_id' | 'imdb_url'
+    'name_cn' | 'name_en' | 'avatar' | 'gender' | 'birthday' | 'deathday' | 'place_of_birth' | 'also_known_as' | 'imdb_sid' | 'imdb_id' | 'imdb_url'
 > & Pick<CastFields, 'id'>
 
 /**

@@ -6,7 +6,7 @@
           <el-card :body-style="cardBodyStyle">
             <el-image
               :src="movieInfo.poster"
-              :alt="movieInfo.name"
+              :alt="movieInfo.name_cn"
               @error="
                 () => {
                   movieInfo.poster = empty_poster;
@@ -18,7 +18,7 @@
                   <img
                     class="el-image__inner"
                     :src="empty_poster"
-                    :alt="movieInfo.name"
+                    :alt="movieInfo.name_cn"
                   />
                 </div>
               </template>
@@ -28,7 +28,7 @@
       </div>
       <div class="movie-right">
         <div class="movie-name">
-          {{ movieInfo.name }}
+          {{ movieInfo.name_cn }}
           <span class="movie-year" v-if="movieInfo.year"
             >({{ movieInfo.year }})</span
           >
@@ -38,15 +38,15 @@
           <div class="movie-info">
             <div class="info-item" v-if="directs.length">
               导演:
-              <span>{{ directs.map((d) => d.name).join(",") }}</span>
+              <span>{{ directs.map((d) => d.name_cn).join(",") }}</span>
             </div>
             <div class="info-item" v-if="edits.length">
               编剧:
-              <span>{{ edits.map((d) => d.name).join(",") }}</span>
+              <span>{{ edits.map((d) => d.name_cn).join(",") }}</span>
             </div>
             <div class="info-item" v-if="actors.length">
               主演:
-              <span>{{ main_actors.map((d) => d.name).join(",") }}</span>
+              <span>{{ main_actors.map((d) => d.name_cn).join(",") }}</span>
             </div>
             <div class="info-item" v-if="movieInfo.genres">
               类型:

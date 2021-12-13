@@ -21,7 +21,7 @@
           <el-image
             lazy
             :src="item.poster"
-            :alt="item.name"
+            :alt="item.name_cn"
             @error="
               () => {
                 item.poster = empty_poster;
@@ -33,7 +33,7 @@
                 <img
                   class="el-image__inner"
                   :src="empty_poster"
-                  :alt="item.name"
+                  :alt="item.name_cn"
                 />
               </div>
             </template>
@@ -75,7 +75,7 @@
           </div>
           <div class="movie-info">
             <span class="movie-name">
-              {{ item.name }}
+              {{ item.name_cn }}
               <span class="movie-year" v-if="item.year">({{ item.year }})</span>
             </span>
           </div>

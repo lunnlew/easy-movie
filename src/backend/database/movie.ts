@@ -15,7 +15,7 @@ class movie {
     async getByName(name: any) {
         return this.knex.select(['movies.*', 'movie_files.path', 'movie_files.id as fid', 'movie_files.media_lib_id']).from('movie_files').join('movies', function () {
             this.on('movie_files.movie_id', '=', 'movies.id')
-        }).where('movies.name', name).first()
+        }).where('movies.name_cn', name).first()
     }
     async getById(id: any) {
         return this.knex.select(['movies.*', 'movie_files.path', 'movie_files.id as fid', 'movie_files.media_lib_id']).from('movie_files').join('movies', function () {
@@ -51,7 +51,7 @@ class movie {
         }
 
         let knex = this.knex
-            .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name', 'movies.language', 'movies.year', 'movies.poster'])
+            .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name_cn', 'movies.language', 'movies.year', 'movies.poster'])
             .limit(size)
             .offset(offset)
             .from('movie_files')

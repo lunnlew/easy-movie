@@ -98,7 +98,7 @@ export type ScraperCastRequestPayload = {
     /**
      * 演职员姓名
      */
-    name: string,
+     name: string,
     /**
      * 演职员库中的ID
      */

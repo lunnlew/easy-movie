@@ -27,12 +27,13 @@ export default class CastEventEmitter implements CastEventEmitterType {
             let old_actor = await this.app.knex('actors').where({
                 id: actor_id
             }).first().catch(err => {
-                console.log('入库时未查询到信息', actor_id, payload.name, err);
+                console.log('入库时未查询到信息', actor_id, payload.name_cn, err);
             })
             let new_actor: CastFields = {
                 is_scraped: true,
                 is_scraped_at: new Date(),
-                name: payload.name,
+                name_cn: payload.name_cn,
+                name_en: payload.name_en,
                 imdb_sid: payload.imdb_sid,
                 imdb_id: payload.imdb_id,
                 imdb_url: payload.imdb_url,
@@ -49,14 +50,14 @@ export default class CastEventEmitter implements CastEventEmitterType {
                 }).update(new_actor).then((res) => {
                     afterUpdate(actor_id)
                 }).catch(err => {
-                    console.log('更新失败', actor_id, payload.name, err);
+                    console.log('更新失败', actor_id, payload.name_cn, err);
                 })
             } else {
                 await this.app.knex('actors').insert(new_actor).then((res) => {
                     actor_id = res[0]
                     afterUpdate(actor_id)
                 }).catch(err => {
-                    console.log('新增失败', payload.name, err);
+                    console.log('新增失败', payload.name_cn, err);
                 })
             }
         }

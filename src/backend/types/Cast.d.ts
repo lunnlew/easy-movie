@@ -4,9 +4,13 @@
  */
 export type CastInfo = {
     /**
-     * 演员名称
+     * 演员中文名称
      */
-    name: string
+    name_cn: string
+    /**
+     * 演员英文名称
+     */
+    name_en: string
     /**
      * 演员头像
      */
@@ -28,7 +32,7 @@ export type CastInfo = {
      */
     place_of_birth: string
     /**
-     * 演员出名职业
+     * 演员亦称
      */
     also_known_as: string
     /**

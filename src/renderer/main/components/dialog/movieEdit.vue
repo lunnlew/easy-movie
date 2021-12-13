@@ -2,12 +2,12 @@
     <el-dialog
         v-model="dialogVisible"
         :width="'70%'"
-        :title="'影视编辑(' + item.name + ';' + item.year + ')'"
+        :title="'影视编辑(' + item.name_cn + ';' + item.year + ')'"
         @close="$emit('hide')"
     >
         <el-form ref="form" :model="libform" label-width="100px">
             <el-form-item label="影视名称">
-                <el-input size="medium" v-model="libform.name"></el-input>
+                <el-input size="medium" v-model="libform.name_cn"></el-input>
             </el-form-item>
             <el-form-item label="发布年份">
                 <el-date-picker size="medium" v-model="libform.year" type="year" placeholder="请选择发布年份"></el-date-picker>
@@ -51,7 +51,7 @@ export default defineComponent({
         const item = reactive(props.data)
         console.log(item)
         const libform = reactive({
-            name: item.name,
+            name_cn: item.name_cn,
             year: item.year,
             media_lib_id: item.media_lib_id,
             type: 'movie',

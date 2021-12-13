@@ -54,7 +54,7 @@ export async function showMovieItemMenu(event: any, item: any) {
                 fid: item.fid,
                 imdb_id: item.imdb_id,
                 media_lib_id: item.media_lib_id,
-                name: item.name,
+                name_cn: item.name_cn,
                 year: item.year,
                 language: item.language
             }

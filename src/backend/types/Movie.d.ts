@@ -1,9 +1,13 @@
 import { CastInfo } from "./Cast"
 export type MovieInfo = {
     /**
-     * 电影名称
+     * 电影中文名称
      */
-    name: string;
+    name_cn: string;
+    /**
+     * 电影英文名称
+     */
+    name_en: string;
     /**
      * 电影原始名称
      */

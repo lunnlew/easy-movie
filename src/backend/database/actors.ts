@@ -15,11 +15,11 @@ class actors {
     }
     async list(name: string, offset: any, size: any) {
         return this.knex('actors')
-            .distinct(['actors.id', 'actors.name'])
+            .distinct(['actors.id', 'actors.name_cn'])
             .leftJoin('actor_movie', function () {
                 this.on('actor_movie.actor_id', '=', 'actors.id')
             })
-            .where('actors.name', 'like', `%${name}%`)
+            .where('actors.name_cn', 'like', `%${name}%`)
             .andWhere('actor_movie.job', '=', 'Actor')
             .limit(size).offset(offset).select()
     }

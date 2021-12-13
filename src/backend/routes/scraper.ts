@@ -12,9 +12,9 @@ const router = Router();
 const imdb_api = new MovieDbApi(imdb_apikey, imdb_apiurl);
 
 const search = async (req: any, res: any, next: any) => {
-    let name = req.body.name
+    let name_cn = req.body.name_cn
     try {
-        let data = await imdb_api.searchMovie({ query: name, language: 'zh' }, {
+        let data = await imdb_api.searchMovie({ query: name_cn, language: 'zh' }, {
             adapter: RequestAdapter as any,
             // proxy: false,
             // httpsAgent: application.buildHttpsTunnelAgent()

@@ -2,12 +2,12 @@
     <el-dialog
         v-model="dialogVisible"
         :width="'70%'"
-        :title="'刮削搜索(' + item.name + ';' + item.year + ')'"
+        :title="'刮削搜索(' + item.name_cn + ';' + item.year + ')'"
         @close="$emit('hide')"
     >
         <el-form ref="form" :model="libform" label-width="0px">
             <el-form-item>
-                <el-input v-model="libform.name" placeholder="请输入关键字">
+                <el-input v-model="libform.name_cn" placeholder="请输入关键字">
                     <template #append>
                         <el-button @click.stop="search" :loading="searchloading">
                             <el-icon>
@@ -81,7 +81,7 @@ export default defineComponent({
         async function search() {
             searchloading.value = true
             store.dispatch("scraper_search", {
-                name: libform.name
+                name_cn: libform.name_cn
             }).then(data => {
                 searchloading.value = false
                 tableData.value.splice(0, tableData.value.length, ...data.map((item: any) => {
@@ -108,7 +108,7 @@ export default defineComponent({
 
         const item = reactive(props.data)
         const libform = reactive({
-            name: item.name,
+            name_cn: item.name_cn,
             type: 'movie'
         })
 

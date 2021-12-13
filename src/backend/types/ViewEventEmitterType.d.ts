@@ -17,7 +17,7 @@ export type MovieListViewUpdatePayload = {
     /**
      * 电影信息
      */
-    movie: Pick<MovieInfo, "name" | "year" | "language" | "imdb_id"> & Pick<MovieFields, 'id'> & {
+    movie: Pick<MovieInfo, "name_cn" | "name_en" | "year" | "language" | "imdb_id"> & Pick<MovieFields, 'id'> & {
         /**
          * 电影ID
          */

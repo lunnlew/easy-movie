@@ -122,8 +122,8 @@ class MovieScan {
       // }
     } else {
       // 查询电影基础信息是否已存在
-      let select_movieinfos = await movie.knex('movies').column(['id', 'name', 'year']).where({
-        name: movie_info.name
+      let select_movieinfos = await movie.knex('movies').column(['id', 'name_cn', 'year']).where({
+        name_cn: movie_info.name
       }).limit(50).offset(0).select().catch(e => { throw e })
       if (select_movieinfos && select_movieinfos.find(item => item.year === movie_info.year)) {
         has_main_info = true
@@ -134,7 +134,7 @@ class MovieScan {
     if (!has_main_info) {
       // 不存在基础信息
       let ids = await movie.save({
-        name: movie_info.name,
+        name_cn: movie_info.name,
         year: movie_info.year || '',
         path: scanInfo.filePath,
       }).catch(e => { throw e })
@@ -179,7 +179,8 @@ class MovieScan {
       lib_id: scanInfo.media_lib_idd,
       movie: {
         id: movie_info.movie_id,
-        name: movie_info.name,
+        name_cn: movie_info.name_cn,
+        name_en: movie_info.name_en,
         year: movie_info.year,
         language: movie_info.language,
         movie_id: movie_info.movie_id,
