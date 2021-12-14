@@ -116,7 +116,7 @@ export default defineComponent({
       media_lib_id: "",
       id: 0,
       poster: "",
-      name: "",
+      name_cn: "",
       year: "",
       summary: "",
       release_date: "",

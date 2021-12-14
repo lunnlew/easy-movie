@@ -6,7 +6,7 @@ export type MovieInfo = {
     /**
      * 电影名称
      */
-    name: string;
+    name_cn: string;
     /**
      * 电影年份
      */
