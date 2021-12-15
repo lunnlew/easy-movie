@@ -86,7 +86,12 @@ class movie {
             })
             .andWhere(function () {
                 for (let field of search.fields) {
-                    this.orWhere(`movies.${field}`, 'like', `%${search.value}%`)
+                    if (field === 'name') {
+                        this.orWhere(`movies.name_cn`, 'like', `%${search.value}%`)
+                        this.orWhere(`movies.name_en`, 'like', `%${search.value}%`)
+                    } else {
+                        this.orWhere(`movies.${field}`, 'like', `%${search.value}%`)
+                    }
                 }
             })
         return knex.orderBy(`movie_files.${sort.sort_field}`, sort.sort_order).on('query', function (query: any) {
