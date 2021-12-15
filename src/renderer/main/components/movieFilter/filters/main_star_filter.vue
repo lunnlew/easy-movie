@@ -6,7 +6,7 @@
         >:{{
           main_star_filters
             .filter((v, i) => i < 10)
-            .map((v) => v.name)
+            .map((v) => v.name_cn)
             .join(",")
         }}</span
       >
@@ -40,7 +40,7 @@
                 class="infinite-list-item"
                 @click="selectMainStar(item)"
               >
-                {{ item.name }}
+                {{ item.name_cn }}
               </li>
             </ul>
           </div>
@@ -56,7 +56,7 @@
                 class="infinite-list-item"
                 @click="unSelectMainStar(item)"
               >
-                {{ item.name }}
+                {{ item.name_cn }}
               </li>
             </ul>
           </div>
