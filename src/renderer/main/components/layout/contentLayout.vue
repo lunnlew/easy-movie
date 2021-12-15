@@ -12,6 +12,11 @@
           </el-icon>
           <div class="btn-group-right">
             <div class="icon-btn-group">
+              <el-tooltip v-if="$route.name == 'libitem'" content="排序" placement="bottom">
+                <el-icon :class="{ 'active': isShowSort }" @click.stop="toggleSortTool">
+                  <Sort />
+                </el-icon>
+              </el-tooltip>
               <el-tooltip v-if="$route.name == 'libitem'" content="筛选工具" placement="bottom">
                 <el-icon :class="{ 'active': isShowFilter }" @click.stop="toggleFilterTool">
                   <Filter />
@@ -38,7 +43,8 @@
 import {
   Back,
   Close,
-  Filter
+  Filter,
+  Sort
 } from '@element-plus/icons'
 import {
   defineComponent, ref,
@@ -54,6 +60,7 @@ export default defineComponent({
     movieSearch,
     Back,
     Filter,
+    Sort,
     Close,
     UpdateTip
   },
@@ -61,9 +68,15 @@ export default defineComponent({
     function closeWindow() {
       windowControl('close')
     }
+    const isShowSort = ref(false)
+    function toggleSortTool(){
+      isShowSort.value = !isShowSort.value
+    }
     return {
       isShowFilter,
       toggleFilterTool,
+      isShowSort,
+      toggleSortTool,
       showUpdateCancel,
       showUpdateTip,
       needUpdateAlert,
@@ -108,6 +121,7 @@ export default defineComponent({
   }
   .el-icon {
     padding: 5px;
+    margin: 0 2px;
     -webkit-app-region: no-drag;
     cursor: pointer;
     border-radius: 3px;
