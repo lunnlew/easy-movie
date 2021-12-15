@@ -94,7 +94,7 @@ export default defineComponent({
         size: pagination.size,
         name: search_main_star.value,
       }).then((res) => {
-        list.value.push(...res.data.data);
+        list.value.push(...res.data?.data || []);
         pagination.page++;
       });
     };
