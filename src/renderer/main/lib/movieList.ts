@@ -55,7 +55,7 @@ export async function onFilterChange() {
             sort_order: "asc"
         }
     })
-    const movie_new_ids = new Set(res.data.data.map((v: { id: any; }) => v.id))
+    const movie_new_ids = new Set(res.data?.data?.map((v: { id: any; }) => v.id))
     const movie_old_ids = movies.value.map((v: { id: any; }) => v.id)
     const intersect = new Set([...movie_old_ids].filter(x => movie_new_ids.has(x)));
     for (const item of res.data.data) {
