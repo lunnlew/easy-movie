@@ -88,6 +88,7 @@ export async function changeFilter(data: any) {
  */
 export async function refresh_type_filter() {
     if (filter_enables.value.includes("type_filter")) {
+        // 设置改变显示时，重新加载数据
         const result = await loadConfig({
             type: "type_filter",
         })
@@ -105,6 +106,12 @@ export async function refresh_type_filter() {
                 count: count_result.data?.data[item.val] || 0
             }
         })
+    } else {
+        // 设置改变隐藏时，取消所有选择
+        type_filters.value = type_filters.value.map(v => ({
+            ...v,
+            checked: false
+        }))
     }
 }
 

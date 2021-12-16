@@ -9,6 +9,14 @@ import { MovieInfo } from '@/types/all'
  * 电影列表
  */
 export const movies = ref<MovieInfo[]>([])
+/**
+ * 上一次的排序方式
+ */
+export const lastSortType = ref('')
+/**
+ * 上一次的排序字段
+ */
+export const lastSortField = ref('')
 
 /**
  * 分页信息
@@ -39,6 +47,8 @@ export async function updatePagination(page = 1, size = 50) {
  */
 export async function onFilterChange() {
     updatePagination(1, 50)
+    const sort_order = movie_sort_type.value.filter(v => v.enable).map(v => v.field).join(',') || 'asc'
+    const sort_field = movie_sort_field.value.filter(v => v.enable).map(v => v.field).join(',') || 'id'
     const res = await getMovies({
         pagination,
         search: {
@@ -51,20 +61,26 @@ export async function onFilterChange() {
             genres: ['like', isShowFilter.value ? type_filters.value.filter(v => v.checked).map(v => v.name) : []]
         },
         sort: {
-            sort_field: movie_sort_field.value.filter(v => v.enable).map(v => v.field).join(',') || 'id',
-            sort_order: movie_sort_type.value.filter(v => v.enable).map(v => v.field).join(',') || 'asc',
+            sort_field,
+            sort_order,
         }
     })
     const data = res.data?.data || []
-    const movie_new_ids = new Set(data.map((v: { id: any; }) => v.id))
-    const movie_old_ids = movies.value.map((v: { id: any; }) => v.id)
-    const intersect = new Set([...movie_old_ids].filter(x => movie_new_ids.has(x)));
-    for (const item of data) {
-        if (!intersect.has(item.id)) {
-            movies.value.push(item)
+    if (lastSortType.value == sort_order && lastSortField.value == sort_field) {
+        const movie_new_ids = new Set(data.map((v: { id: any; }) => v.id))
+        const movie_old_ids = movies.value.map((v: { id: any; }) => v.id)
+        const intersect = new Set([...movie_old_ids].filter(x => movie_new_ids.has(x)));
+        for (const item of data) {
+            if (!intersect.has(item.id)) {
+                movies.value.push(item)
+            }
         }
+        movies.value = movies.value.filter((v: { id: any; }) => movie_new_ids.has(v.id))
+    } else {
+        movies.value = data
     }
-    movies.value = movies.value.filter((v: { id: any; }) => movie_new_ids.has(v.id))
+    lastSortType.value = sort_order
+    lastSortField.value = sort_field
 }
 
 /**

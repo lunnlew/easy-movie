@@ -94,7 +94,12 @@ class movie {
                     }
                 }
             })
-        return knex.orderBy(`movie_files.${sort.sort_field}`, sort.sort_order).on('query', function (query: any) {
+        if (['id'].indexOf(sort.sort_field) > -1) {
+            knex = knex.orderBy(`movie_files.${sort.sort_field}`, sort.sort_order)
+        } else if (['imdb_votes', 'release_date'].indexOf(sort.sort_field) > -1) {
+            knex = knex.orderBy(`movies.${sort.sort_field}`, sort.sort_order)
+        }
+        return knex.on('query', function (query: any) {
             console.log(query.sql)
         })
     }

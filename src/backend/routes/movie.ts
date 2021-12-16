@@ -9,7 +9,6 @@ import { __fix_dirname } from '../preference'
 import application from '../libs/application';
 import movie_files from '../database/movie_files'
 import actors from '../database/actors'
-import { MovieFields, MovieFileFields } from '@/types/Movie'
 
 const router = Router();
 
