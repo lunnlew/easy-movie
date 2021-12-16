@@ -9,6 +9,7 @@ const invokeMainActions = [
     'setFilterData',
     'showSearchAreaMenu',
     'showMovieItemMenu',
+    'showSortAreaMenu',
     'showLibMenu',
     'windowControl',
     'invokeViewAction',

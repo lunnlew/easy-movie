@@ -315,4 +315,37 @@ export default async function (knex: Knex) {
         type: 'type_filter',
         state: 0
     }])
+
+    // 排序方式
+    await knex('config').insert([{
+        name: '升序(默认)',
+        val: 'asc',
+        type: 'sort_type',
+        state: 1
+    }, {
+        name: '降序',
+        val: 'desc',
+        type: 'sort_type',
+        state: 0
+    }])
+
+    // 排序字段
+    await knex('config').insert([{
+        name: '添加时间(默认)',
+        val: 'create_time',
+        type: 'sort_field',
+        state: 1
+    }])
+    await knex('config').insert([{
+        name: '发布时间',
+        val: 'release_date',
+        type: 'sort_field',
+        state: 0
+    }])
+    await knex('config').insert([{
+        name: 'IMDB评分',
+        val: 'imdb_votes',
+        type: 'sort_field',
+        state: 0
+    }])
 }

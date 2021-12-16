@@ -13,7 +13,7 @@
           <div class="btn-group-right">
             <div class="icon-btn-group">
               <el-tooltip v-if="$route.name == 'libitem'" content="排序" placement="bottom">
-                <el-icon :class="{ 'active': isShowSort }" @click.stop="toggleSortTool">
+                <el-icon @click.stop="showSortMenuClick($event)">
                   <Sort />
                 </el-icon>
               </el-tooltip>
@@ -53,6 +53,7 @@ import movieSearch from '@/components/movieSearch/index.vue'
 import { isShowFilter, toggleFilterTool } from '@/lib/movieFilter'
 import UpdateTip from '@/components/dialog/updateTip.vue';
 import { windowControl } from '@/lib/native'
+import { showSortAreaMenu } from "@/lib/contextMenu";
 import { showUpdateTip, showUpdateCancel, needUpdateAlert } from '@/lib/update'
 export default defineComponent({
   name: "ContentLayout",
@@ -68,15 +69,14 @@ export default defineComponent({
     function closeWindow() {
       windowControl('close')
     }
-    const isShowSort = ref(false)
-    function toggleSortTool(){
-      isShowSort.value = !isShowSort.value
+    async function showSortMenuClick(event: MouseEvent) {
+      const result = await showSortAreaMenu(event);
+      console.log(result);
     }
     return {
       isShowFilter,
       toggleFilterTool,
-      isShowSort,
-      toggleSortTool,
+      showSortMenuClick,
       showUpdateCancel,
       showUpdateTip,
       needUpdateAlert,
@@ -121,7 +121,7 @@ export default defineComponent({
   }
   .el-icon {
     padding: 5px;
-    margin: 0 2px;
+    margin: 0 1px;
     -webkit-app-region: no-drag;
     cursor: pointer;
     border-radius: 3px;

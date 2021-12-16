@@ -67,11 +67,8 @@ export function createContextMenu(event: any, params: any) {
  */
 export async function createSearchAreaMenu(event: any, params: any, handler: any) {
     const menu = new Menu()
-    menu.append(new MenuItem({ label: '搜索范围：' }))
+    menu.append(new MenuItem({ label: '搜索范围：', enabled: false }))
     let fields = await application.knex('config').where('type', '=', 'search_field')
-    if (fields.length <= 0) {
-        return handler({})
-    }
     for (let field of fields) {
         let option: any = {
             label: field.name,
@@ -120,7 +117,7 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     const menu = new Menu()
     let point = params.options?.point || { x: 0, y: 0 }
     let item = params.options?.item || {}
-    menu.append(new MenuItem({ label: item.name_cn.length > 10 ? item.name_cn.substr(0, 10) + '...' : item.name_cn }))
+    menu.append(new MenuItem({ label: item.name_cn.length > 10 ? item.name_cn.substr(0, 10) + '...' : item.name_cn, enabled: false }))
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '编辑', click: () => {
@@ -248,4 +245,101 @@ export async function createLibMenu(event: any, params: any, handler: any) {
             state: 'success',
         })
     }
+}
+
+/**
+ * 排序区上下文菜单
+ * @param event 
+ * @param params 
+ * @param handler 
+ */
+export async function showSortAreaMenu(event: any, params: any, handler: any) {
+    let point = params.options?.point || { x: 0, y: 0 }
+    const menu = new Menu()
+    menu.append(new MenuItem({ label: '排序字段', enabled: false }))
+
+    let fields = await application.knex('config').where('type', '=', 'sort_field')
+    for (let field of fields) {
+        let option: any = {
+            label: field.name,
+            click: () => {
+                if (field.state == 0) {
+                    application.knex('config').where({ type: 'sort_field' }).update({
+                        state: field.state
+                    }).on('query', (query: any) => {
+                        console.log(query.sql)
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                }
+                application.knex('config').where({ id: field.id }).update({
+                    state: field.state == 0 ? 1 : 0
+                }).on('query', (query: any) => {
+                    console.log(query.sql)
+                }).catch(err => {
+                    console.log(err)
+                })
+                handler({
+                    action: 'sort_field',
+                    field: field.val,
+                    label: field.name,
+                    enable: field.state == 0 ? true : false
+                })
+            }
+        }
+        if (field.state == 1) {
+            option.icon = path.join(__app_path, 'dist/check.png')
+        }
+        menu.append(new MenuItem(option))
+    }
+
+    menu.append(new MenuItem({ type: 'separator' }))
+    menu.append(new MenuItem({ label: '排序方式', enabled: false }))
+
+    fields = await application.knex('config').where('type', '=', 'sort_type')
+    for (let field of fields) {
+        let option: any = {
+            label: field.name,
+            // type: 'radio',
+            click: () => {
+                application.knex('config').where({ type: 'sort_type' }).update({
+                    state: field.state
+                }).on('query', (query: any) => {
+                    console.log(query.sql)
+                }).catch(err => {
+                    console.log(err)
+                })
+                application.knex('config').where({ id: field.id }).update({
+                    state: field.state == 0 ? 1 : 0
+                }).on('query', (query: any) => {
+                    console.log(query.sql)
+                }).catch(err => {
+                    console.log(err)
+                })
+                handler({
+                    action: 'sort_type',
+                    field: field.val,
+                    label: field.name,
+                    enable: field.state == 0 ? true : false
+                })
+            }
+        }
+        if (field.state == 1) {
+            option.icon = path.join(__app_path, 'dist/check.png')
+        }
+        menu.append(new MenuItem(option))
+    }
+
+    const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
+    menu.popup({
+        window: win,
+        x: point.x || 0,
+        y: point.y || 0
+    })
+    menu.on('menu-will-close', () => {
+        handler({
+            action: 'close',
+            state: 'success',
+        })
+    })
 }

@@ -84,3 +84,22 @@ export async function showLibMenu(event: any, item: any) {
         await_complete: true
     })
 }
+
+
+/**
+ * 显示排序菜单
+ * @param lib 
+ * @returns 
+ */
+ export async function showSortAreaMenu(event: any) {
+    return await store.dispatch('invokeMainAction', {
+        action: 'showSortAreaMenu',
+        options: {
+            point: {
+                x: event.clientX,
+                y: event.clientY
+            }
+        },
+        await_complete: true
+    })
+}
