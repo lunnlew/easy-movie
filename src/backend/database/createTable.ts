@@ -332,7 +332,7 @@ export default async function (knex: Knex) {
     // 排序字段
     await knex('config').insert([{
         name: '添加时间(默认)',
-        val: 'create_time',
+        val: 'id',
         type: 'sort_field',
         state: 1
     }])

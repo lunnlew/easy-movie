@@ -10,11 +10,24 @@ import store from "@/store";
 export const filter_enables = ref([]);
 
 /**
+ * 设置启用的过滤器
+ * @param filters 
+ */
+export function setEnableFilters(filters) {
+    filter_enables.value = filters.filter(i => i.checked).map(i => i.value);
+    return filter_enables.value
+}
+
+/**
  * 从设置页的结果中更新过滤器
  * @param val 
  */
 export function changeEnableFromSetting(filters) {
-    filter_enables.value = filters.filter(i => i.checked).map(i => i.value);
+    // 变更启用的过滤选项
+    setEnableFilters(filters);
+    // 尝试刷新类型过滤器
+    refresh_type_filter()
+    // 触发落库更改
     store.dispatch('invokeMainAction', {
         action: 'setFilterSetting',
         options: filters,
@@ -73,8 +86,8 @@ export async function changeFilter(data: any) {
 /**
  * 更新筛选条件展示值
  */
-export async function refresh_filter() {
-    if (filter_enables.value.indexOf('type_filter') != -1) {
+export async function refresh_type_filter() {
+    if (filter_enables.value.includes("type_filter")) {
         const result = await loadConfig({
             type: "type_filter",
         })
@@ -93,18 +106,6 @@ export async function refresh_filter() {
             }
         })
     }
-
-    await loadConfig({
-        type: "filter_setting",
-    }).then(result => {
-        changeEnableFromSetting(result.map((item: any) => {
-            return {
-                label: item.name,
-                value: item.val,
-                checked: item.state == 1 ? true : false
-            }
-        }))
-    })
 }
 
 /**
@@ -113,3 +114,41 @@ export async function refresh_filter() {
 export async function clear_filter() {
     // type_filters.value = []
 }
+
+/**
+ * 启用的排序字段
+ */
+export const movie_sort_field = ref([])
+
+/**
+ * 启用的排序类型
+ */
+export const movie_sort_type = ref([])
+
+/**
+ * 更改排序
+ * @param params 
+ */
+export async function changeSort(params: any) {
+    if (params.action == 'sort_field') {
+        const index = movie_sort_field.value.find(v => v.field === params.field)
+        if (index > -1 && !params.enable) {
+            movie_sort_field.value.splice(index, 1)
+        } else {
+            movie_sort_field.value = [params]
+        }
+    } else if (params.action == 'sort_type') {
+        const index = movie_sort_type.value.find(v => v.field === params.field)
+        if (index > -1 && !params.enable) {
+            movie_sort_type.value.splice(index, 1)
+        } else {
+            movie_sort_type.value = [params]
+        }
+    }
+}
+
+// 是否加载筛选工具配置完成
+export const loadedTypeFilterConfig = ref(false)
+
+// 是否加载排序工具配置完成
+export const loadedSortConfig = ref(false)

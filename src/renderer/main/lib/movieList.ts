@@ -2,7 +2,7 @@
 import { getMovies } from "@/api/movie";
 import { reactive, ref } from "vue";
 import { search_keyword, search_fields } from "./movieSearch";
-import { isShowFilter, type_filters, movie_lib, main_star_filters } from "./movieFilter";
+import { isShowFilter, type_filters, movie_lib, main_star_filters, movie_sort_field, movie_sort_type } from "./movieFilter";
 import { MovieInfo } from '@/types/all'
 
 /**
@@ -51,8 +51,8 @@ export async function onFilterChange() {
             genres: ['like', isShowFilter.value ? type_filters.value.filter(v => v.checked).map(v => v.name) : []]
         },
         sort: {
-            sort_field: "id",
-            sort_order: "asc"
+            sort_field: movie_sort_field.value.filter(v => v.enable).map(v => v.field).join(',') || 'id',
+            sort_order: movie_sort_type.value.filter(v => v.enable).map(v => v.field).join(',') || 'asc',
         }
     })
     const data = res.data?.data || []

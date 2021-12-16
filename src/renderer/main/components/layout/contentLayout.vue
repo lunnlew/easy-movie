@@ -12,19 +12,33 @@
           </el-icon>
           <div class="btn-group-right">
             <div class="icon-btn-group">
-              <el-tooltip v-if="$route.name == 'libitem'" content="排序" placement="bottom">
+              <el-tooltip
+                v-if="$route.name == 'libitem'"
+                content="排序"
+                placement="bottom"
+              >
                 <el-icon @click.stop="showSortMenuClick($event)">
                   <Sort />
                 </el-icon>
               </el-tooltip>
-              <el-tooltip v-if="$route.name == 'libitem'" content="筛选工具" placement="bottom">
-                <el-icon :class="{ 'active': isShowFilter }" @click.stop="toggleFilterTool">
+              <el-tooltip
+                v-if="$route.name == 'libitem'"
+                content="筛选工具"
+                placement="bottom"
+              >
+                <el-icon
+                  :class="{ active: isShowFilter }"
+                  @click.stop="toggleFilterTool"
+                >
                   <Filter />
                 </el-icon>
               </el-tooltip>
               <movie-search v-if="$route.name == 'libitem'"></movie-search>
             </div>
-            <div class="icon-btn-group" :style="{ width: '40px', textAlign: 'right' }">
+            <div
+              class="icon-btn-group"
+              :style="{ width: '40px', textAlign: 'right' }"
+            >
               <el-icon @click.stop="closeWindow">
                 <close />
               </el-icon>
@@ -36,25 +50,28 @@
     <div class="layout-content__main">
       <slot></slot>
     </div>
-    <update-tip v-if="showUpdateTip && !showUpdateCancel && needUpdateAlert"></update-tip>
+    <update-tip
+      v-if="showUpdateTip && !showUpdateCancel && needUpdateAlert"
+    ></update-tip>
   </div>
 </template>
 <script lang="ts">
+import { Back, Close, Filter, Sort } from "@element-plus/icons";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
+import movieSearch from "@/components/movieSearch/index.vue";
 import {
-  Back,
-  Close,
-  Filter,
-  Sort
-} from '@element-plus/icons'
-import {
-  defineComponent, ref,
-} from "vue";
-import movieSearch from '@/components/movieSearch/index.vue'
-import { isShowFilter, toggleFilterTool } from '@/lib/movieFilter'
-import UpdateTip from '@/components/dialog/updateTip.vue';
-import { windowControl } from '@/lib/native'
+  isShowFilter,
+  toggleFilterTool,
+  changeSort,
+  movie_sort_type,
+  movie_sort_field,
+  loadedSortConfig,
+} from "@/lib/movieFilter";
+import UpdateTip from "@/components/dialog/updateTip.vue";
+import { windowControl } from "@/lib/native";
 import { showSortAreaMenu } from "@/lib/contextMenu";
-import { showUpdateTip, showUpdateCancel, needUpdateAlert } from '@/lib/update'
+import { showUpdateTip, showUpdateCancel, needUpdateAlert } from "@/lib/update";
+import { loadConfig } from "@/lib/config";
 export default defineComponent({
   name: "ContentLayout",
   components: {
@@ -63,16 +80,41 @@ export default defineComponent({
     Filter,
     Sort,
     Close,
-    UpdateTip
+    UpdateTip,
   },
   setup: () => {
     function closeWindow() {
-      windowControl('close')
+      windowControl("close");
     }
     async function showSortMenuClick(event: MouseEvent) {
       const result = await showSortAreaMenu(event);
-      console.log(result);
+      changeSort(result);
     }
+
+    onMounted(async () => {
+      let result = await loadConfig({
+        type: "sort_type",
+      });
+      movie_sort_type.value = result
+        .filter((item: { state: number }) => item.state == 1)
+        .map((v) => ({
+          field: v.val,
+          enable: v.state == 1 ? true : false,
+        }));
+      result = await loadConfig({
+        type: "sort_field",
+      });
+      movie_sort_field.value = result
+        .filter((item: { state: number }) => item.state == 1)
+        .map((v) => ({
+          field: v.val,
+          enable: v.state == 1 ? true : false,
+        }));
+
+      nextTick(() => {
+        loadedSortConfig.value = true;
+      });
+    });
     return {
       isShowFilter,
       toggleFilterTool,
@@ -80,9 +122,9 @@ export default defineComponent({
       showUpdateCancel,
       showUpdateTip,
       needUpdateAlert,
-      closeWindow
-    }
-  }
+      closeWindow,
+    };
+  },
 });
 </script>
 <style lang="less" scoped>

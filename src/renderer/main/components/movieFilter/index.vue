@@ -22,7 +22,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, watch } from "vue";
+import { defineComponent, nextTick, onMounted, watch } from "vue";
 import {
   CircleCheck,
   Check,
@@ -34,12 +34,15 @@ import {
   isShowFilter,
   changeFilter,
   clear_filter,
-  refresh_filter,
+  refresh_type_filter,
   movie_lib,
   filter_enables,
+  setEnableFilters,
+  loadedTypeFilterConfig,
 } from "@/lib/movieFilter";
 import typeFilter from "./filters/type_filter.vue";
 import mainStarFilter from "./filters/main_star_filter.vue";
+import { loadConfig } from "@/lib/config";
 export default defineComponent({
   name: "MovieFilter",
   components: {
@@ -47,36 +50,47 @@ export default defineComponent({
     mainStarFilter,
   },
   setup: (props) => {
+    // 切换显示时变更
     watch(
       () => isShowFilter.value,
       (val, pre) => {
         if (val !== pre && val) {
-          refresh_filter();
+          refresh_type_filter();
         } else {
           clear_filter();
         }
       }
     );
+    // 切换影视库时变更
     watch(
       () => movie_lib.value,
       (val) => {
         if (isShowFilter.value) {
-          refresh_filter();
-        }
-      }
-    );
-    watch(
-      () => filter_enables.value,
-      (val, pre) => {
-        if (val.join("") !== pre.join("")) {
-          if (isShowFilter.value) {
-            refresh_filter();
-          }
+          refresh_type_filter();
         }
       }
     );
     onMounted(async () => {
-      refresh_filter();
+      // 加载筛选器配置
+      let result = await loadConfig({
+        type: "filter_setting",
+      });
+      setEnableFilters(
+        result.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.val,
+            checked: item.state == 1 ? true : false,
+          };
+        })
+      );
+      // 加载类型筛选器
+      refresh_type_filter();
+      // 加载主演筛选器
+
+      nextTick(() => {
+        loadedTypeFilterConfig.value = true;
+      });
     });
     return {
       changeFilter,

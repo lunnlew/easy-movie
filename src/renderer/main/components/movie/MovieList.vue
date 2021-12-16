@@ -117,6 +117,10 @@ import {
   type_filters,
   movie_lib,
   main_star_filters,
+  movie_sort_field,
+  movie_sort_type,
+  loadedTypeFilterConfig,
+  loadedSortConfig,
 } from "@/lib/movieFilter";
 import { search_keyword, search_fields } from "@/lib/movieSearch";
 import {
@@ -165,20 +169,37 @@ export default defineComponent({
         },
       });
     }
+
+    // 当配置项加载完后才允许首次的列表内容加载
+    const loadedConfig = computed(
+      () => loadedSortConfig.value && loadedTypeFilterConfig.value
+    );
+    watch(
+      () => loadedConfig.value,
+      (val) => {
+        val && onFilterChange();
+      }
+    );
+
+    // 搜索内容变更
     watch(
       () => search_keyword.value,
       () => {
-        onFilterChange();
+        loadedConfig.value && onFilterChange();
       }
     );
+
+    // 搜索字段变更
     watch(
       () => search_fields.value,
       () => {
         if (search_keyword.value) {
-          onFilterChange();
+          loadedConfig.value && onFilterChange();
         }
       }
     );
+
+    // 电影类型字段变更
     const type_filter_checked = computed(() =>
       type_filters.value
         .filter((item) => item.checked)
@@ -189,21 +210,57 @@ export default defineComponent({
     watch(
       () => type_filter_checked.value,
       () => {
-        onFilterChange();
+        loadedConfig.value && onFilterChange();
       }
     );
+
+    // 电影排序字段变更
+    const sort_field_checked = computed(() =>
+      movie_sort_field.value
+        .filter((item) => item.enable)
+        .map((v) => v.field)
+        .sort((v) => v)
+        .join(",")
+    );
+    watch(
+      () => sort_field_checked.value,
+      () => {
+        loadedConfig.value && onFilterChange();
+      }
+    );
+
+    // 电影排序类型变更
+    const sort_type_checked = computed(() =>
+      movie_sort_type.value
+        .filter((item) => item.enable)
+        .map((v) => v.field)
+        .sort((v) => v)
+        .join(",")
+    );
+    watch(
+      () => sort_type_checked.value,
+      () => {
+        loadedConfig.value && onFilterChange();
+      }
+    );
+
+    // 筛选工具显隐变更
     watch(
       () => isShowFilter.value,
       (val) => {
-        onFilterChange();
+        loadedConfig.value && onFilterChange();
       }
     );
+
+    // 媒体库变更
     watch(
       () => movie_lib.value,
       () => {
-        onFilterChange();
+        loadedConfig.value && onFilterChange();
       }
     );
+
+    // 滚动到底
     watch(
       () => store.state.Libs.is_scroll_bottom_end,
       (val) => {
@@ -213,6 +270,7 @@ export default defineComponent({
       }
     );
 
+    // 演员变更
     const main_star_filter_checked = computed(() =>
       main_star_filters.value
         .map((v) => v.id)
@@ -222,13 +280,11 @@ export default defineComponent({
     watch(
       () => main_star_filter_checked.value,
       () => {
-        onFilterChange();
+        loadedConfig.value && onFilterChange();
       }
     );
 
-    onMounted(() => {
-      onFilterChange();
-    });
+    // 列表元素右键菜单操作
     async function showMovieItemMenuClick(event: MouseEvent, item: any) {
       const result = await showMovieItemMenu(event, item);
       if (result.action == "remove" && result.state == "success") {
