@@ -1,22 +1,16 @@
 <template>
-  <div class="section">
-    <span class="section-title">系统服务</span>
-    <el-radio-group
-      v-if="load_service_state"
-      v-model="enable_service"
-      class="item-list inline"
-    >
-      <el-radio :label="'none'">禁用</el-radio>
-      <el-radio :label="'enable'">启用</el-radio>
-    </el-radio-group>
-  </div>
-  <div class="section">
-    <span class="section-title">主题</span>
-    <ul class="theme">
-      <li v-for="(item, index) of themes" :key="index">
-        <div :style="item.style"></div>
-      </li>
-    </ul>
+  <div class="section-wrapper">
+    <div class="section">
+      <span class="section-title">系统服务</span>
+      <el-radio-group
+        v-if="load_service_state"
+        v-model="enable_service"
+        class="item-list inline"
+      >
+        <el-radio :label="'none'">禁用</el-radio>
+        <el-radio :label="'enable'">启用</el-radio>
+      </el-radio-group>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -27,24 +21,6 @@ export default defineComponent({
   name: "Setting",
   components: {},
   setup: (props, { emit }) => {
-    const themes = [
-      {
-        style: {
-          background: "#409EFF",
-        },
-      },
-      {
-        style: {
-          background: "#ffffff",
-        },
-      },
-      {
-        style: {
-          background: "#4e5155",
-        },
-      },
-    ];
-
     watch(
       () => enable_service.value,
       (newVal) => {
@@ -76,7 +52,7 @@ export default defineComponent({
       loadStatus();
     });
 
-    return { themes, enable_service, load_service_state };
+    return { enable_service, load_service_state };
   },
 });
 </script>

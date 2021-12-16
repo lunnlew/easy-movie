@@ -62,13 +62,11 @@
       </el-aside>
       <el-main>
         <div class="main">
-          <base-section v-if="current_section === 'base'"></base-section>
+          <base-section v-show="current_section === 'base'"></base-section>
           <filter-section
-            v-else-if="current_section === 'filter'"
+            v-show="current_section === 'filter'"
           ></filter-section>
-          <proxy-section
-            v-else-if="current_section === 'proxy'"
-          ></proxy-section>
+          <proxy-section v-show="current_section === 'proxy'"></proxy-section>
         </div>
       </el-main>
     </el-container>

@@ -1,21 +1,23 @@
 <template>
-  <div class="section">
-    <span class="section-title">代理</span>
-    <el-radio-group v-model="type" class="item-list">
-      <el-radio :label="'none'">不使用代理</el-radio>
-      <el-radio :label="'system'">使用系统代理</el-radio>
-      <el-radio :label="'custom'"
-        >自定义代理：
-        <el-input
-          :disabled="type !== 'custom'"
-          style="width: 200px"
-          v-model="proxy"
-          size="mini"
-          placeholder=""
-      /></el-radio>
-    </el-radio-group>
+  <div class="section-wrapper">
+    <div class="section">
+      <span class="section-title">代理</span>
+      <el-radio-group v-model="type" class="item-list">
+        <el-radio :label="'none'">不使用代理</el-radio>
+        <el-radio :label="'system'">使用系统代理</el-radio>
+        <el-radio :label="'custom'"
+          >自定义代理：
+          <el-input
+            :disabled="type !== 'custom'"
+            style="width: 200px"
+            v-model="proxy"
+            size="mini"
+            placeholder=""
+        /></el-radio>
+      </el-radio-group>
+    </div>
+    <div class="section" v-if="changed">* 代理设置需要应用重启后生效</div>
   </div>
-  <div class="section" v-if="changed">* 代理设置需要应用重启后生效</div>
 </template>
 <script lang="ts">
 import store from "@/store";

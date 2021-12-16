@@ -1,15 +1,21 @@
 <template>
-  <div class="section">
-    <span class="section-title">在筛选器显示</span>
-    <el-checkbox-group v-model="checkList" class="filterList" @change="change">
-      <el-checkbox
-        :label="item.value"
-        v-for="item of filterList"
-        :key="item.value"
+  <div class="section-wrapper">
+    <div class="section">
+      <span class="section-title">在筛选器显示</span>
+      <el-checkbox-group
+        v-model="checkList"
+        class="filterList"
+        @change="change"
       >
-        {{ item.label }}
-      </el-checkbox>
-    </el-checkbox-group>
+        <el-checkbox
+          :label="item.value"
+          v-for="item of filterList"
+          :key="item.value"
+        >
+          {{ item.label }}
+        </el-checkbox>
+      </el-checkbox-group>
+    </div>
   </div>
 </template>
 <script lang="ts">
