@@ -254,7 +254,7 @@ export default defineComponent({
 
         .movie-info {
           width: 280px;
-          padding-left: 20px;
+          padding: 0 20px;
           box-sizing: border-box;
           .info-item {
             font-size: 14px;
