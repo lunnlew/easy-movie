@@ -29,8 +29,8 @@ export const dicts: {
     'Tragedy': '悲剧'
 }
 
-export default function fmt_genres(genres: string) {
+export default function fmt_genres(genres: string, size: number = 4): string {
     return genres.split(",").map(item => {
         return dicts[item.trim()] || item
-    }).join(" , ")
+    }).filter((v, i) => i < size).join(",")
 }

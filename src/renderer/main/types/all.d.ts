@@ -4,9 +4,13 @@ export type MovieInfo = {
      */
     id: number;
     /**
-     * 电影名称
+     * 电影中文名称
      */
     name_cn: string;
+    /**
+     * 电影英文名称
+     */
+    name_en: string;
     /**
      * 电影年份
      */
@@ -33,10 +37,16 @@ export type MovieInfo = {
      * 制片国家/地区
      */
     country: string;
+    
     /**
      * 发行语言
      */
     language: string;
+
+    /**
+     * 电影评分
+     */
+    imdb_rating: number;
 
     /**
      * 上映时间

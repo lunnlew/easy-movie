@@ -15,11 +15,7 @@
             >
               <template #placeholder>
                 <div class="image-slot">
-                  <img
-                    class="el-image__inner"
-                    :src="empty_poster"
-                    :alt="movieInfo.name_cn"
-                  />
+                  <img class="el-image__inner" :src="empty_poster" :alt="movieInfo.name_cn" />
                 </div>
               </template>
             </el-image>
@@ -29,9 +25,10 @@
       <div class="movie-right">
         <div class="movie-name">
           {{ movieInfo.name_cn }}
-          <span class="movie-year" v-if="movieInfo.year"
-            >({{ movieInfo.year }})</span
-          >
+          <span
+            class="movie-year"
+            v-if="movieInfo.year"
+          >({{ movieInfo.year }})</span>
           <span class="lib-name">位置：{{ libName }}</span>
         </div>
         <div class="movie-body">
@@ -82,12 +79,7 @@
             <p class="group-content desc-content">{{ movieInfo.summary }}</p>
             <div class="group-title">演职员</div>
             <p class="group-content actor-list">
-              <el-image
-                v-for="item of actors"
-                :key="item.id"
-                :src="item.avatar"
-                :alt="item.name"
-              ></el-image>
+              <el-image v-for="item of actors" :key="item.id" :src="item.avatar" :alt="item.name"></el-image>
             </p>
           </div>
         </div>
@@ -117,9 +109,11 @@ export default defineComponent({
       id: 0,
       poster: "",
       name_cn: "",
+      name_en: "",
       year: "",
       summary: "",
       release_date: "",
+      imdb_rating: 0,
       duration: 0,
       original_title: "",
       genres: "",

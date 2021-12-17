@@ -14,31 +14,27 @@
             <div class="icon-btn-group">
               <el-tooltip
                 v-if="$route.name == 'libitem'"
-                content="排序"
+                :content="listView == 'card' ? '切换列表' : '切换卡片'"
                 placement="bottom"
               >
+                <el-icon @click.stop="toggleListView($event)">
+                  <grid v-if="listView == 'card'" />
+                  <list v-else />
+                </el-icon>
+              </el-tooltip>
+              <el-tooltip v-if="$route.name == 'libitem'" content="排序" placement="bottom">
                 <el-icon @click.stop="showSortMenuClick($event)">
                   <Sort />
                 </el-icon>
               </el-tooltip>
-              <el-tooltip
-                v-if="$route.name == 'libitem'"
-                content="筛选工具"
-                placement="bottom"
-              >
-                <el-icon
-                  :class="{ active: isShowFilter }"
-                  @click.stop="toggleFilterTool"
-                >
+              <el-tooltip v-if="$route.name == 'libitem'" content="筛选工具" placement="bottom">
+                <el-icon :class="{ active: isShowFilter }" @click.stop="toggleFilterTool">
                   <Filter />
                 </el-icon>
               </el-tooltip>
               <movie-search v-if="$route.name == 'libitem'"></movie-search>
             </div>
-            <div
-              class="icon-btn-group"
-              :style="{ width: '40px', textAlign: 'right' }"
-            >
+            <div class="icon-btn-group" :style="{ width: '40px', textAlign: 'right' }">
               <el-icon @click.stop="closeWindow">
                 <close />
               </el-icon>
@@ -50,14 +46,12 @@
     <div class="layout-content__main">
       <slot></slot>
     </div>
-    <update-tip
-      v-if="showUpdateTip && !showUpdateCancel && needUpdateAlert"
-    ></update-tip>
+    <update-tip v-if="showUpdateTip && !showUpdateCancel && needUpdateAlert"></update-tip>
   </div>
 </template>
 <script lang="ts">
-import { Back, Close, Filter, Sort } from "@element-plus/icons";
-import { defineComponent, nextTick, onMounted, ref } from "vue";
+import { Back, Close, Filter, Sort, List, Grid } from "@element-plus/icons";
+import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import movieSearch from "@/components/movieSearch/index.vue";
 import {
   isShowFilter,
@@ -72,6 +66,7 @@ import { windowControl } from "@/lib/native";
 import { showSortAreaMenu } from "@/lib/contextMenu";
 import { showUpdateTip, showUpdateCancel, needUpdateAlert } from "@/lib/update";
 import { loadConfig } from "@/lib/config";
+import { useStore } from "vuex";
 export default defineComponent({
   name: "ContentLayout",
   components: {
@@ -81,6 +76,8 @@ export default defineComponent({
     Sort,
     Close,
     UpdateTip,
+    List,
+    Grid
   },
   setup: () => {
     function closeWindow() {
@@ -90,6 +87,11 @@ export default defineComponent({
       const result = await showSortAreaMenu(event);
       changeSort(result);
     }
+
+    const store = useStore();
+    const listView = computed(() => {
+      return store.state.Movie.listView;
+    });
 
     onMounted(async () => {
       let result = await loadConfig({
@@ -115,6 +117,9 @@ export default defineComponent({
         loadedSortConfig.value = true;
       });
     });
+    function toggleListView(event: MouseEvent) {
+      store.commit("toggleListView");
+    }
     return {
       isShowFilter,
       toggleFilterTool,
@@ -123,6 +128,8 @@ export default defineComponent({
       showUpdateTip,
       needUpdateAlert,
       closeWindow,
+      toggleListView,
+      listView
     };
   },
 });

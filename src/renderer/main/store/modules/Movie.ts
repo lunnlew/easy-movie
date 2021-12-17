@@ -2,9 +2,14 @@ import { getMovie, getMovieActors, update_movie } from "@/api/movie";
 export default {
     namespaced: false,
     state() {
-        return {}
+        return {
+            listView: 'card'
+        }
     },
     mutations: {
+        toggleListView(state) {
+            state.listView = state.listView === 'list' ? 'card' : 'list';
+        }
     },
     actions: {
         movie_update({ state }: any, payload: any) {

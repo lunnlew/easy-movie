@@ -51,7 +51,18 @@ class movie {
         }
 
         let knex = this.knex
-            .select(['movies.id', 'movie_files.id as fid', 'movie_files.media_lib_id', 'movies.name_cn', 'movies.language', 'movies.year', 'movies.poster'])
+            .select([
+                'movies.id',
+                'movie_files.id as fid',
+                'movie_files.media_lib_id', 'movies.name_cn',
+                'movies.name_en',
+                'movies.imdb_rating',
+                'movies.duration',
+                'movies.language',
+                'movies.year',
+                'movies.poster',
+                'movies.genres'
+            ])
             .limit(size)
             .offset(offset)
             .from('movie_files')
