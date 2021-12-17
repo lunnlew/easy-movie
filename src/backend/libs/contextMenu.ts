@@ -1,5 +1,6 @@
-import { app, Menu, MenuItem, BrowserWindow } from "electron";
+import { app, Menu, MenuItem, BrowserWindow, shell } from "electron";
 import path from 'path'
+import fs from 'fs'
 import windowControl from "./window";
 import updateControl from "./update";
 import { __app_path } from "../preference";
@@ -132,6 +133,27 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
             handler({
                 action: 'scraper',
                 state: 'success',
+            })
+        }
+    }))
+    menu.append(new MenuItem({
+        label: '打开所在文件夹', click: () => {
+            application.knex('movie_files').where({ id: item.fid }).first().then((res) => {
+                if (fs.existsSync(res.path)) {
+                    fs.statSync(res.path).isDirectory() ?
+                        shell.openPath(res.path).catch(err => console.log(err)) :
+                        shell.openPath(path.dirname(res.path)).catch(err => console.log(err))
+                }
+                handler({
+                    action: 'opendir',
+                    state: 'success',
+                })
+            }).catch(err => {
+                console.log(err)
+                handler({
+                    action: 'opendir',
+                    state: 'error',
+                })
             })
         }
     }))
