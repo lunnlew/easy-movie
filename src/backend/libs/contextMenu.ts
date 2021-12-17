@@ -137,7 +137,7 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
         }
     }))
     menu.append(new MenuItem({
-        label: '打开所在文件夹', click: () => {
+        label: '打开电影位置', click: () => {
             application.knex('movie_files').where({ id: item.fid }).first().then((res) => {
                 if (fs.existsSync(res.path)) {
                     fs.statSync(res.path).isDirectory() ?
@@ -241,7 +241,7 @@ export async function createLibMenu(event: any, params: any, handler: any) {
             }
         }))
         menu.append(new MenuItem({
-            label: '打开库路径', click: async () => {
+            label: '打开库位置', click: async () => {
                 let res = await libs.getByName(item.name).catch(err => { throw err })
                 if (fs.existsSync(res.path)) {
                     fs.statSync(res.path).isDirectory() ?
