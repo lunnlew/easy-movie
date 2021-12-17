@@ -240,6 +240,20 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                 })
             }
         }))
+        menu.append(new MenuItem({
+            label: '打开库路径', click: async () => {
+                let res = await libs.getByName(item.name).catch(err => { throw err })
+                if (fs.existsSync(res.path)) {
+                    fs.statSync(res.path).isDirectory() ?
+                        shell.openPath(res.path).catch(err => console.log(err)) :
+                        shell.openPath(path.dirname(res.path)).catch(err => console.log(err))
+                }
+                handler({
+                    action: 'openlibdir',
+                    state: 'success',
+                })
+            }
+        }))
         menu.append(new MenuItem({ type: 'separator' }))
         menu.append(new MenuItem({
             label: '移除', click: () => {
