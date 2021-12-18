@@ -1,7 +1,10 @@
 
 import { ApplicationType } from '@/types/Application'
 import { CastFields } from '@/types/Cast'
+import path from 'path'
+import fs from 'fs'
 import { CastEventEmitterType } from '@/types/CastEventEmitterType'
+import Downloader from '../utils/downloader'
 
 /**
  * 演员相关消息事件
@@ -19,6 +22,8 @@ export default class CastEventEmitter implements CastEventEmitterType {
                 if (payload.avatar) {
                     this.app.event.emit('cast:download-avator', {
                         id: actor_id,
+                        path: payload.path,
+                        resource_type: payload.resource_type,
                         avatar: payload.avatar
                     })
                 }
@@ -71,6 +76,36 @@ export default class CastEventEmitter implements CastEventEmitterType {
         )
         this.app.event.on('cast:download-avator', async (payload) => {
             console.log('cast:download-avator', payload)
+            let { id, path: file_path, resource_type, avatar } = payload
+
+            let avatar_path = file_path.replace(/\\/ig, '/')
+            let avatar_dir
+            if (resource_type === 'origin-disk') {
+                avatar_dir = avatar_dir + `/.avatar/`
+            } else {
+                avatar_dir = path.dirname(avatar_path) + `/.avatar/`
+            }
+            if (!fs.existsSync(avatar_dir)) {
+                fs.mkdirSync(avatar_dir)
+            }
+            avatar_path = avatar_dir + `${id}.jpg`
+            if (avatar) {
+                if (!fs.existsSync(avatar_path)) {
+                    new Downloader().download(avatar, avatar_path).catch(err => {
+                        console.log('下载演员图片失败', err)
+                    })
+                }
+
+                this.app.knex('actors').update({
+                    avatar: path.basename(avatar_path),
+                    avatar_url: avatar,
+                    updated_at: Date.now()
+                }).where({
+                    id: id
+                }).catch(err => {
+                    console.log('更新演员图片失败', err)
+                })
+            }
         })
     }
 }

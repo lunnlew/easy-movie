@@ -98,7 +98,7 @@ export type ScraperCastRequestPayload = {
     /**
      * 演职员姓名
      */
-     name: string,
+    name: string,
     /**
      * 演职员库中的ID
      */
@@ -115,6 +115,10 @@ export type ScraperCastRequestPayload = {
      * 文件存放位置
      */
     path?: string;
+    /**
+     * 资源类型
+     */
+    resource_type?: 'single' | 'origin-disk'
 }
 
 /**

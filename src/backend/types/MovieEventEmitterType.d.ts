@@ -26,11 +26,11 @@ export type MovieDownloadBackdropPayload = Pick<MovieFileFields, 'media_lib_id' 
 /**
  * 电泳演员数据
  */
-export type MovieCastsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource_type'> & Pick<MovieFields, 'id'> & Pick<MovieInfo, 'casts'>
+export type MovieCastsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource_type' | 'path'> & Pick<MovieFields, 'id'> & Pick<MovieInfo, 'casts'>
 /**
  * 电影摄影组数据
  */
-export type MovieCrewsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource_type'> & Pick<MovieFields, 'id'> & Pick<MovieInfo, 'crews'>
+export type MovieCrewsPayload = Pick<MovieFileFields, 'media_lib_id' | 'resource_type' | 'path'> & Pick<MovieFields, 'id'> & Pick<MovieInfo, 'crews'>
 
 /**
  * NFO生成任务数据

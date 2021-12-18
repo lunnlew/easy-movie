@@ -168,6 +168,7 @@ export default async function (knex: Knex) {
         table.string('name_cn').comment('演职员名称');
         table.string('name_en').comment('演职员名称');
         table.string('avatar').comment('演职员头像');
+        table.string('avatar_url').comment('演职员头像');
         table.string('gender').comment('演职员性别');
         table.string('imdb_id').comment('演职员imdb_id');
         table.string('imdb_sid').comment('演职员imdb_sid');

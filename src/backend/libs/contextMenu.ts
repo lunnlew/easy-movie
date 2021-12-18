@@ -140,7 +140,7 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     }))
     menu.append(new MenuItem({
         label: '打开电影位置', click: () => {
-            application.knex('movie_files').where({ id: item.fid }).first().then((res) => {
+            movie.getById(item.id).then((res) => {
                 if (fs.existsSync(res.path)) {
                     fs.statSync(res.path).isDirectory() ?
                         shell.openPath(res.path).catch(err => console.log(err)) :

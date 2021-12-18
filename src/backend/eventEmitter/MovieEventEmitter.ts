@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { ApplicationType } from '@/types/Application'
 import { MovieFields } from '@/types/Movie'
-import { MovieEventEmitterType } from '@/types/MovieEventEmitterType'
+import { MovieCastsPayload, MovieEventEmitterType } from '@/types/MovieEventEmitterType'
 import { CastFields } from '@/types/Cast'
 import Downloader from '../utils/downloader'
 import gennfo from '../utils/gennfo'
@@ -46,6 +46,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     this.app.event.emit('movie:update-casts', {
                         id: movie_id,
                         media_lib_id: payload.media_lib_id,
+                        path: payload.path || '',
                         casts: payload.casts,
                         resource_type: payload.resource_type,
                     })
@@ -54,6 +55,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     this.app.event.emit('movie:update-crews', {
                         id: movie_id,
                         media_lib_id: payload.media_lib_id,
+                        path: payload.path || '',
                         crews: payload.crews,
                         resource_type: payload.resource_type,
                     })
@@ -207,7 +209,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
          */
         this.app.event.on('movie:update-crews', async (payload) => {
             for (let crew of payload.crews) {
-                this.update_movie_actor(payload, {
+                this.update_movie_actor(payload as any, {
                     ...crew,
                     character: ''
                 } as any)
@@ -221,7 +223,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
     /**
      * 更新电影演职员信息
      */
-    async update_movie_actor(payload: any, actorInfo: CastFields) {
+    async update_movie_actor(payload: MovieCastsPayload, actorInfo: CastFields) {
         console.log('update-actors', actorInfo.id, actorInfo.name_cn || actorInfo.name_en, actorInfo.character, actorInfo.department, actorInfo.job)
         // 查询是否已经存在
         let actor = await this.app.knex('actors').where({
@@ -264,6 +266,8 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     payload: {
                         name: actorInfo.name_en || actorInfo.name_cn,
                         actor_id: actor_id,
+                        path: payload.path,
+                        resource_type: payload.resource_type,
                         imdb_sid: actorInfo.id
                     }
                 });

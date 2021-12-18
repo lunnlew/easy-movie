@@ -4,7 +4,13 @@
       <div class="movie-left">
         <div class="movie-poster">
           <el-card :body-style="cardBodyStyle">
-            <el-image v-if="movieInfo.poster" :src="setImgUrlPrex(movieInfo.poster)" :alt="movieInfo.name_cn">
+            <el-image
+              v-if="movieInfo.poster"
+              :src="setImgUrlPrex(movieInfo.poster)"
+              :alt="movieInfo.name_cn"
+              :title="movieInfo.name_cn"
+              @error="() => movieInfo.poster = empty_poster"
+            >
               <template #placeholder>
                 <div class="image-slot">
                   <img class="el-image__inner" :src="empty_poster" :alt="movieInfo.name_cn" />
@@ -75,8 +81,16 @@
                 v-for="item of actors"
                 :key="item.id"
                 :src="setImgUrlPrex(item.avatar)"
-                :alt="item.name"
-              ></el-image>
+                :alt="item.name_cn"
+                :title="item.name_cn"
+                @error="() => item.poster = empty_poster"
+              >
+                <template #placeholder>
+                  <div class="image-slot">
+                    <img class="el-image__inner" :src="empty_poster" :alt="item.name_cn" />
+                  </div>
+                </template>
+              </el-image>
             </p>
           </div>
         </div>

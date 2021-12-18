@@ -15,11 +15,8 @@
                     lazy
                     :src="setImgUrlPrex(item.poster)"
                     :alt="item.name_cn"
-                    @error="
-                        () => {
-                            item.poster = empty_poster;
-                        }
-                    "
+                    :title="item.name_cn"
+                    @error="() => item.poster = empty_poster"
                 >
                     <template #placeholder>
                         <div class="image-slot">

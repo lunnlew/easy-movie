@@ -13,6 +13,9 @@ class actors {
         this.knex = application.knex
         this.tableName = 'actors'
     }
+    async getById(id: any) {
+        return this.knex('actors').where('actors.id', id).first()
+    }
     async list(name: string, offset: any, size: any) {
         return this.knex('actors')
             .distinct(['actors.id', 'actors.name_cn'])
