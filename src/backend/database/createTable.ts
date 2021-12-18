@@ -318,13 +318,13 @@ export default async function (knex: Knex) {
 
     // 排序方式
     await knex('config').insert([{
-        name: '升序(默认)',
-        val: 'asc',
+        name: '降序(默认)',
+        val: 'desc',
         type: 'sort_type',
         state: 1
     }, {
-        name: '降序',
-        val: 'desc',
+        name: '升序',
+        val: 'asc',
         type: 'sort_type',
         state: 0
     }])
