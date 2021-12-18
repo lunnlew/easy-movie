@@ -2,7 +2,7 @@ import application from "../libs/application"
 import MediaNFO from "../libs/mediaNFO"
 import path from 'path'
 import fs from 'fs'
-import { MovieFields } from "@/types/Movie"
+import { MovieFields, MovieFileFields } from "@/types/Movie"
 
 /**
  * 生成nfo文件
@@ -11,6 +11,7 @@ export default class gennfo {
     async generate(payload) {
         let { movie_id, file_path } = payload
         let movie: MovieFields = await application.knex('movies').where('id', movie_id).first()
+        let movie_files: Array<MovieFileFields> = await application.knex('movie_files').where('movie_id', movie_id).select()
 
         let stats = fs.statSync(file_path)
         // 是文件的话取得父目录
@@ -32,6 +33,9 @@ export default class gennfo {
             .setReleaseDate(movie.release_date)
             .setReleaseYear(movie.year)
             .setPoster(movie.poster)
+            .setGenres(movie.genres)
+            .setResourceType(movie_files.map(v => v.resource_type))
+            .setVideos(movie_files.map(v => v.path.replace(file_path.replace(/\\/g, '/'), '')))
             .write()
     }
 }

@@ -75,7 +75,7 @@ const mutations = {
         const menu = state.menus.find(menu => menu.lib_id === lib.lib_id);
         if (menu) {
             menu.name = lib.name || menu.name;
-            menu.name = `/lib/` + encodeURIComponent(menu.name);
+            menu.path = `/lib/` + encodeURIComponent(menu.name);
             menu.scan_loading = lib.scan_loading || menu.scan_loading;
             menu.meta = {
                 title: lib.meta?.title || menu.meta?.title || (menu.name === 'all' ? '全部' : menu.name),

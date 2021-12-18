@@ -178,6 +178,24 @@ export default class MediaNFO implements MediaNFOType {
         return this
     }
     /**
+     * 设置资源类型
+     * @param type 
+     * @returns 
+     */
+    setResourceType(type: Array<any>) {
+        this.setXmlProperty('resource_type', type.join(','))
+        return this
+    }
+    /**
+     * 设置文件列表
+     * @param genres
+     * @returns 
+     */
+    setVideos(files: Array<any>) {
+        this.setXmlProperty('videos', files.join(','))
+        return this
+    }
+    /**
      * 设置电影演员
      * @param casts 
      * @returns 

@@ -99,6 +99,16 @@ export function endsWithVideo(file: string) {
 }
 
 /**
+ * 是否nfo文件
+ * @param file 
+ */
+export function endsWithNFO(file: string) {
+    let ext = path.extname(file)
+    const support_exts = ['.nfo']
+    return support_exts.includes(ext)
+}
+
+/**
  * 获取子目录名称
  * @param filePath 目录路径
  * @returns 子目录名称
