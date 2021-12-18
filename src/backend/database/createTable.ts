@@ -42,6 +42,7 @@ export default async function (knex: Knex) {
         table.string('name_cn').comment('电影中文名称');
         table.string('name_en').comment('电影英文名称');
         table.string('original_title').comment('别名');
+        table.string('first_char_cn').comment('中文名称首字母');
         table.text('path').comment('电影路径');
         table.string('poster').comment('电影封面');
         table.string('backdrop').comment('电影背景');
@@ -335,6 +336,12 @@ export default async function (knex: Knex) {
         val: 'id',
         type: 'sort_field',
         state: 1
+    }])
+    await knex('config').insert([{
+        name: '首字母',
+        val: 'first_char_cn',
+        type: 'sort_field',
+        state: 0
     }])
     await knex('config').insert([{
         name: '发布时间',

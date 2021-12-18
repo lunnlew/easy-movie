@@ -30,6 +30,7 @@ export const dicts: {
 }
 
 export default function fmt_genres(genres: string, size: number = 4): string {
+    if (!genres) return ''
     return genres.split(",").map(item => {
         return dicts[item.trim()] || item
     }).filter((v, i) => i < size).join(",")

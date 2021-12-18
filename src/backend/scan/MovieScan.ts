@@ -5,8 +5,9 @@ import application from '../libs/application';
 import movie from '../database/movie'
 import movieFile from '../database/movie_files'
 import libs from '../database/libs'
-import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance } from '../utils'
+import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance, getFirstChar } from '../utils'
 import { GlobalEventEmitterType } from '@/types/EventEmitter';
+
 const path = require('path');
 const fs = require('fs');
 class MovieScan {
@@ -135,6 +136,7 @@ class MovieScan {
       // 不存在基础信息
       let ids = await movie.save({
         name_cn: movie_info.name,
+        first_char_cn: getFirstChar(movie_info.name),
         year: movie_info.year || '',
         path: scanInfo.filePath,
       }).catch(e => { throw e })

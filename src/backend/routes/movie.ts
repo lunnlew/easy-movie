@@ -1,8 +1,6 @@
-
-
 import { Router } from 'express'
 import movie from '../database/movie'
-import { buildResult, buildErrResult } from '../utils'
+import { buildResult, buildErrResult, getFirstChar } from '../utils'
 import fs from 'fs'
 import path from 'path'
 import { __fix_dirname } from '../preference'
@@ -169,6 +167,7 @@ const movieUpdate = async function (req: any, res: any, next: any) {
 
         await movie.update(old_data.id, {
             name_cn: new_data.name_cn,
+            first_char_cn: getFirstChar(new_data.name_cn),
             year: new_data.year,
         }).catch(err => { throw err });
 

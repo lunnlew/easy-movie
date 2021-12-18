@@ -1,4 +1,6 @@
 import path from 'path'
+import { pinyin } from 'pinyin-pro'
+
 
 /**
  * 构建返回数据
@@ -179,4 +181,17 @@ export function minEditDistance(s1: string, s2: string) {
         }
     }
     return matrix[len1][len2] //返回右下角的值
+}
+
+/**
+ * 取得电影名称首字母
+ * @param name 
+ * @returns 
+ */
+export function getFirstChar(name: string) {
+    if (/.*[\u4e00-\u9fa5]+.*$/.test(name)) {
+        return pinyin(name, { pattern: 'first', type: 'array' })[0]
+    } else {
+        return name.substring(0, 1)
+    }
 }

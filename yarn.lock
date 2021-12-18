@@ -5749,6 +5749,11 @@ pinkie@^2.0.0:
   resolved "https://registry.npmjs.org/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
+pinyin-pro@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/pinyin-pro/-/pinyin-pro-3.4.0.tgz#a7d7ad5d188aacac9a5fe6bf5cb516fc8328d918"
+  integrity sha512-MNSUCO0dA5CXqhcnLUaZY6S6ONioTituiOdlx46sQih3Y00AOt4VBXA5h1kBXDy1JFEeJ7EE7WdZOk7B74d6uA==
+
 pixelmatch@^4.0.2:
   version "4.0.2"
   resolved "https://registry.npmjs.org/pixelmatch/-/pixelmatch-4.0.2.tgz#8f47dcec5011b477b67db03c243bc1f3085e8854"
