@@ -5,6 +5,7 @@
                 <tr>
                     <th class="name_cn">电影名</th>
                     <th class="name_en">别名</th>
+                    <th class="first_char_cn">首字母</th>
                     <th class="type">类别</th>
                     <th class="duration">时长(分钟)</th>
                     <th class="imdb_rating">评分</th>
@@ -21,6 +22,7 @@
                 >
                     <td class="name_cn">{{ item.name_cn }}</td>
                     <td class="name_en">{{ item.name_en }}</td>
+                    <td class="first_char_cn">{{ ToUpperCase(item.first_char_cn) }}</td>
                     <th class="type">{{ fmt_genres(item.genres, 2) }}</th>
                     <td class="duration">{{ item.duration }}</td>
                     <td class="imdb_rating">{{ item.imdb_rating }}</td>
@@ -37,6 +39,7 @@ import {
     movies, remove_movie, show_movie_edit, show_scraper_search
 } from "@/lib/movieList";
 import fmt_genres from "@/utils/genres";
+import { ToUpperCase } from "@/utils/util";
 import { showMovieItemMenu } from "@/lib/contextMenu";
 export default defineComponent({
     props: {
@@ -75,6 +78,7 @@ export default defineComponent({
         return {
             showMovieItemMenuClick,
             movies,
+            ToUpperCase,
             fmt_genres
         }
     },

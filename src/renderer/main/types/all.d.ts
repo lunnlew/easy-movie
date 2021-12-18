@@ -12,6 +12,10 @@ export type MovieInfo = {
      */
     name_en: string;
     /**
+     * 名称首字母
+     */
+    first_char_cn: string;
+    /**
      * 电影年份
      */
     year: string;
@@ -37,7 +41,7 @@ export type MovieInfo = {
      * 制片国家/地区
      */
     country: string;
-    
+
     /**
      * 发行语言
      */
