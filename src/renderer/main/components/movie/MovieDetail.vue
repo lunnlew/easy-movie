@@ -5,7 +5,7 @@
         <div class="movie-poster">
           <el-card :body-style="cardBodyStyle">
             <el-image
-              :src="movieInfo.poster"
+              :src="setImgUrlPrex(movieInfo.poster)"
               :alt="movieInfo.name_cn"
               @error="
                 () => {
@@ -98,6 +98,7 @@ import { MovieInfo } from "@/types/all";
 import fmt_genres from "@/utils/genres";
 import fmt_contry from "@/utils/contries";
 import fmt_lang from "@/utils/langs";
+import { setImgUrlPrex } from "@/utils/util";
 export default defineComponent({
   name: "MovieDetail",
   // components: { TvSeries },
@@ -186,6 +187,7 @@ export default defineComponent({
       edits,
       cardBodyStyle,
       libName,
+      setImgUrlPrex
     };
   },
 });

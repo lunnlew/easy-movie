@@ -139,7 +139,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                         this.app.event.emit('render:list-view:update', {
                             lib_id: media_lib_id,
                             movie: {
-                                poster: 'http://127.0.0.1:6877/api/movie/poster/' + id + '?v=' + Date.now(),
+                                poster: 'movie/poster/' + id + '?v=' + Date.now(),
                                 id: id
                             } as any
                         })

@@ -14,7 +14,7 @@ export type MovieInfo = {
     /**
      * 名称首字母
      */
-    first_char_cn: string;
+    first_char_cn?: string;
     /**
      * 电影年份
      */

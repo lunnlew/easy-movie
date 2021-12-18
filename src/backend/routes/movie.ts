@@ -35,7 +35,7 @@ const movieList = async (req: any, res: any, next: any) => {
     let offset = (page - 1) * size;
     movie.list(filters, search, sort, offset, size).then((data: any) => {
         res.json(buildResult(data.map((item: any) => {
-            item.poster = 'http://127.0.0.1:6877/api/movie/poster/' + item.id;
+            item.poster = 'movie/poster/' + item.id;
             return item;
         })))
     }).catch((err: any) => {
@@ -48,7 +48,7 @@ function movieDetail(req: any, res: any, next: any) {
     movie.getById(id).then((data: any) => {
         res.json(buildResult({
             ...data,
-            poster: 'http://127.0.0.1:6877/api/movie/poster/' + data.id
+            poster: 'movie/poster/' + data.id
         }))
     }).catch((err: any) => {
         res.json(buildErrResult(err.message, 500))

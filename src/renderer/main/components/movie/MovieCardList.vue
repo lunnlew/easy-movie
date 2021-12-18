@@ -13,7 +13,7 @@
             >
                 <el-image
                     lazy
-                    :src="item.poster"
+                    :src="setImgUrlPrex(item.poster)"
                     :alt="item.name_cn"
                     @error="
                         () => {
@@ -80,6 +80,7 @@ import { defineComponent } from "vue";
 import empty_poster from "@/assets/empty_poster.png";
 import { Search, Edit } from "@element-plus/icons";
 import { showMovieItemMenu } from "@/lib/contextMenu";
+import { setImgUrlPrex } from "@/utils/util";
 import {
     remove_movie,
     movies,
@@ -125,7 +126,8 @@ export default defineComponent({
             showMovieItemMenuClick,
             empty_poster,
             cardBodyStyle,
-            movies
+            movies,
+            setImgUrlPrex
         }
     },
 });
