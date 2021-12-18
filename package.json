@@ -54,7 +54,8 @@
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
-    "winsw-wrapper": "^1.8.1"
+    "winsw-wrapper": "^1.8.1",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

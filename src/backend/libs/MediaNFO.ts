@@ -1,5 +1,6 @@
 import xml from "xml";
 import fs from "fs";
+import { parseStringPromise } from "xml2js"
 import { MediaNFOType } from "@/types/MediaNFOType";
 
 /**
@@ -44,25 +45,46 @@ export default class MediaNFO implements MediaNFOType {
     _nfo_file: string = '';
 
     /**
-     * @param nfo_path 
-     */
-    constructor(nfo_path?: string) {
-        this._nfo_file = nfo_path;
-        if (nfo_path && fs.existsSync(nfo_path)) {
-            xml.parse(nfo_path, (err, result) => {
-                if (err) {
-                    throw err;
-                }
-                this._xml = [...result, ...this._xml];
-            })
-        }
-    }
-
-    /**
      * 获取xml
      */
     get xml(): string {
         return this.generateXml('movie', this._xml);
+    }
+
+    /**
+     * 加载已有的文件数据
+     * @param nfo_path 
+     * @returns 
+     */
+    async loadFromFile(nfo_path: string) {
+        this._nfo_file = nfo_path
+        if (nfo_path && fs.existsSync(nfo_path)) {
+            let result = await parseStringPromise(fs.readFileSync(nfo_path, 'utf-8'))
+            for (let key in result.movie) {
+                this._xml.push({
+                    [key]: result.movie[key][0]
+                })
+            }
+        }
+        return this
+    }
+
+    /**
+     * 设置XML标签
+     * @param key 
+     * @param value 
+     * @returns 
+     */
+    setXmlProperty(key: string, value: any) {
+        let index = this._xml.findIndex(item => key in item)
+        if (index > -1) {
+            this._xml[index][key] = value
+        } else {
+            this._xml.push({
+                [key]: value
+            })
+        }
+        return this
     }
 
     /**
@@ -71,9 +93,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setName(name: string) {
-        this._xml.push({
-            'name': name
-        })
+        this.setXmlProperty('name', name)
         return this
     }
     /**
@@ -82,9 +102,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setSummary(summary: string) {
-        this._xml.push({
-            'summary': summary
-        })
+        this.setXmlProperty('summary', summary)
         return this
     }
     /**
@@ -93,9 +111,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setReleaseYear(year: string) {
-        this._xml.push({
-            'year': year
-        })
+        this.setXmlProperty('year', year)
         return this
     }
     /**
@@ -104,9 +120,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setReleaseDate(date: string) {
-        this._xml.push({
-            'release_date': date
-        })
+        this.setXmlProperty('release_date', date)
         return this
     }
     /**
@@ -115,9 +129,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setDuration(duration: number) {
-        this._xml.push({
-            'duration': duration
-        })
+        this.setXmlProperty('duration', duration)
         return this
     }
     /**
@@ -126,9 +138,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setPoster(poster: string) {
-        this._xml.push({
-            'poster': poster
-        })
+        this.setXmlProperty('poster', poster)
         return this
     }
     /**
@@ -137,9 +147,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setBackdrop(backdrop: string) {
-        this._xml.push({
-            'backdrop': backdrop
-        })
+        this.setXmlProperty('backdrop', backdrop)
         return this
     }
     /**
@@ -148,9 +156,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setCountrys(countrys: string) {
-        this._xml.push({
-            'countrys': countrys
-        })
+        this.setXmlProperty('countrys', countrys)
         return this
     }
     /**
@@ -159,9 +165,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setLanguage(language: string) {
-        this._xml.push({
-            'language': language
-        })
+        this.setXmlProperty('language', language)
         return this
     }
     /**
@@ -170,9 +174,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setGenres(genres: string) {
-        this._xml.push({
-            'genres': genres
-        })
+        this.setXmlProperty('genres', genres)
         return this
     }
     /**
@@ -181,9 +183,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setCasts(casts: string) {
-        this._xml.push({
-            'casts': casts
-        })
+        this.setXmlProperty('casts', casts)
         return this
     }
     /**
@@ -191,9 +191,7 @@ export default class MediaNFO implements MediaNFOType {
      * @param crews 
      */
     setCrews(crews: string) {
-        this._xml.push({
-            'crews': crews
-        })
+        this.setXmlProperty('crews', crews)
         return this
     }
     /**
@@ -202,9 +200,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setIMDB_ID(imdb_id: string) {
-        this._xml.push({
-            'imdb_id': imdb_id
-        })
+        this.setXmlProperty('imdb_id', imdb_id)
         return this
     }
     /**
@@ -213,9 +209,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setIMDB_Rating(imdb_rating: number) {
-        this._xml.push({
-            'imdb_rating': imdb_rating
-        })
+        this.setXmlProperty('imdb_rating', imdb_rating)
         return this
     }
     /**
@@ -224,9 +218,7 @@ export default class MediaNFO implements MediaNFOType {
      * @returns 
      */
     setIMDB_Votes(imdb_votes: number) {
-        this._xml.push({
-            'imdb_votes': imdb_votes
-        })
+        this.setXmlProperty('imdb_votes', imdb_votes)
         return this
     }
     /**
@@ -243,14 +235,14 @@ export default class MediaNFO implements MediaNFOType {
     }
     /**
      * 写入文件
-     * @param nfo_path 
+     * @param _nfo_file 
      */
-    write(nfo_path?: string) {
-        if (nfo_path) {
-            this._nfo_file = nfo_path;
+    write(_nfo_file?: string) {
+        if (_nfo_file) {
+            this._nfo_file = _nfo_file;
         }
         if (!this._nfo_file) {
-            throw new Error('nfo_path is empty');
+            throw new Error('_nfo_file is empty');
         }
         fs.writeFileSync(this._nfo_file, this.xml);
     }

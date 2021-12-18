@@ -9,6 +9,7 @@ import libs from "../database/libs";
 import tvScan from '../scan/TvScan'
 import movieScan from '../scan/MovieScan'
 import invokeAction from "../eventEmitter/invokeAction";
+import movie from "../database/movie";
 
 /**
  * 左上角上下文菜单
@@ -237,6 +238,23 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                 }, false)
                 handler({
                     action: 'scan',
+                    state: 'success',
+                })
+            }
+        }))
+        menu.append(new MenuItem({
+            label: '生成NFO信息', click: async () => {
+                let lib = await libs.getByName(item.name).catch(err => { throw err })
+                let movies = await movie.listByLibId(lib.id)
+                for (let movie of movies) {
+                    // 去生成影视nfo信息
+                    application.event.emit('movie:generate-nfo', {
+                        movie_id: movie.id,
+                        file_path: movie.path.replace(/\\/g, '/'),
+                    });
+                }
+                handler({
+                    action: 'gennfo',
                     state: 'success',
                 })
             }

@@ -43,8 +43,12 @@ class movie {
             updated_at: Date.now()
         })
     }
+    async listByLibId(id: any) {
+        return this.knex.select(['movies.*', 'movie_files.path', 'movie_files.id as fid', 'movie_files.media_lib_id']).from('movie_files').join('movies', function () {
+            this.on('movie_files.movie_id', '=', 'movies.id')
+        }).where('movie_files.media_lib_id', id).select()
+    }
     async list(filters: any, search: any, sort: any, offset: any, size: any) {
-
         // 先从关联表中查询出演员的电影
         let movieIds = []
         if (filters.actors && filters.actors[1].length > 0) {
