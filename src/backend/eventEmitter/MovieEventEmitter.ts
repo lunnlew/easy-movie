@@ -170,7 +170,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             if (resource_type === 'origin-disk') {
                 backdrop_path = backdrop_path + '/' + path.basename(backdrop_path) + '.backdrop.jpg'
             } else {
-                backdrop_path = backdrop_path + '.poster.jpg'
+                backdrop_path = backdrop_path + '.backdrop.jpg'
             }
 
             if (backdrop) {
