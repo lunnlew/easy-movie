@@ -22,7 +22,7 @@
       </div>
       <div class="movie-right">
         <div class="movie-name">
-          {{ movieInfo.name_cn }}{{ movieInfo.poster }}
+          {{ movieInfo.name_cn }}
           <span
             class="movie-year"
             v-if="movieInfo.year"
