@@ -5,6 +5,7 @@
             v-model="search_keyword"
             v-if="$route.name == 'libitem'"
             placeholder="搜索"
+            ref="searchInput"
             style="width: 200px"
         >
             <template #prefix>
@@ -25,7 +26,7 @@ import {
 } from '@element-plus/icons'
 
 import {
-    defineComponent, onMounted,
+    defineComponent, onMounted, ref,
 } from "vue";
 import { search_keyword, search_fields } from "@/lib/movieSearch"
 import { showSearchAreaMenu } from "@/lib/contextMenu"
@@ -52,8 +53,19 @@ export default defineComponent({
             })
             search_fields.value = result.filter((item: { state: number; }) => item.state == 1).map((item: { val: any; }) => item.val)
         })
+
+        const searchInput = ref<HTMLElement>()
+
+        window.addEventListener('keyup', e => {
+            const { shiftKey, key } = e;
+            if (shiftKey && key === 'F') {
+                searchInput.value.focus()
+            }
+        }, false);
+
         return {
             search_keyword,
+            searchInput,
             showSearchAreaMenuClick
         }
     }
