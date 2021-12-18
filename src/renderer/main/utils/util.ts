@@ -17,5 +17,8 @@ export function ToUpperCase(str: string) {
  * @returns 
  */
 export function setImgUrlPrex(img: string) {
+    if (img.startsWith('http')) {
+        return img
+    }
     return 'http://127.0.0.1:6877/api/' + img
 }
