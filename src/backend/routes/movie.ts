@@ -161,7 +161,8 @@ const movieUpdate = async function (req: any, res: any, next: any) {
 
         if (old_data.media_lib_id !== new_data.media_lib_id) {
             await movie_files.update(old_data.fid, {
-                media_lib_id: new_data.media_lib_id
+                media_lib_id: new_data.media_lib_id,
+                updated_at: Date.now()
             }).catch(err => { throw err });
         }
 
@@ -169,6 +170,7 @@ const movieUpdate = async function (req: any, res: any, next: any) {
             name_cn: new_data.name_cn,
             first_char_cn: getFirstChar(new_data.name_cn),
             year: new_data.year,
+            updated_at: Date.now()
         }).catch(err => { throw err });
 
         res.json(buildResult({}));

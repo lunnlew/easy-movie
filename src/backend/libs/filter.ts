@@ -7,8 +7,9 @@ import application from './application'
  * @param params 
  */
 export function setFilterData(event: any, params: any) {
-    application.knex('config').where('type', '=', params.options.type).where({ val: params.options.name }).update({
-        state: params.options.value ? 1 : 0
+    application.knex('config').where('type', '=', params.options.type).where({ val: params.options.key }).update({
+        state: params.options.value ? 1 : 0,
+        updated_at: Date.now()
     }).on('query', (query: any) => {
         console.log(query.sql)
     }).catch(err => {
@@ -24,7 +25,8 @@ export function setFilterData(event: any, params: any) {
 export function setFilterSetting(event: any, params: any) {
     for (let item of params.options) {
         application.knex('config').where('type', '=', 'filter_setting').where({ val: item.value }).update({
-            state: item.checked ? 1 : 0
+            state: item.checked ? 1 : 0,
+            updated_at: Date.now()
         }).on('query', (query: any) => {
             console.log(query.sql)
         }).catch(err => {

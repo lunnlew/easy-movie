@@ -15,6 +15,7 @@ export const filter_enables = ref([]);
  */
 export function setEnableFilters(filters) {
     filter_enables.value = filters.filter(i => i.checked).map(i => i.value);
+    console.log('setEnableFilters', filter_enables.value);
     return filter_enables.value
 }
 
@@ -26,7 +27,7 @@ export function changeEnableFromSetting(filters) {
     // 变更启用的过滤选项
     setEnableFilters(filters);
     // 尝试刷新类型过滤器
-    refresh_type_filter()
+    refresh_filter()
     // 触发落库更改
     store.dispatch('invokeMainAction', {
         action: 'setFilterSetting',
@@ -49,6 +50,11 @@ export const type_filters = ref<any[]>([]);
  * 主演筛选
  */
 export const main_star_filters = ref<any[]>([]);
+
+/**
+ * 标签筛选
+ */
+export const tag_filters = ref<any[]>([]);
 
 /**
  * 当前的媒体库ID
@@ -80,6 +86,20 @@ export async function changeFilter(data: any) {
         type_filters.value = [...type_filters.value]
     } else if (data.type == 'main_star_filter') {
         main_star_filters.value = [...main_star_filters.value]
+    } else if (data.type == 'tag_filter') {
+        // 互斥标签处理
+        if (data.key === 'watched') {
+            let unwatched = tag_filters.value.find(i => i.key === 'unwatched')
+            if (unwatched) {
+                unwatched.disabled = data.value
+            }
+        } else if (data.key === 'unwatched') {
+            let watched = tag_filters.value.find(i => i.key === 'watched')
+            if (watched) {
+                watched.disabled = data.value
+            }
+        }
+        tag_filters.value = [...tag_filters.value]
     }
 }
 
@@ -113,6 +133,48 @@ export async function refresh_type_filter() {
             checked: false
         }))
     }
+}
+
+/**
+ * 刷新标签过滤器
+ */
+export async function refresh_tag_filter() {
+    if (filter_enables.value.includes("tag_filter")) {
+        // 设置改变显示时，重新加载数据
+        const result = await loadConfig({
+            type: "tag_filter",
+        })
+        const count_result = await getFilters(movie_lib.value.lib_id, 'tag_filter', result.map((item: any) => {
+            return {
+                name: item.name,
+                key: item.val
+            }
+        }))
+        tag_filters.value = result.map((item: any) => {
+            return {
+                name: item.name,
+                key: item.val,
+                checked: item.state == 1 ? true : false,
+                count: count_result.data?.data[item.val] || 0
+            }
+        })
+    } else {
+        // 设置改变隐藏时，取消所有选择
+        tag_filters.value = tag_filters.value.map(v => ({
+            ...v,
+            checked: false
+        }))
+    }
+}
+
+/**
+ * 刷新过滤器
+ */
+export function refresh_filter() {
+    // 刷新类型过滤器
+    refresh_type_filter()
+    // 刷新标签过滤器
+    refresh_tag_filter()
 }
 
 /**

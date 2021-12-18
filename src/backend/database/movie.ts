@@ -31,10 +31,17 @@ class movie {
         })
     }
     async save(movieInfo: any) {
-        return this.knex(this.tableName).insert(movieInfo)
+        return this.knex(this.tableName).insert({
+            ...movieInfo,
+            created_at: Date.now(),
+            updated_at: Date.now()
+        })
     }
     async update(oldId: any, data: any) {
-        return this.knex(this.tableName).where({ id: oldId }).update(data)
+        return this.knex(this.tableName).where({ id: oldId }).update({
+            ...data,
+            updated_at: Date.now()
+        })
     }
     async list(filters: any, search: any, sort: any, offset: any, size: any) {
 
@@ -75,7 +82,21 @@ class movie {
                     if (key == 'media_lib_id' && filters[key] == '') {
                         continue
                     }
-                    if (typeof filters[key] === 'object' && 'length' in filters[key]) {
+                    if (key === 'tags') {
+                        for (let tag of filters[key]) {
+                            if (tag === 'watched') {// 已观看
+                                this.where(`movie_files.watched`, 1)
+                            } else if (tag === 'unwatched') {// 未观看
+                                this.where(function () {
+                                    this.where(`movie_files.watched`, '<>', 1).orWhere(`movie_files.watched`, null)
+                                })
+                            } else if (tag === 'recently_added') { // 最近添加
+                                this.where(`movie_files.created_at`, '>', new Date(new Date().getTime() - 24 * 60 * 60 * 1000))
+                            } else {
+                                // this.where(`movies.tags`, 'like', `%${item}%`)
+                            }
+                        }
+                    } else if (typeof filters[key] === 'object' && 'length' in filters[key]) {
                         if (filters[key][0] === 'like' && key == 'genres') {
                             // {genres: ['like', ['动作']]}
                             if (filters[key][1].length > 0) {

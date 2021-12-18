@@ -1,22 +1,16 @@
 <template>
-  <div
-    class="movie-filter"
-    :style="{
-      height: (isShowFilter ? 40 : 0) + 'px',
-    }"
-  >
+  <div class="movie-filter" :style="{
+    height: (isShowFilter ? 40 : 0) + 'px',
+  }">
     <div class="filter-items">
       <span class="filter-item">
-        <type-filter
-          v-if="filter_enables.includes('type_filter')"
-          @filter="changeFilter"
-        ></type-filter>
+        <type-filter v-if="filter_enables.includes('type_filter')" @filter="changeFilter"></type-filter>
       </span>
       <span class="filter-item">
-        <main-star-filter
-          v-if="filter_enables.includes('main_star_filter')"
-          @filter="changeFilter"
-        ></main-star-filter>
+        <main-star-filter v-if="filter_enables.includes('main_star_filter')" @filter="changeFilter"></main-star-filter>
+      </span>
+      <span class="filter-item">
+        <tag-filter v-if="filter_enables.includes('tag_filter')" @filter="changeFilter"></tag-filter>
       </span>
     </div>
   </div>
@@ -34,20 +28,22 @@ import {
   isShowFilter,
   changeFilter,
   clear_filter,
-  refresh_type_filter,
   movie_lib,
   filter_enables,
   setEnableFilters,
   loadedTypeFilterConfig,
+  refresh_filter,
 } from "@/lib/movieFilter";
 import typeFilter from "./filters/type_filter.vue";
 import mainStarFilter from "./filters/main_star_filter.vue";
+import tagFilter from "./filters/tag_filter.vue";
 import { loadConfig } from "@/lib/config";
 export default defineComponent({
   name: "MovieFilter",
   components: {
     typeFilter,
     mainStarFilter,
+    tagFilter
   },
   setup: (props) => {
     // 切换显示时变更
@@ -55,7 +51,7 @@ export default defineComponent({
       () => isShowFilter.value,
       (val, pre) => {
         if (val !== pre && val) {
-          refresh_type_filter();
+          refresh_filter();
         } else {
           clear_filter();
         }
@@ -66,7 +62,7 @@ export default defineComponent({
       () => movie_lib.value,
       (val) => {
         if (isShowFilter.value) {
-          refresh_type_filter();
+          refresh_filter();
         }
       }
     );
@@ -85,7 +81,7 @@ export default defineComponent({
         })
       );
       // 加载类型筛选器
-      refresh_type_filter();
+      refresh_filter();
       // 加载主演筛选器
 
       nextTick(() => {

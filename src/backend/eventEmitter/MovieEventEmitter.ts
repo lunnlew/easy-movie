@@ -99,13 +99,20 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             if (old_movie) {
                 await this.app.knex('movies').where({
                     id: movie_id
-                }).update(new_movie).then((res) => {
+                }).update({
+                    ...new_movie,
+                    updated_at: Date.now()
+                }).then((res) => {
                     afterUpdate(movie_id)
                 }).catch(err => {
                     console.log('更新失败', movie_id, payload.name_cn, err);
                 })
             } else {
-                await this.app.knex('movies').insert(new_movie).then((res) => {
+                await this.app.knex('movies').insert({
+                    ...new_movie,
+                    created_at: Date.now(),
+                    updated_at: Date.now()
+                }).then((res) => {
                     movie_id = res[0]
                     afterUpdate(movie_id)
                 }).catch(err => {
@@ -143,7 +150,8 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
 
                 this.app.knex('movies').update({
                     poster: path.basename(poster_path),
-                    poster_url: poster
+                    poster_url: poster,
+                    updated_at: Date.now()
                 }).where({
                     id: id
                 }).catch(err => {
@@ -174,7 +182,8 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
 
                 this.app.knex('movies').update({
                     backdrop: path.basename(backdrop_path),
-                    backdrop_url: backdrop
+                    backdrop_url: backdrop,
+                    updated_at: Date.now()
                 }).where({
                     id: id
                 }).catch(err => {
@@ -228,7 +237,8 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 name_cn: actorInfo.name_cn,
                 name_en: actorInfo.name_en,
                 gender: actorInfo.gender,
-                avatar: actorInfo.avatar
+                avatar: actorInfo.avatar,
+                updated_at: Date.now()
             }).catch(err => console.log('更新演职员错误', err))
         } else {
             let ids = await this.app.knex('actors').insert({
@@ -236,7 +246,9 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                 name_cn: actorInfo.name_cn,
                 name_en: actorInfo.name_en,
                 gender: actorInfo.gender,
-                avatar: actorInfo.avatar
+                avatar: actorInfo.avatar,
+                created_at: Date.now(),
+                updated_at: Date.now()
             }).catch(err => console.log('新增演职员错误', err))
             if (ids) {
                 actor_id = ids[0] as number
@@ -268,7 +280,9 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
                     movie_id: payload.id,
                     department: actorInfo.department,
                     character: actorInfo.character,
-                    job: actorInfo.job
+                    job: actorInfo.job,
+                    created_at: Date.now(),
+                    updated_at: Date.now()
                 }).catch(err => console.log('新增影视-演职员关系错误', err))
             }
         }

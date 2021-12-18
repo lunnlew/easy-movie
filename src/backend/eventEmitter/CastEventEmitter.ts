@@ -47,13 +47,20 @@ export default class CastEventEmitter implements CastEventEmitterType {
             if (old_actor) {
                 await this.app.knex('actors').where({
                     id: actor_id
-                }).update(new_actor).then((res) => {
+                }).update({
+                    ...new_actor,
+                    updated_at: Date.now()
+                }).then((res) => {
                     afterUpdate(actor_id)
                 }).catch(err => {
                     console.log('更新失败', actor_id, payload.name_cn, err);
                 })
             } else {
-                await this.app.knex('actors').insert(new_actor).then((res) => {
+                await this.app.knex('actors').insert({
+                    ...new_actor,
+                    created_at: Date.now(),
+                    updated_at: Date.now()
+                }).then((res) => {
                     actor_id = res[0]
                     afterUpdate(actor_id)
                 }).catch(err => {

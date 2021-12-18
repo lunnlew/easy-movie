@@ -61,7 +61,9 @@ class ScraperQueue {
                 uuid,
                 fail_count: 0,
                 priority: task.task_priority,
-                json: JSON.stringify(task)
+                json: JSON.stringify(task),
+                created_at: Date.now(),
+                updated_at: Date.now()
             }).catch(err => {
                 console.log('新增数据库任务失败', err);
             })

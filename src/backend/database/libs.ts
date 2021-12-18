@@ -14,13 +14,23 @@ class libs {
         this.tableName = 'media_libs'
     }
     async save(libInfo: any) {
-        return this.knex(this.tableName).insert(libInfo)
+        return this.knex(this.tableName).insert({
+            ...libInfo,
+            created_at: Date.now(),
+            updated_at: Date.now()
+        })
     }
     async updateById(id: any, libInfo: any) {
-        return this.knex(this.tableName).where({ id }).update(libInfo)
+        return this.knex(this.tableName).where({ id }).update({
+            ...libInfo,
+            updated_at: Date.now()
+        })
     }
     async updateByName(name: any, libInfo: any) {
-        return this.knex(this.tableName).where({ name }).update(libInfo)
+        return this.knex(this.tableName).where({ name }).update({
+            ...libInfo,
+            updated_at: Date.now()
+        })
     }
     async getByName(name: any) {
         return this.knex(this.tableName).where({ name: name }).first()

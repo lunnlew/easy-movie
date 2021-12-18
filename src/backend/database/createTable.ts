@@ -89,6 +89,7 @@ export default async function (knex: Knex) {
         table.string('size').comment('文件大小');
         table.string('duration').comment('文件时长');
         table.string('subtitle').comment('文件字幕');
+        table.string('watched').comment('是否已观看');
         table.string('movie_id').comment('电影ID');
         table.string('serie_id').comment('电影系列ID');
         table.string('media_lib_id').comment('媒体库ID');
@@ -252,6 +253,11 @@ export default async function (knex: Knex) {
         val: 'main_star_filter',
         type: 'filter_setting',
         state: 1
+    }, {
+        name: '标签',
+        val: 'tag_filter',
+        type: 'filter_setting',
+        state: 1
     }])
 
     // 筛选-类型-子项
@@ -314,6 +320,24 @@ export default async function (knex: Knex) {
         name: '',
         val: 'Animation',
         type: 'type_filter',
+        state: 0
+    }])
+
+    // 筛选-标签-子项
+    await knex('config').insert([{
+        name: '已观看',
+        val: 'watched',
+        type: 'tag_filter',
+        state: 0
+    }, {
+        name: '未观看',
+        val: 'unwatched',
+        type: 'tag_filter',
+        state: 0
+    }, {
+        name: '最近添加',
+        val: 'recently_added',
+        type: 'tag_filter',
         state: 0
     }])
 

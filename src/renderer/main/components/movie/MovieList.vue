@@ -56,6 +56,7 @@ import {
   movie_sort_type,
   loadedTypeFilterConfig,
   loadedSortConfig,
+  tag_filters,
 } from "@/lib/movieFilter";
 import { search_keyword, search_fields } from "@/lib/movieSearch";
 import {
@@ -143,6 +144,21 @@ export default defineComponent({
     );
     watch(
       () => type_filter_checked.value,
+      () => {
+        loadedConfig.value && onFilterChange();
+      }
+    );
+
+    // 电影标签字段变更
+    const tag_filter_checked = computed(() =>
+      tag_filters.value
+        .filter((item) => item.checked)
+        .map((v) => v.key)
+        .sort((v) => v)
+        .join(",")
+    );
+    watch(
+      () => tag_filter_checked.value,
       () => {
         loadedConfig.value && onFilterChange();
       }

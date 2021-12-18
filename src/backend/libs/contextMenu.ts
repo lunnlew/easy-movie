@@ -75,7 +75,8 @@ export async function createSearchAreaMenu(event: any, params: any, handler: any
             label: field.name,
             click: () => {
                 application.knex('config').where({ id: field.id }).update({
-                    state: field.state == 0 ? 1 : 0
+                    state: field.state == 0 ? 1 : 0,
+                    updated_at: Date.now()
                 }).on('query', (query: any) => {
                     console.log(query.sql)
                 }).catch(err => {
@@ -301,7 +302,8 @@ export async function showSortAreaMenu(event: any, params: any, handler: any) {
             click: () => {
                 if (field.state == 0) {
                     application.knex('config').where({ type: 'sort_field' }).update({
-                        state: field.state
+                        state: field.state,
+                        updated_at: Date.now()
                     }).on('query', (query: any) => {
                         console.log(query.sql)
                     }).catch(err => {
@@ -309,7 +311,8 @@ export async function showSortAreaMenu(event: any, params: any, handler: any) {
                     })
                 }
                 application.knex('config').where({ id: field.id }).update({
-                    state: field.state == 0 ? 1 : 0
+                    state: field.state == 0 ? 1 : 0,
+                    updated_at: Date.now()
                 }).on('query', (query: any) => {
                     console.log(query.sql)
                 }).catch(err => {
@@ -339,14 +342,16 @@ export async function showSortAreaMenu(event: any, params: any, handler: any) {
             // type: 'radio',
             click: () => {
                 application.knex('config').where({ type: 'sort_type' }).update({
-                    state: field.state
+                    state: field.state,
+                    updated_at: Date.now()
                 }).on('query', (query: any) => {
                     console.log(query.sql)
                 }).catch(err => {
                     console.log(err)
                 })
                 application.knex('config').where({ id: field.id }).update({
-                    state: field.state == 0 ? 1 : 0
+                    state: field.state == 0 ? 1 : 0,
+                    updated_at: Date.now()
                 }).on('query', (query: any) => {
                     console.log(query.sql)
                 }).catch(err => {
