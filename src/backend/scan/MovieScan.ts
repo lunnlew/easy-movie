@@ -126,9 +126,11 @@ class MovieScan {
         name_cn: movie_info.name_cn
       }).limit(50).offset(0).select().catch(e => { throw e })
       let movie_data = select_movieinfos.find(item => item.year === movie_info.year)
-      if (select_movieinfos && movie) {
+      if (select_movieinfos && movie_data) {
         has_main_info = true
         movie_info.id = movie_data.id
+      } else {
+        delete movie_info.id
       }
     }
 
@@ -312,23 +314,25 @@ class MovieScan {
         movie_info[propkey] = prop[propkey]
       }
     }
-    movie_info.videos = movie_info.videos.split(',')
-    movie_info.resource_type = movie_info.resource_type.split(',')
-    for (let i = 0; i < movie_info.videos.length; i++) {
-      await this.save_movie_info({
-        name_cn: movie_info.name,
-        name_en: movie_info.name,
-        year: movie_info.year,
-        language: movie_info.language,
-        imdb_id: movie_info.imdb_id,
-        imdb_votes: movie_info.imdb_votes,
-        imdb_rating: movie_info.imdb_rating,
-        duration: movie_info.duration,
-      } as MovieFields, {
-        filePath: (path.dirname(nfo_path) + movie_info.videos[i]).replace(/\\/g, '/'),
-        media_lib_id: scanInfo.media_lib_id,
-        resource_type: movie_info.resource_type[i] || 'single',
-      })
+    if (Array.isArray(movie_info.videos.file)) {
+      for (let video of movie_info.videos.file) {
+        let file_path = video._
+        let attr = video.$
+        await this.save_movie_info({
+          name_cn: movie_info.name,
+          name_en: movie_info.name,
+          year: movie_info.year,
+          language: movie_info.language,
+          imdb_id: movie_info.imdb_id,
+          imdb_votes: movie_info.imdb_votes,
+          imdb_rating: movie_info.imdb_rating,
+          duration: movie_info.duration,
+        } as MovieFields, {
+          filePath: (path.dirname(nfo_path) + file_path).replace(/\\/g, '/'),
+          media_lib_id: scanInfo.media_lib_id,
+          resource_type: attr.resource_type || 'single',
+        })
+      }
     }
   }
   async scan(file_path: any, media_lib_id: any, is_top: boolean = false) {
@@ -349,7 +353,12 @@ class MovieScan {
         }
         if (this.isHasNFO(scanedDirInfo)) {
           for (let nfo_file of scanedDirInfo.nfoPaths) {
-            this.extractMovieInfoFromNFO(nfo_file, scanedDirInfo)
+            this.extractMovieInfoFromNFO(nfo_file, {
+              media_lib_id,
+              scanPath: filePath,
+              type: 'movie',
+              scanedDirInfo
+            })
           }
         } else if (this.isSingleMovieDir(scanedDirInfo)) {
           console.log(`${filePath} 单文件电影目录`);

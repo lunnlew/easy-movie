@@ -129,6 +129,7 @@ const movieActorAvatar = async (req: any, res: any, next: any) => {
             res.sendStatus(404);
         } else if (data.avatar && data.avatar.indexOf('http') === 0) {
             application.event.emit('cast:download-avator', {
+                imdb_id: data.imdb_id,
                 id: data.id,
                 path: movie_data.path,
                 avatar: data.avatar
@@ -136,6 +137,7 @@ const movieActorAvatar = async (req: any, res: any, next: any) => {
             res.sendStatus(404);
         } else if (!data.avatar && data.avatar_url.indexOf('http') === 0) {
             application.event.emit('cast:download-avator', {
+                imdb_id: data.imdb_id,
                 id: data.id,
                 path: movie_data.path,
                 avatar: data.avatar_url

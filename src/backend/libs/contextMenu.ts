@@ -212,9 +212,9 @@ export async function createLibMenu(event: any, params: any, handler: any) {
         }))
         menu.append(new MenuItem({
             label: '扫描', click: async () => {
+                console.log('扫描', item.name)
                 let data = await libs.getByName(item.name).catch(err => { throw err })
-                libs.updateByName(item.name, {
-                    ...data,
+                libs.updateById(data.id, {
                     scan_loading: true
                 })
                 if (data.type === 'tv') {

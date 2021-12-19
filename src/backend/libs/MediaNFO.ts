@@ -75,14 +75,29 @@ export default class MediaNFO implements MediaNFOType {
      * @param value 
      * @returns 
      */
-    setXmlProperty(key: string, value: any) {
+    setXmlProperty(key: string, value: any, subkey?: string) {
         let index = this._xml.findIndex(item => key in item)
         if (index > -1) {
-            this._xml[index][key] = value
+            if (Array.isArray(value)) {
+                this._xml[index][key] = []
+                for (let v of value) {
+                    this._xml[index][key].push({
+                        [subkey]: v
+                    })
+                }
+            } else {
+                this._xml[index][key] = value
+            }
         } else {
-            this._xml.push({
-                [key]: value
-            })
+            if (Array.isArray(value)) {
+                this._xml.push({
+                    [key]: [...value.map(v => ({ [subkey]: v }))]
+                })
+            } else {
+                this._xml.push({
+                    [key]: value
+                })
+            }
         }
         return this
     }
@@ -178,21 +193,30 @@ export default class MediaNFO implements MediaNFOType {
         return this
     }
     /**
-     * 设置资源类型
-     * @param type 
-     * @returns 
-     */
-    setResourceType(type: Array<any>) {
-        this.setXmlProperty('resource_type', type.join(','))
-        return this
-    }
-    /**
      * 设置文件列表
      * @param genres
      * @returns 
      */
     setVideos(files: Array<any>) {
-        this.setXmlProperty('videos', files.join(','))
+        let key = 'videos'
+        let subkey = 'file'
+        let index = this._xml.findIndex(item => key in item)
+        if (index > -1) {
+            this._xml.splice(index, 1)
+        }
+        this._xml.push({
+            [key]: [...files.map(v => ({
+                [subkey]: [
+                    v.path,
+                    {
+                        _attr: {
+                            resource_type: v.resource_type,
+                            // path: file.path
+                        }
+                    }
+                ]
+            }))]
+        })
         return this
     }
     /**

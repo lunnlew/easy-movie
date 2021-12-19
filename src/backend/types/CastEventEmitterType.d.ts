@@ -18,7 +18,7 @@ export type CastOnEventPayload = Pick<
 /**
  * 下载演员图片参数
  */
-export type CastDownloadAvatorPayload = Pick<CastFields, 'id'> & Pick<CastInfo, 'avatar'> & Pick<MovieFileFields, 'path' | 'resource_type'>
+export type CastDownloadAvatorPayload = Pick<CastFields, 'id' | 'imdb_id'> & Pick<CastInfo, 'avatar'> & Pick<MovieFileFields, 'path' | 'resource_type'>
 
 /**
  *演员相关事件数据MAP

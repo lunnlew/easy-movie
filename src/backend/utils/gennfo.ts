@@ -34,8 +34,10 @@ export default class gennfo {
             .setReleaseYear(movie.year)
             .setPoster(movie.poster)
             .setGenres(movie.genres)
-            .setResourceType(movie_files.map(v => v.resource_type))
-            .setVideos(movie_files.map(v => v.path.replace(file_path.replace(/\\/g, '/'), '')))
+            .setVideos(movie_files.map(v => ({
+                path: v.path.replace(file_path.replace(/\\/g, '/'), ''),
+                resource_type: v.resource_type
+            })))
             .write()
     }
 }
