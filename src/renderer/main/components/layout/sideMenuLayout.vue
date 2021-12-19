@@ -94,7 +94,7 @@ import {
 } from "@/lib/lib";
 import { showContextMenu, showLibMenu } from "@/lib/contextMenu";
 import { libMenuClick } from "@/lib/sideMenu";
-import { changeFilter, needTagFilter, tag_filters } from "@/lib/movieFilter";
+import { changeFilter, needTagFilter, refresh_tag_filter, tag_filters } from "@/lib/movieFilter";
 export default defineComponent({
   name: "SideMenuLayout",
   components: {
@@ -151,6 +151,7 @@ export default defineComponent({
           v.checked = false;
         }
       });
+      refresh_tag_filter()
     }
 
     return {
