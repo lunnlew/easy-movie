@@ -42,6 +42,11 @@ export function changeEnableFromSetting(filters) {
 export const isShowFilter = ref(false);
 
 /**
+ * 是否需要筛选过滤
+ */
+export const needTagFilter = ref(false);
+
+/**
  * 类型筛选
  */
 export const type_filters = ref<any[]>([]);
@@ -92,11 +97,13 @@ export async function changeFilter(data: any) {
             let unwatched = tag_filters.value.find(i => i.key === 'unwatched')
             if (unwatched) {
                 unwatched.disabled = data.value
+                unwatched.checked = data.value ? false : unwatched.checked
             }
         } else if (data.key === 'unwatched') {
             let watched = tag_filters.value.find(i => i.key === 'watched')
             if (watched) {
                 watched.disabled = data.value
+                watched.checked = data.value ? false : watched.checked
             }
         }
         tag_filters.value = [...tag_filters.value]

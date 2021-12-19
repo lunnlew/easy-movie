@@ -52,6 +52,27 @@
           </el-icon>
         </div>
       </el-menu-item>
+      <el-menu-item
+        @click="tagClick('alltags')"
+        :key="'alltags'"
+        :index="'alltags'"
+      >
+        <span>快捷标签</span>
+      </el-menu-item>
+      <el-menu-item
+        v-for="tag of tags_menus"
+        @click="tagClick(tag)"
+        :key="tag.key"
+        :index="tag.key"
+      >
+        <el-icon>
+          <List />
+        </el-icon>
+        <span>{{ tag.name }}</span>
+        <div class="icon-btn-group">
+          <span style="margin-right: 10px">{{ tag.count }}</span>
+        </div>
+      </el-menu-item>
     </el-menu>
   </div>
   <new-lib
@@ -62,7 +83,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
-import { Close, Plus, Operation, Loading } from "@element-plus/icons";
+import { Close, Plus, Operation, Loading, List } from "@element-plus/icons";
 import newLib from "@/components/dialog/newLib.vue";
 import ResetLibDir from "../dialog/resetLibDir.vue";
 import { useStore } from "vuex";
@@ -73,6 +94,7 @@ import {
 } from "@/lib/lib";
 import { showContextMenu, showLibMenu } from "@/lib/contextMenu";
 import { libMenuClick } from "@/lib/sideMenu";
+import { changeFilter, needTagFilter, tag_filters } from "@/lib/movieFilter";
 export default defineComponent({
   name: "SideMenuLayout",
   components: {
@@ -82,6 +104,7 @@ export default defineComponent({
     Operation,
     newLib,
     ResetLibDir,
+    List,
   },
   setup: () => {
     const store = useStore();
@@ -101,9 +124,40 @@ export default defineComponent({
       () => store.state.libMenuView.showResetDirView
     );
 
+    const tags_menus = computed(() =>
+      tag_filters.value.filter((item) =>
+        ["recently_added", "watched", "unwatched"].includes(item.key)
+      )
+    );
+
+    function tagClick(tag: any) {
+      needTagFilter.value = true;
+      tag_filters.value.map((v) => {
+        if (v.key === tag.key) {
+          v.checked = true;
+          changeFilter({
+            type: "tag_filter",
+            name: v.name,
+            key: v.key,
+            value: true,
+          });
+        } else {
+          changeFilter({
+            type: "tag_filter",
+            name: v.name,
+            key: v.key,
+            value: false,
+          });
+          v.checked = false;
+        }
+      });
+    }
+
     return {
       libMenuClick,
       currentLibs,
+      tagClick,
+      tags_menus,
       showNewLibDialog,
       removeLibConfirm,
       showLibMenuClick,
