@@ -36,7 +36,7 @@
         <el-button size="medium" type="primary" @click="onSubmit"
           >保存</el-button
         >
-        <el-button size="medium" @click="$emit('hide')">取消</el-button>
+        <el-button size="medium" @click="close">取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
