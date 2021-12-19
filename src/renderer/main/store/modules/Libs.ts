@@ -1,4 +1,4 @@
-import { getLib, getLibs, removeLib, scanLib, saveLib } from "@/api/lib";
+import { getLib, getLibs, removeLib, scanLib, saveLib, updateLib } from "@/api/lib";
 import { ElMessage } from 'element-plus'
 export default {
     namespaced: false,
@@ -50,6 +50,27 @@ export default {
                     lib_id: res.data.data.pop(),
                 }
                 commit('addLib', lib)
+                commit('libScanView/SET_LIB_SCAN_STATE', lib)
+                commit('libMenuView/SET_LIB_MENU', lib)
+                return lib
+            } else {
+                ElMessage({
+                    message: res.data.message,
+                    type: 'error'
+                })
+            }
+        },
+        async changeLib({ commit }: any, lib: any) {
+            const res = await updateLib({
+                ...lib,
+                newpath: lib.newpath.replace(/\\/g, '/')
+            })
+            if (res.data.code === 200) {
+                lib = {
+                    ...lib,
+                    lib_path: lib.newpath.replace(/\\/g, '/')
+                }
+                commit('updateLib', lib);
                 commit('libScanView/SET_LIB_SCAN_STATE', lib)
                 commit('libMenuView/SET_LIB_MENU', lib)
                 return lib

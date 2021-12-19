@@ -200,8 +200,39 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
 export async function createLibMenu(event: any, params: any, handler: any) {
     let point = params.options?.point || { x: 0, y: 0 }
     let item = params.options?.item || {}
+    const menu = new Menu()
+
+    menu.append(new MenuItem({
+        label: '生成NFO信息', click: async () => {
+            let movies
+            if (item.name === 'all') {
+                movies = await application.knex('movies')
+                    .select([
+                        'movies.id',
+                        'movie_files.path'
+                    ]).from('movie_files')
+                    .leftJoin('movies', function () {
+                        this.on('movie_files.movie_id', '=', 'movies.id')
+                    })
+            } else {
+                let lib = await libs.getByName(item.name).catch(err => { throw err })
+                movies = await movie.listByLibId(lib.id)
+            }
+            for (let movie of movies) {
+                // 去生成影视nfo信息
+                application.event.emit('movie:generate-nfo', {
+                    movie_id: movie.id,
+                    file_path: movie.path.replace(/\\/g, '/'),
+                });
+            }
+            handler({
+                action: 'gennfo',
+                state: 'success',
+            })
+        }
+    }))
     if (item.name !== 'all') {
-        const menu = new Menu()
+        menu.append(new MenuItem({ type: 'separator' }))
         menu.append(new MenuItem({
             label: '编辑', click: () => {
                 handler({
@@ -243,23 +274,6 @@ export async function createLibMenu(event: any, params: any, handler: any) {
             }
         }))
         menu.append(new MenuItem({
-            label: '生成NFO信息', click: async () => {
-                let lib = await libs.getByName(item.name).catch(err => { throw err })
-                let movies = await movie.listByLibId(lib.id)
-                for (let movie of movies) {
-                    // 去生成影视nfo信息
-                    application.event.emit('movie:generate-nfo', {
-                        movie_id: movie.id,
-                        file_path: movie.path.replace(/\\/g, '/'),
-                    });
-                }
-                handler({
-                    action: 'gennfo',
-                    state: 'success',
-                })
-            }
-        }))
-        menu.append(new MenuItem({
             label: '打开库位置', click: async () => {
                 let res = await libs.getByName(item.name).catch(err => { throw err })
                 if (fs.existsSync(res.path)) {
@@ -273,6 +287,24 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                 })
             }
         }))
+        menu.append(new MenuItem({
+            label: '位置重定位', click: async () => {
+                let res = await libs.getByName(item.name).catch(err => { throw err })
+                invokeAction.invokeRenderAction('mainView', {
+                    action: 'libMenuView/SET_RESETDIR_VIEW',
+                    options: {
+                        lib_id: res.id,
+                        name: res.name,
+                        path: res.path,
+                        show: true
+                    }
+                }, false)
+                handler({
+                    action: 'resetdir',
+                    state: 'success',
+                })
+            }
+        }))
         menu.append(new MenuItem({ type: 'separator' }))
         menu.append(new MenuItem({
             label: '移除', click: () => {
@@ -282,24 +314,20 @@ export async function createLibMenu(event: any, params: any, handler: any) {
                 })
             }
         }))
-        const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
-        menu.popup({
-            window: win,
-            x: point.x || 0,
-            y: point.y || 0
-        })
-        menu.on('menu-will-close', () => {
-            handler({
-                action: 'close',
-                state: 'success',
-            })
-        })
-    } else {
+    }
+
+    const win = BrowserWindow.fromWebContents(event.sender) as BrowserWindow
+    menu.popup({
+        window: win,
+        x: point.x || 0,
+        y: point.y || 0
+    })
+    menu.on('menu-will-close', () => {
         handler({
-            action: 'skip',
+            action: 'close',
             state: 'success',
         })
-    }
+    })
 }
 
 /**

@@ -19,11 +19,25 @@ interface LibMenuItem {
     }
 }
 
+interface ShowResetLib {
+    lib_id: string,
+    name: string,
+    path: string,
+}
+
 interface LibMenuViewState {
     /**
      * 菜单列表
      */
     menus: LibMenuItem[];
+    /**
+     * 是否显示重定位对话框
+     */
+    showResetDirView: boolean;
+    /**
+     * 重定位对话框库信息
+     */
+    showResetLib: ShowResetLib
 }
 
 /**
@@ -40,7 +54,9 @@ function getIcon(type: string) {
 }
 
 const state: LibMenuViewState = {
-    menus: []
+    menus: [],
+    showResetDirView: false,
+    showResetLib: {} as ShowResetLib
 }
 
 const mutations = {
@@ -105,11 +121,22 @@ const mutations = {
         if (index > -1) {
             state.menus.splice(index, 1);
         }
+    },
+    /**
+     * 显示重定位对话框
+     * @param state 
+     * @param payload 
+     */
+    SET_RESETDIR_VIEW(state: LibMenuViewState, lib: any) {
+        state.showResetDirView = lib.show;
+        state.showResetLib = lib;
     }
 }
 const actions = {}
 const getters = {
-    lib_menus: (state: LibMenuViewState) => state.menus
+    lib_menus: (state: LibMenuViewState) => state.menus,
+    showResetLib: (state: LibMenuViewState) => state.showResetLib,
+    showResetDirView: (state: LibMenuViewState) => state.showResetDirView,
 }
 export default {
     namespaced: true,

@@ -23,9 +23,18 @@ export async function scanLib(lib: any) {
         data: lib
     })
 }
+
 export async function saveLib(lib: any) {
     return axios({
         url: '/libs/save',
+        method: 'post',
+        data: lib
+    })
+}
+
+export async function updateLib(lib: any) {
+    return axios({
+        url: '/libs/update',
         method: 'post',
         data: lib
     })

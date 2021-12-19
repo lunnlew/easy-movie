@@ -6,6 +6,7 @@ import { buildResult, buildErrResult } from '../utils'
 import tvScan from '../scan/TvScan'
 import movieScan from '../scan/MovieScan'
 import movie_files from '../database/movie_files'
+import application from '../libs/application'
 
 
 const router = Router();
@@ -37,6 +38,33 @@ const saveLib = async (req: any, res: any, next: any) => {
     let lib = req.body;
     try {
         let data = await libs.save(lib).catch(err => { throw err })
+        res.json(buildResult(data))
+    } catch (err: any) {
+        res.json(buildErrResult(err.message, 500))
+    }
+}
+
+const updateLib = async (req: any, res: any, next: any) => {
+    let lib = req.body;
+    try {
+        let lib_id = lib.lib_id
+        let newpath = lib.newpath.replace(/\\/g, '/')
+        delete lib.lib_id
+        delete lib.newpath
+        let data = await libs.updateById(lib_id, {
+            ...lib,
+            path: newpath
+        }).catch(err => { throw err })
+        application.knex('movies').update({
+            path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
+        }).on('query', (query: any) => {
+            console.log(query.sql, lib.path, newpath)
+        }).catch(err => { throw err })
+        application.knex('movie_files').update({
+            path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
+        }).on('query', (query: any) => {
+            console.log(query.sql, lib.path, newpath)
+        }).catch(err => { throw err })
         res.json(buildResult(data))
     } catch (err: any) {
         res.json(buildErrResult(err.message, 500))
@@ -102,6 +130,7 @@ const scanLib = async (req: any, res: any, next: any) => {
 
 router.post("/list", libsList)
 router.post("/save", saveLib)
+router.post("/update", updateLib)
 router.post("/remove", removeLib)
 router.post("/detail", getLib)
 router.post("/scan", scanLib)

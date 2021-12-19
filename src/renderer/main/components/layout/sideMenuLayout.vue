@@ -58,11 +58,13 @@
     v-if="isShowNewLibDialog"
     @hide="isShowNewLibDialog = false"
   ></new-lib>
+  <reset-lib-dir v-if="isShowResetDirView"></reset-lib-dir>
 </template>
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import { Close, Plus, Operation, Loading } from "@element-plus/icons";
 import newLib from "@/components/dialog/newLib.vue";
+import ResetLibDir from "../dialog/resetLibDir.vue";
 import { useStore } from "vuex";
 import {
   isShowNewLibDialog,
@@ -79,6 +81,7 @@ export default defineComponent({
     Loading,
     Operation,
     newLib,
+    ResetLibDir,
   },
   setup: () => {
     const store = useStore();
@@ -94,12 +97,17 @@ export default defineComponent({
       console.log(result);
     }
 
+    const isShowResetDirView = computed(
+      () => store.state.libMenuView.showResetDirView
+    );
+
     return {
       libMenuClick,
       currentLibs,
       showNewLibDialog,
       removeLibConfirm,
       showLibMenuClick,
+      isShowResetDirView,
       isShowNewLibDialog,
       showContextMenu,
     };
