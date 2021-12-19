@@ -150,14 +150,29 @@ export async function refresh_tag_filter() {
                 key: item.val
             }
         }))
-        tag_filters.value = result.map((item: any) => {
+        let data = result.map((item: any) => {
             return {
                 name: item.name,
                 key: item.val,
+                disabled: 0,
                 checked: item.state == 1 ? true : false,
                 count: count_result.data?.data[item.val] || 0
             }
         })
+        for (let item of data) {
+            if (item.key === 'watched') {
+                let unwatched = data.find(i => i.key === 'unwatched')
+                if (unwatched) {
+                    unwatched.disabled = item.checked
+                }
+            } else if (data.key === 'unwatched') {
+                let watched = data.find(i => i.key === 'watched')
+                if (watched) {
+                    watched.disabled = item.checked
+                }
+            }
+        }
+        tag_filters.value = data
     } else {
         // 设置改变隐藏时，取消所有选择
         tag_filters.value = tag_filters.value.map(v => ({

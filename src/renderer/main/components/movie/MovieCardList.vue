@@ -82,8 +82,10 @@ import {
     remove_movie,
     movies,
     show_movie_edit,
-    show_scraper_search
+    show_scraper_search,
+    onFilterChange
 } from "@/lib/movieList";
+import { refresh_tag_filter } from "@/lib/movieFilter";
 export default defineComponent({
     props: {
         toDetail: {
@@ -117,6 +119,9 @@ export default defineComponent({
                 show_movie_edit(item);
             } else if (result.action == "scraper" && result.state == "success") {
                 show_scraper_search(item);
+            } else if(result.action == "needUpdateTags" && result.state == "success") {
+                refresh_tag_filter()
+                onFilterChange()
             }
         }
         return {

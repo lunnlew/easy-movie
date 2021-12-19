@@ -10,6 +10,7 @@ import tvScan from '../scan/TvScan'
 import movieScan from '../scan/MovieScan'
 import invokeAction from "../eventEmitter/invokeAction";
 import movie from "../database/movie";
+import movie_files from "@/database/movie_files";
 
 /**
  * 左上角上下文菜单
@@ -159,6 +160,41 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
             })
         }
     }))
+    menu.append(new MenuItem({ type: 'separator' }))
+    let data = await application.knex('movie_files').where('id', '=', item.fid).first()
+    if (data.watched == '1') {
+        menu.append(new MenuItem({
+            label: '标记为[未观看]', click: () => {
+                application.knex('movie_files').where({ id: item.fid }).update({
+                    watched: 0
+                }).on('query', (query: any) => {
+                    console.log(query.sql)
+                }).catch(err => {
+                    console.log(err)
+                })
+                handler({
+                    action: 'needUpdateTags',
+                    state: 'success',
+                })
+            }
+        }))
+    } else {
+        menu.append(new MenuItem({
+            label: '标记为[已观看]', click: () => {
+                application.knex('movie_files').where({ id: item.fid }).update({
+                    watched: 1
+                }).on('query', (query: any) => {
+                    console.log(query.sql)
+                }).catch(err => {
+                    console.log(err)
+                })
+                handler({
+                    action: 'needUpdateTags',
+                    state: 'success',
+                })
+            }
+        }))
+    }
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '从媒体库移除', click: () => {
