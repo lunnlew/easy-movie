@@ -68,6 +68,7 @@ class movie {
                 'movie_files.media_lib_id',
                 'movies.name_cn',
                 'movies.name_en',
+                'movies.imdb_id',
                 'movies.first_char_cn',
                 'movies.imdb_rating',
                 'movies.duration',

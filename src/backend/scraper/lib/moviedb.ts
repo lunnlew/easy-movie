@@ -10,7 +10,7 @@ class MovieDb implements IScraper {
     imgbase: string = imdb_imgbase;
     api: MovieDbApi;
     app: ApplicationType
-    scraper_id: string = 'moviedb';
+    scraper_id: string = 'themoviedb';
     constructor(app: ApplicationType) {
         this.app = app
         this.api = new MovieDbApi(this.apikey, this.apiurl);
