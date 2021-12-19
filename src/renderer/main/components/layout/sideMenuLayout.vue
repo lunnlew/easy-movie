@@ -94,7 +94,12 @@ import {
 } from "@/lib/lib";
 import { showContextMenu, showLibMenu } from "@/lib/contextMenu";
 import { libMenuClick } from "@/lib/sideMenu";
-import { changeFilter, needTagFilter, refresh_tag_filter, tag_filters } from "@/lib/movieFilter";
+import {
+  changeFilter,
+  needTagFilter,
+  refresh_tag_filter,
+  tag_filters,
+} from "@/lib/movieFilter";
 export default defineComponent({
   name: "SideMenuLayout",
   components: {
@@ -132,26 +137,13 @@ export default defineComponent({
 
     function tagClick(tag: any) {
       needTagFilter.value = true;
-      tag_filters.value.map((v) => {
-        if (v.key === tag.key) {
-          v.checked = true;
-          changeFilter({
-            type: "tag_filter",
-            name: v.name,
-            key: v.key,
-            value: true,
-          });
-        } else {
-          changeFilter({
-            type: "tag_filter",
-            name: v.name,
-            key: v.key,
-            value: false,
-          });
-          v.checked = false;
-        }
-      });
-      refresh_tag_filter()
+      changeFilter({
+        type: "tag_filter",
+        name: tag.name,
+        key: tag.key,
+        value: true,
+      }, true);
+      refresh_tag_filter();
     }
 
     return {

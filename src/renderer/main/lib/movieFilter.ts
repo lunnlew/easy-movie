@@ -81,35 +81,72 @@ export function toggleFilterTool() {
  * 筛选条件变化监听处理
  * @param data 
  */
-export async function changeFilter(data: any) {
-    store.dispatch('invokeMainAction', {
-        action: 'setFilterData',
-        options: data,
-        await_complete: false
-    })
+export async function changeFilter(data: any, menu: boolean = false) {
     if (data.type == 'type_filter') {
         type_filters.value = [...type_filters.value]
+        sync_filter_setting(data)
     } else if (data.type == 'main_star_filter') {
         main_star_filters.value = [...main_star_filters.value]
+        sync_filter_setting(data)
     } else if (data.type == 'tag_filter') {
-        // 互斥标签处理
-        if (data.key === 'watched') {
-            let unwatched = tag_filters.value.find(i => i.key === 'unwatched')
-            if (unwatched) {
-                unwatched.disabled = data.value
-                unwatched.checked = data.value ? false : unwatched.checked
-            }
-        } else if (data.key === 'unwatched') {
-            let watched = tag_filters.value.find(i => i.key === 'watched')
-            if (watched) {
-                watched.disabled = data.value
-                watched.checked = data.value ? false : watched.checked
+        if (menu) {
+            tag_filters.value.map(v => {
+                if (v.key !== data.key) {
+                    sync_filter_setting({
+                        type: "tag_filter",
+                        name: v.name,
+                        key: v.key,
+                        value: false,
+                    })
+                } else {
+                    sync_filter_setting({
+                        type: "tag_filter",
+                        name: v.name,
+                        key: v.key,
+                        value: true,
+                    })
+                }
+            })
+        } else {
+            sync_filter_setting(data)
+            // 互斥标签处理
+            if (data.key === 'watched') {
+                let unwatched = tag_filters.value.find(i => i.key === 'unwatched')
+                if (unwatched) {
+                    // unwatched.disabled = data.value
+                    unwatched.checked = data.value ? false : unwatched.checked
+                }
+                sync_filter_setting({
+                    type: "tag_filter",
+                    name: unwatched.name,
+                    key: unwatched.key,
+                    value: false,
+                })
+            } else if (data.key === 'unwatched') {
+                let watched = tag_filters.value.find(i => i.key === 'watched')
+                if (watched) {
+                    // watched.disabled = data.value
+                    watched.checked = data.value ? false : watched.checked
+                }
+                sync_filter_setting({
+                    type: "tag_filter",
+                    name: watched.name,
+                    key: watched.key,
+                    value: false,
+                })
             }
         }
         tag_filters.value = [...tag_filters.value]
     }
 }
 
+export async function sync_filter_setting(data) {
+    store.dispatch('invokeMainAction', {
+        action: 'setFilterData',
+        options: data,
+        await_complete: false
+    })
+}
 /**
  * 更新筛选条件展示值
  */
@@ -166,19 +203,19 @@ export async function refresh_tag_filter() {
                 count: count_result.data?.data[item.val] || 0
             }
         })
-        for (let item of data) {
-            if (item.key === 'watched') {
-                let unwatched = data.find(i => i.key === 'unwatched')
-                if (unwatched) {
-                    item.disabled = unwatched.checked
-                }
-            } else if (data.key === 'unwatched') {
-                let watched = data.find(i => i.key === 'watched')
-                if (watched) {
-                    item.disabled = watched.checked
-                }
-            }
-        }
+        // for (let item of data) {
+        //     if (item.key === 'watched') {
+        //         let unwatched = data.find(i => i.key === 'unwatched')
+        //         if (unwatched) {
+        //             item.disabled = unwatched.checked
+        //         }
+        //     } else if (data.key === 'unwatched') {
+        //         let watched = data.find(i => i.key === 'watched')
+        //         if (watched) {
+        //             item.disabled = watched.checked
+        //         }
+        //     }
+        // }
         console.log('refresh_tag_filter', data)
         tag_filters.value = data
     } else {
