@@ -44,7 +44,6 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from "vue";
 import { useStore } from "vuex";
-import { libMenuClick } from "@/lib/sideMenu";
 export default defineComponent({
   name: "resetLibDir",
   emits: ["hide"],
@@ -63,15 +62,23 @@ export default defineComponent({
     });
 
     async function onSubmit() {
-      store.dispatch("changeLib", libform).then((lib) => {
-        dialogVisible.value = false;
+      if (libform.newpath) {
+        await store.dispatch("changeLib", libform);
         store.commit("libMenuView/SET_RESETDIR_VIEW", {
           path: libform.newpath,
           lib_id: libform.lib_id,
           name: libform.name,
           show: false,
         });
-      });
+      } else {
+        store.commit("libMenuView/SET_RESETDIR_VIEW", {
+          path: libform.path,
+          lib_id: libform.lib_id,
+          name: libform.name,
+          show: false,
+        });
+      }
+      dialogVisible.value = false;
     }
     async function onSelectDirectory() {
       const result = await store.dispatch("invokeMainAction", {
@@ -92,7 +99,7 @@ export default defineComponent({
         show: false,
       });
     }
-    
+
     return {
       libform,
       onSubmit,
