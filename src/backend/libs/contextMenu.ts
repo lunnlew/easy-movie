@@ -162,8 +162,8 @@ export async function createMovieItemMenu(event: any, params: any, handler: any)
     menu.append(new MenuItem({ type: 'separator' }))
     menu.append(new MenuItem({
         label: '从媒体库移除', click: () => {
+            console.log('从媒体库移除', item.fid, item.name_cn)
             application.knex('movie_files').where({ id: item.fid }).delete().then((res) => {
-                console.log(res)
                 handler({
                     action: 'remove',
                     state: 'success',

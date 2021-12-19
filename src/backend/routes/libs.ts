@@ -55,16 +55,27 @@ const updateLib = async (req: any, res: any, next: any) => {
             ...lib,
             path: newpath
         }).catch(err => { throw err })
-        application.knex('movies').update({
-            path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
-        }).on('query', (query: any) => {
-            console.log(query.sql, lib.path, newpath)
-        }).catch(err => { throw err })
-        application.knex('movie_files').update({
-            path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
-        }).on('query', (query: any) => {
-            console.log(query.sql, lib.path, newpath)
-        }).catch(err => { throw err })
+        let offset = 0
+        let size = 30
+        let count = await application.knex('movie_files').where('media_lib_id', lib_id).count('id')
+        let total = count[0]['count(`id`)'] as number || 0
+        while (total > 0) {
+            let movie_files = await application.knex('movie_files').where('media_lib_id', lib_id).offset(offset).limit(size)
+            let ids = movie_files.map(item => item.id)
+            let movie_ids = Array.from(new Set(movie_files.map(item => item.movie_id)))
+            await application.knex('movie_files').whereIn('id', ids).update({
+                path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
+            }).on('query', (query: any) => {
+                console.log(query.sql, lib.path, ids)
+            }).catch(err => { throw err })
+            await application.knex('movies').whereIn('id', movie_ids).update({
+                path: application.knex.raw('replace(`path`, ?, ?)', [lib.path, newpath])
+            }).on('query', (query: any) => {
+                console.log(query.sql, lib.path, movie_ids)
+            }).catch(err => { throw err })
+            offset += size
+            total -= movie_files.length
+        }
         res.json(buildResult(data))
     } catch (err: any) {
         res.json(buildErrResult(err.message, 500))
