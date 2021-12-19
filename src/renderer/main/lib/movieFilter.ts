@@ -163,15 +163,16 @@ export async function refresh_tag_filter() {
             if (item.key === 'watched') {
                 let unwatched = data.find(i => i.key === 'unwatched')
                 if (unwatched) {
-                    unwatched.disabled = item.checked
+                    item.disabled = unwatched.checked
                 }
             } else if (data.key === 'unwatched') {
                 let watched = data.find(i => i.key === 'watched')
                 if (watched) {
-                    watched.disabled = item.checked
+                    item.disabled = watched.checked
                 }
             }
         }
+        console.log('refresh_tag_filter', data)
         tag_filters.value = data
     } else {
         // 设置改变隐藏时，取消所有选择
