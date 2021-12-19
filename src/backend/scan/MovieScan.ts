@@ -155,7 +155,7 @@ class MovieScan {
     // 保存新的文件路径
     await movieFile.save({
       path: movie_file.filePath,
-      name: movie_info.name_cn,
+      name: movie_file.name || movie_info.name_cn,
       type: 'movie',
       movie_id: movie_info.id,
       media_lib_id: movie_file.media_lib_id,
@@ -322,8 +322,8 @@ class MovieScan {
         let file_path = video._
         let attr = video.$
         await this.save_movie_info({
-          name_cn: movie_info.name,
-          name_en: movie_info.name,
+          name_cn: attr.name || movie_info.name,
+          name_en: attr.name || movie_info.name,
           year: movie_info.year,
           language: movie_info.language,
           imdb_id: movie_info.imdb_id,
@@ -334,6 +334,7 @@ class MovieScan {
           filePath: (path.dirname(nfo_path) + file_path).replace(/\\/g, '/'),
           media_lib_id: scanInfo.media_lib_id,
           resource_type: attr.resource_type || 'single',
+          name: attr.name || movie_info.name,
         })
       }
     }

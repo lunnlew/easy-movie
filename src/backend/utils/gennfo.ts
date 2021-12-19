@@ -36,7 +36,8 @@ export default class gennfo {
             .setGenres(movie.genres)
             .setVideos(movie_files.map(v => ({
                 path: v.path.replace(file_path.replace(/\\/g, '/'), ''),
-                resource_type: v.resource_type
+                resource_type: v.resource_type,
+                name: v.name
             })))
             .write()
     }
