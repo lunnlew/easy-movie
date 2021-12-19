@@ -145,12 +145,6 @@ class MovieScan {
       movie_info.id = ids[0]
     }
 
-    // 去生成影视nfo信息
-    this.event.emit('movie:generate-nfo', {
-      movie_id: movie_info.id,
-      file_path: movie_file.filePath,
-    });
-
     console.log(`${movie_info.name_cn}, ${movie_info.year || ''}, ${movie_file.filePath} 路径入库`);
     // 保存新的文件路径
     await movieFile.save({
@@ -176,6 +170,12 @@ class MovieScan {
         path: movie_file.filePath,
         resource_type: movie_file.resource_type || 'single'
       }
+    });
+
+    // 去生成影视nfo信息
+    this.event.emit('movie:generate-nfo', {
+      movie_id: movie_info.id,
+      file_path: movie_file.filePath,
     });
 
     // 页面上显示
