@@ -276,6 +276,29 @@ export default class MediaNFO implements MediaNFOType {
         ).replace(/\n/g, "\r\n");
     }
     /**
+     * 生成器信息描述
+     */
+    generateMeta() {
+        let index = this._xml.findIndex(item => 'Metadata' in item)
+        if (index > -1) {
+            this._xml.splice(index, 1)
+        }
+        this._xml.unshift({
+            Metadata: [
+                {
+                    Version: '0.1',
+                },
+                {
+                    Generator: 'easy-movie',
+                },
+                {
+                    Url: 'https://github.com/lunnlew/easy-movie',
+                }
+            ]
+        })
+        return this
+    }
+    /**
      * 写入文件
      * @param _nfo_file 
      */
@@ -286,6 +309,7 @@ export default class MediaNFO implements MediaNFOType {
         if (!this._nfo_file) {
             throw new Error('_nfo_file is empty');
         }
+        this.generateMeta()
         fs.writeFileSync(this._nfo_file, this.xml);
     }
 }

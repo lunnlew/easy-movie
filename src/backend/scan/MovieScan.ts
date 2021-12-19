@@ -311,6 +311,9 @@ class MovieScan {
     let movie_info = {} as any
     for (let prop of media_nfo._xml) {
       for (let propkey in prop) {
+        if (propkey === 'Metadata') {
+          continue
+        }
         movie_info[propkey] = prop[propkey]
       }
     }
