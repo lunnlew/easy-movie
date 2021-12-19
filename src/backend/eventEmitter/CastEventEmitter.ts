@@ -18,11 +18,16 @@ export default class CastEventEmitter implements CastEventEmitterType {
     }
     initialize() {
         this.app.event.on('cast:save-info', async (payload) => {
-            var afterUpdate = (actor_id: number, imdb_id: string) => {
+            var afterUpdate = (actor: {
+                actor_id: number,
+                imdb_id: string,
+                imdb_sid: number,
+            }) => {
                 if (payload.avatar) {
                     this.app.event.emit('cast:download-avator', {
-                        imdb_id: imdb_id,
-                        id: actor_id,
+                        imdb_id: actor.imdb_id,
+                        imdb_sid: actor.imdb_sid,
+                        id: actor.actor_id,
                         path: payload.path,
                         resource_type: payload.resource_type,
                         avatar: payload.avatar
@@ -57,7 +62,11 @@ export default class CastEventEmitter implements CastEventEmitterType {
                     ...new_actor,
                     updated_at: Date.now()
                 }).then((res) => {
-                    afterUpdate(actor_id, payload.imdb_id)
+                    afterUpdate({
+                        actor_id,
+                        imdb_id: payload.imdb_id,
+                        imdb_sid: payload.imdb_sid
+                    })
                 }).catch(err => {
                     console.log('更新失败', actor_id, payload.name_cn, err);
                 })
@@ -68,7 +77,11 @@ export default class CastEventEmitter implements CastEventEmitterType {
                     updated_at: Date.now()
                 }).then((res) => {
                     actor_id = res[0]
-                    afterUpdate(actor_id, payload.imdb_id)
+                    afterUpdate({
+                        actor_id,
+                        imdb_id: payload.imdb_id,
+                        imdb_sid: payload.imdb_sid
+                    })
                 }).catch(err => {
                     console.log('新增失败', payload.name_cn, err);
                 })
@@ -77,7 +90,7 @@ export default class CastEventEmitter implements CastEventEmitterType {
         )
         this.app.event.on('cast:download-avator', async (payload) => {
             console.log('cast:download-avator', payload)
-            let { id, imdb_id, path: file_path, resource_type, avatar } = payload
+            let { id, imdb_id, imdb_sid, path: file_path, resource_type, avatar } = payload
 
             let avatar_path = file_path.replace(/\\/ig, '/')
             let avatar_dir
@@ -89,7 +102,7 @@ export default class CastEventEmitter implements CastEventEmitterType {
             if (!fs.existsSync(avatar_dir)) {
                 fs.mkdirSync(avatar_dir)
             }
-            avatar_path = avatar_dir + `${imdb_id}.jpg`
+            avatar_path = avatar_dir + `sid-${imdb_sid}-imdb-${imdb_id}.jpg`
             if (avatar) {
                 if (!fs.existsSync(avatar_path)) {
                     new Downloader().download(avatar, avatar_path).catch(err => {

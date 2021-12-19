@@ -9,11 +9,15 @@
               :src="setImgUrlPrex(movieInfo.poster)"
               :alt="movieInfo.name_cn"
               :title="movieInfo.name_cn"
-              @error="() => movieInfo.poster = empty_poster"
+              @error="() => (movieInfo.poster = empty_poster)"
             >
               <template #placeholder>
                 <div class="image-slot">
-                  <img class="el-image__inner" :src="empty_poster" :alt="movieInfo.name_cn" />
+                  <img
+                    class="el-image__inner"
+                    :src="empty_poster"
+                    :alt="movieInfo.name_cn"
+                  />
                 </div>
               </template>
             </el-image>
@@ -23,10 +27,9 @@
       <div class="movie-right">
         <div class="movie-name">
           {{ movieInfo.name_cn }}
-          <span
-            class="movie-year"
-            v-if="movieInfo.year"
-          >({{ movieInfo.year }})</span>
+          <span class="movie-year" v-if="movieInfo.year"
+            >({{ movieInfo.year }})</span
+          >
           <span class="lib-name">位置：{{ libName }}</span>
         </div>
         <div class="movie-body">
@@ -77,20 +80,25 @@
             <p class="group-content desc-content">{{ movieInfo.summary }}</p>
             <div class="group-title">演职员</div>
             <p class="group-content actor-list">
-              <el-image
-                v-for="item of actors"
-                :key="item.id"
-                :src="setImgUrlPrex(item.avatar)"
-                :alt="item.name_cn"
-                :title="item.name_cn"
-                @error="() => item.poster = empty_poster"
-              >
-                <template #placeholder>
-                  <div class="image-slot">
-                    <img class="el-image__inner" :src="empty_poster" :alt="item.name_cn" />
-                  </div>
-                </template>
-              </el-image>
+              <template v-for="item of actors" :key="item.id">
+                <el-image
+                  v-if="item.avatar"
+                  :src="setImgUrlPrex(item.avatar)"
+                  :alt="item.name_cn"
+                  :title="item.name_cn"
+                  @error="() => (item.poster = empty_poster)"
+                >
+                  <template #placeholder>
+                    <div class="image-slot">
+                      <img
+                        class="el-image__inner"
+                        :src="empty_poster"
+                        :alt="item.name_cn"
+                      />
+                    </div>
+                  </template>
+                </el-image>
+              </template>
             </p>
           </div>
         </div>
@@ -198,7 +206,7 @@ export default defineComponent({
       edits,
       cardBodyStyle,
       libName,
-      setImgUrlPrex
+      setImgUrlPrex,
     };
   },
 });
