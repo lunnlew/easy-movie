@@ -60,6 +60,7 @@ const updateLib = async (req: any, res: any, next: any) => {
         let count = await application.knex('movie_files').where('media_lib_id', lib_id).count('id')
         let total = count[0]['count(`id`)'] as number || 0
         while (total > 0) {
+            console.log(`更新库${lib_id}的${offset}-${offset + size}条数据`)
             let movie_files = await application.knex('movie_files').where('media_lib_id', lib_id).offset(offset).limit(size)
             let ids = movie_files.map(item => item.id)
             let movie_ids = Array.from(new Set(movie_files.map(item => item.movie_id)))
