@@ -322,8 +322,8 @@ class MovieScan {
         let file_path = video._
         let attr = video.$
         await this.save_movie_info({
-          name_cn: attr.name || movie_info.name,
-          name_en: attr.name || movie_info.name,
+          name_cn: movie_info.name,
+          name_en: movie_info.name,
           year: movie_info.year,
           language: movie_info.language,
           imdb_id: movie_info.imdb_id,
