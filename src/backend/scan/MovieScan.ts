@@ -173,10 +173,10 @@ class MovieScan {
     });
 
     // 去生成影视nfo信息
-    this.event.emit('movie:generate-nfo', {
-      movie_id: movie_info.id,
-      file_path: movie_file.filePath,
-    });
+    // this.event.emit('movie:generate-nfo', {
+    //   movie_id: movie_info.id,
+    //   file_path: movie_file.filePath,
+    // });
 
     // 页面上显示
     this.event.emit('render:list-view:update', {
