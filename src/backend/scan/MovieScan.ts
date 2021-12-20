@@ -319,22 +319,26 @@ class MovieScan {
     }
     if (Array.isArray(movie_info.videos.file)) {
       for (let video of movie_info.videos.file) {
-        let file_path = video._
         let attr = video.$
         await this.save_movie_info({
           name_cn: movie_info.name,
           name_en: movie_info.name,
-          year: movie_info.year,
+          summary: movie_info.summary,
+          backdrop: movie_info.backdrop,
+          poster: movie_info.poster,
           language: movie_info.language,
           imdb_id: movie_info.imdb_id,
+          imdb_url: movie_info.imdb_url,
           imdb_votes: movie_info.imdb_votes,
           imdb_rating: movie_info.imdb_rating,
+          year: movie_info.year,
+          release_date: movie_info.release_date,
           duration: movie_info.duration,
         } as MovieFields, {
-          filePath: (path.dirname(nfo_path) + file_path).replace(/\\/g, '/'),
+          filePath: (path.dirname(nfo_path) + attr.path).replace(/\\/g, '/'),
           media_lib_id: scanInfo.media_lib_id,
           resource_type: attr.resource_type || 'single',
-          name: attr.name || movie_info.name,
+          name: movie_info.name,
         })
       }
     }
