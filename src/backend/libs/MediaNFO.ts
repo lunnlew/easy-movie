@@ -207,11 +207,10 @@ export default class MediaNFO implements MediaNFOType {
         this._xml.push({
             [key]: [...files.map(v => ({
                 [subkey]: [
-                    v.path,
+                    '',
                     {
                         _attr: {
-                            resource_type: v.resource_type,
-                            // path: file.path
+                            ...v
                         }
                     }
                 ]
@@ -220,20 +219,29 @@ export default class MediaNFO implements MediaNFOType {
         return this
     }
     /**
-     * 设置电影演员
-     * @param casts 
+     * 设置演职员列表
+     * @param genres
      * @returns 
      */
-    setCasts(casts: string) {
-        this.setXmlProperty('casts', casts)
-        return this
-    }
-    /**
-     * 设置电影摄制组
-     * @param crews 
-     */
-    setCrews(crews: string) {
-        this.setXmlProperty('crews', crews)
+    setCasts(casts: any[]) {
+        let key = 'casts'
+        let subkey = 'person'
+        let index = this._xml.findIndex(item => key in item)
+        if (index > -1) {
+            this._xml.splice(index, 1)
+        }
+        this._xml.push({
+            [key]: [...casts.map(v => ({
+                [subkey]: [
+                    '',
+                    {
+                        _attr: {
+                            ...v
+                        }
+                    }
+                ]
+            }))]
+        })
         return this
     }
     /**
@@ -243,6 +251,15 @@ export default class MediaNFO implements MediaNFOType {
      */
     setIMDB_ID(imdb_id: string) {
         this.setXmlProperty('imdb_id', imdb_id)
+        return this
+    }
+    /**
+     * 设置电影imdb url
+     * @param imdb_id 
+     * @returns 
+     */
+    setIMDB_URL(imdb_id: string) {
+        this.setXmlProperty('imdb_url', imdb_id)
         return this
     }
     /**

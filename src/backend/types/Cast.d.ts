@@ -16,6 +16,10 @@ export type CastInfo = {
      */
     avatar: string
     /**
+     * 演员头像
+     */
+    avatar_url?: string
+    /**
      * 演员性别
      */
     gender: number

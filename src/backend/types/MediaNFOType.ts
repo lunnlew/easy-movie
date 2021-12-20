@@ -77,17 +77,11 @@ export interface MediaNFOType {
     setGenres(genres: string): this;
 
     /**
-     * 设置电影演员
+     * 设置电影演职员列表
      * @param casts 
      * @returns 
      */
-    setCasts(casts: string): this;
-
-    /**
-     * 设置电影摄制组
-     * @param crews 
-     */
-    setCrews(crews: string): this;
+    setCasts(casts: any[]): this;
 
     /**
      * 设置电影imdb ID

@@ -117,8 +117,4 @@ export type MovieFileFields = {
      * 资源类型
      */
     resource_type?: 'single' | 'origin-disk'
-    /**
-     * 电影名称
-     */
-    name: string
 }
