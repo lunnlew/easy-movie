@@ -321,8 +321,8 @@ class MovieScan {
       for (let video of movie_info.videos.file) {
         let attr = video.$
         await this.save_movie_info({
-          name_cn: movie_info.name,
-          name_en: movie_info.name,
+          name_cn: movie_info.name_cn,
+          name_en: movie_info.name_en,
           summary: movie_info.summary,
           backdrop: movie_info.backdrop,
           poster: movie_info.poster,
@@ -338,7 +338,7 @@ class MovieScan {
           filePath: (path.dirname(nfo_path) + attr.path).replace(/\\/g, '/'),
           media_lib_id: scanInfo.media_lib_id,
           resource_type: attr.resource_type || 'single',
-          name: movie_info.name,
+          name: movie_info.name_cn,
         })
       }
     }
