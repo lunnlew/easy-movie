@@ -107,8 +107,17 @@ export default class MediaNFO implements MediaNFOType {
      * @param name 
      * @returns 
      */
-    setName(name: string) {
-        this.setXmlProperty('name', name)
+    setNameCN(name: string) {
+        this.setXmlProperty('name_cn', name)
+        return this
+    }
+    /**
+     * 设置电影名称
+     * @param name 
+     * @returns 
+     */
+    setNameEN(name: string) {
+        this.setXmlProperty('name_en', name)
         return this
     }
     /**

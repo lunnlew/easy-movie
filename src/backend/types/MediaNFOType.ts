@@ -11,7 +11,14 @@ export interface MediaNFOType {
      * @param title 
      * @returns 
      */
-    setName(name: string): this;
+    setNameCN(name: string): this;
+    
+    /**
+     * 设置电影名称
+     * @param title 
+     * @returns 
+     */
+    setNameEN(name: string): this;
 
     /**
      * 设置电影简介

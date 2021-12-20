@@ -31,7 +31,8 @@ export default class gennfo {
 
         let nfo_path = path.join(file_path, movie.name_cn + '.nfo')
         const nfo_file = await new MediaNFO().loadFromFile(nfo_path)
-        nfo_file.setName(movie.name_cn)
+        nfo_file.setNameCN(movie.name_cn)
+            .setNameEN(movie.name_en)
             .setSummary(movie.summary)
             .setBackdrop(movie.backdrop)
             .setPoster(movie.poster)
