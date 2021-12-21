@@ -8,7 +8,8 @@ import movieFile from '../database/movie_files'
 import libs from '../database/libs'
 import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance, getFirstChar, endsWithNFO } from '../utils'
 import { GlobalEventEmitterType } from '@/types/EventEmitter';
-import { MovieFields } from '@/types/Movie';
+import { MovieFetchOptions, MovieFields, MovieFileFields, scanedDirInfo } from '@/types/Movie';
+import { ScanItemResult } from '@/types/ScanEventEmitterType';
 
 const path = require('path');
 const fs = require('fs');
@@ -18,7 +19,70 @@ class MovieScan {
     this.event = application.event
     this.initialize();
   }
-  buildYear(movieName: string, file_path: string) {
+  async initialize() {
+    console.log('MovieScan initialize');
+    // 接受扫描单项结果
+    this.event.on('scan:item-result', async (scanInfo) => {
+      let pre_movieInfo = {
+        imdb_id: '',
+        name_cn: '',
+        year: '',
+        language: '',
+      } as Pick<MovieFields, 'imdb_id' | 'name_cn' | 'year' | 'language'>;
+      if (scanInfo.isSingleMovieDir) {
+        pre_movieInfo.year = this.extractYear(scanInfo.movieName, scanInfo.filePath) || scanInfo.year
+        let newMovieName = parseMovieName(scanInfo.movieName, pre_movieInfo.year)
+        pre_movieInfo.name_cn = newMovieName
+        pre_movieInfo.language = scanInfo.language || 'en'
+        // 电影名称是否含有中文
+        if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
+          pre_movieInfo.language = 'zh'
+        }
+        await this.save_movie_info(pre_movieInfo as any, {
+          path: scanInfo.filePath.replace(/\\/g, '/'),
+          media_lib_id: scanInfo.media_lib_id
+        })
+      } else if (scanInfo.isBDMVDir) {
+        pre_movieInfo.year = this.extractYear(scanInfo.movieName, scanInfo.filePath) || scanInfo.year
+        let newMovieName = parseMovieName(scanInfo.movieName, pre_movieInfo.year)
+        pre_movieInfo.name_cn = newMovieName
+        pre_movieInfo.language = scanInfo.language || 'en'
+        // 电影名称是否含有中文
+        if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
+          pre_movieInfo.language = 'zh'
+        }
+        await this.save_movie_info(pre_movieInfo as any, {
+          path: scanInfo.filePath.replace(/\\/g, '/'),
+          media_lib_id: scanInfo.media_lib_id,
+          resource_type: 'origin-disk'
+        })
+      } else if (scanInfo.isMultiMovieDir) {
+        for (let scanInfo_item of scanInfo.scanedDirInfo.filePaths) {
+          pre_movieInfo.year = this.extractYear(scanInfo.movieName, scanInfo_item)
+          let newMovieName = parseMovieName(baseName(scanInfo_item).split(' ')[0], pre_movieInfo.year)
+          pre_movieInfo.name_cn = newMovieName
+          pre_movieInfo.language = scanInfo.language || 'en'
+          // 电影名称是否含有中文
+          if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
+            pre_movieInfo.language = 'zh'
+          }
+          await this.save_movie_info(pre_movieInfo as any, {
+            path: scanInfo_item.replace(/\\/g, '/'),
+            media_lib_id: scanInfo.media_lib_id,
+          })
+        }
+      } else {
+        console.log('其他类别文件夹，跳过', scanInfo.scanPath)
+      }
+    })
+  }
+  /**
+   * 提取年份
+   * @param movieName 电影名称
+   * @param file_path 电影文件路径
+   * @returns 
+   */
+  extractYear(movieName: string, file_path: string): string {
     let movieName_matched = Array.from(movieName.matchAll(/\d{4}\b/g))
     let file_path_matched = Array.from(file_path.matchAll(/\d{4}\b/g))
     let year = ''
@@ -35,169 +99,157 @@ class MovieScan {
     }
     return year
   }
-  async initialize() {
-    console.log('MovieScan initialize');
-    // 接受扫描单项结果
-    this.event.on('scan:item-result', async (scanInfo) => {
-      let pre_movieInfo = {
-        imdb_id: '',
-        name_cn: '',
-        year: '',
-        language: '',
-      };
-      if (scanInfo.isSingleMovieDir) {
-        pre_movieInfo.year = this.buildYear(scanInfo.movieName, scanInfo.filePath) || scanInfo.year
-        let newMovieName = parseMovieName(scanInfo.movieName, pre_movieInfo.year)
-        pre_movieInfo.name_cn = newMovieName
-        pre_movieInfo.language = scanInfo.language || 'en'
-        // 电影名称是否含有中文
-        if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
-          pre_movieInfo.language = 'zh'
-        }
-        await this.save_movie_info(pre_movieInfo as any, {
-          filePath: scanInfo.filePath.replace(/\\/g, '/'),
-          media_lib_id: scanInfo.media_lib_id
-        })
-      } else if (scanInfo.isBDMVDir) {
-        pre_movieInfo.year = this.buildYear(scanInfo.movieName, scanInfo.filePath) || scanInfo.year
-        let newMovieName = parseMovieName(scanInfo.movieName, pre_movieInfo.year)
-        pre_movieInfo.name_cn = newMovieName
-        pre_movieInfo.language = scanInfo.language || 'en'
-        // 电影名称是否含有中文
-        if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
-          pre_movieInfo.language = 'zh'
-        }
-        await this.save_movie_info(pre_movieInfo as any, {
-          filePath: scanInfo.filePath.replace(/\\/g, '/'),
-          media_lib_id: scanInfo.media_lib_id,
-          resource_type: 'origin-disk'
-        })
-      } else if (scanInfo.isMultiMovieDir) {
-        for (let scanInfo_item of scanInfo.scanedDirInfo.filePaths) {
-          pre_movieInfo.year = this.buildYear(scanInfo.movieName, scanInfo_item)
-          let newMovieName = parseMovieName(baseName(scanInfo_item).split(' ')[0], pre_movieInfo.year)
-          pre_movieInfo.name_cn = newMovieName
-          pre_movieInfo.language = scanInfo.language || 'en'
-          // 电影名称是否含有中文
-          if (/.*[\u4e00-\u9fa5]+.*$/.test(newMovieName)) {
-            pre_movieInfo.language = 'zh'
-          }
-          await this.save_movie_info(pre_movieInfo as any, {
-            filePath: scanInfo_item.replace(/\\/g, '/'),
-            media_lib_id: scanInfo.media_lib_id,
-          })
-        }
-      } else {
-        console.log('未知文件夹类型')
-      }
-    })
-  }
-  async save_movie_info(movie_info: MovieFields, movie_file: any) {
-    if (!movie_file.filePath) {
-      console.log('未指定路径，跳过')
-      return
-    }
-    console.log('MovieScan movieFile.findByPath', movie_file.filePath);
-    let fileinfo = await movieFile.getByPath(movie_file.filePath).catch(e => { throw e })
-    let has_main_info = false
-    if (fileinfo) {
-      console.log('暂时对已存在的不做处理');
-      return
-      // if (fileinfo.media_lib_id !== scanInfo.media_lib_id) {
-      //   let exists_movie = await movie.knex('movies').where({
-      //     id: fileinfo.movie_id
-      //   }).first()
-      //   if (exists_movie) {
-      //     console.log('存在不同库的信息, 复用信息')
-      //     movie_info.name_cn = exists_movie.name_cn
-      //     movie_info.year = exists_movie.year
-      //     movie_info.id = exists_movie.id
-      //     movie_info.language = exists_movie.language
-      //     movie_info.imdb_id = exists_movie.imdb_id
-      //     has_main_info = true
-      //   }
-      // } else {
-      //   console.log('存在相同库的信息, 忽略')
-      //   return
-      // }
+  /**
+   * 保存电影信息
+   */
+  async save_movie_base_info(movie_info: MovieFields, filePath: string): Promise<number> {
+    let has_base_info = false
+    // 查询电影基础信息是否已存在
+    let select_movieinfos: MovieFields[] = await movie.knex('movies').column(['id', 'name_cn', 'year']).where({
+      name_cn: movie_info.name_cn
+    }).limit(50).offset(0).select().catch(e => { throw e })
+
+    //  尝试匹配年份信息
+    let movie_data = select_movieinfos.find(item => item.year === movie_info.year)
+    if (select_movieinfos && movie_data) {
+      has_base_info = true
+      movie_info.id = movie_data.id
     } else {
-      // 查询电影基础信息是否已存在
-      let select_movieinfos = await movie.knex('movies').column(['id', 'name_cn', 'year']).where({
-        name_cn: movie_info.name_cn
-      }).limit(50).offset(0).select().catch(e => { throw e })
-      let movie_data = select_movieinfos.find(item => item.year === movie_info.year)
-      if (select_movieinfos && movie_data) {
-        has_main_info = true
-        movie_info.id = movie_data.id
-      } else {
-        delete movie_info.id
-      }
+      delete movie_info.id
     }
 
-    console.log('MovieScan pre_movieInfo', movie_info);
-    if (!has_main_info) {
-      // 不存在基础信息
-      let ids = await movie.save({
+    // 如果没有基础信息，则保存
+    if (!has_base_info) {
+      let ids: number[] = await movie.save({
         ...movie_info,
         first_char_cn: getFirstChar(movie_info.name_cn),
-        path: movie_file.filePath,
+        path: filePath,
       }).catch(e => { throw e })
       movie_info.id = ids[0]
     }
 
-    console.log(`${movie_info.name_cn}, ${movie_info.year || ''}, ${movie_file.filePath} 路径入库`);
-    // 保存新的文件路径
-    await movieFile.save({
-      path: movie_file.filePath,
-      name: movie_info.name_cn,
+    return movie_info.id
+  }
+  /**
+   * 保存电影文件信息
+   * @param filePath  电影文件路径
+   * @param movie_id 电影id
+   * @param media_lib_id 库id
+   * @param resource_type 文件资源类型
+   * @returns 
+   */
+  async save_movie_file_info(filePath: string, movie_id: number, media_lib_id: string, resource_type: string): Promise<number> {
+    if (!filePath) {
+      console.log('未指定要保存的文件路径，跳过')
+      return
+    }
+    let file_info: MovieFileFields = await movieFile.getByPath(filePath).catch(err => {
+      console.log('MovieScan getByPath err', err)
+      return {}
+    })
+    if (file_info.id) {
+      console.log('已存在该路径记录，不做处理', filePath);
+      return
+    }
+    // 保存新的文件记录
+    let new_file_info = {
+      path: filePath,
+      name: baseName(filePath),
+      media_lib_id: media_lib_id,
+      resource_type: resource_type || 'single',
       type: 'movie',
-      movie_id: movie_info.id,
-      media_lib_id: movie_file.media_lib_id,
-      resource_type: movie_file.resource_type || 'single'
-    }).catch(e => { throw e })
+      movie_id: movie_id,
+      create_time: new Date(),
+    }
+    let res = await movieFile.save(new_file_info).catch(err => {
+      console.log('MovieScan save file err', err)
+    })
+    return res[0]
+  }
+
+  /**
+   * 保存信息
+   * @param movie_info 电影信息
+   * @param movie_file 文件信息
+   * @returns 
+   */
+  async save_movie_info(movie_info: MovieFields, movie_file: MovieFileFields, options: MovieFetchOptions = {
+    fetch_movie: true,
+    generate_nfo: true,
+    list_view_update: true,
+  }): Promise<void> {
+
+    // 文件信息入库
+    let movie_file_id = await this.save_movie_file_info(
+      movie_file.path,
+      movie_info.id || 0,
+      movie_file.media_lib_id,
+      movie_file.resource_type
+    )
+
+    if (!movie_file_id) {
+      return
+    }
+
+    // 电影信息入库
+    let movie_info_id = await this.save_movie_base_info(movie_info, movie_file.path)
+    if (!movie_info_id) {
+      return
+    }
+
+    // 更新关联关系
+    await movieFile.update(movie_file_id, {
+      movie_id: movie_info_id
+    })
 
     // 去刮削影视信息
-    this.event.emit('scraper-queue:add-task', {
-      task_event: 'scraper:start:fetch-movie',
-      task_priority: 1,
-      payload: {
-        name: movie_info.name_cn,
-        year: movie_info.year,
-        language: movie_info.language,
-        movie_id: movie_info.id,
-        imdb_id: movie_info.imdb_id,
-        media_lib_id: movie_file.media_lib_id,
-        path: movie_file.filePath,
-        resource_type: movie_file.resource_type || 'single'
-      }
-    });
+    if (options.fetch_movie) {
+      this.event.emit('scraper-queue:add-task', {
+        task_event: 'scraper:start:fetch-movie',
+        task_priority: 1,
+        payload: {
+          name: movie_info.name_cn,
+          year: movie_info.year,
+          language: movie_info.language,
+          movie_id: movie_info.id,
+          imdb_id: movie_info.imdb_id,
+          media_lib_id: movie_file.media_lib_id,
+          path: movie_file.path,
+          resource_type: movie_file.resource_type || 'single'
+        }
+      });
+    }
 
     // 去生成影视nfo信息
-    // this.event.emit('movie:generate-nfo', {
-    //   movie_id: movie_info.id,
-    //   file_path: movie_file.filePath,
-    // });
+    if (options.generate_nfo) {
+      this.event.emit('movie:generate-nfo', {
+        movie_id: movie_info.id,
+        file_path: movie_file.path,
+      });
+    }
 
     // 页面上显示
-    this.event.emit('render:list-view:update', {
-      lib_id: movie_file.media_lib_idd,
-      movie: {
-        id: movie_info.id,
-        name_cn: movie_info.name_cn,
-        name_en: movie_info.name_en,
-        year: movie_info.year,
-        language: movie_info.language,
-        movie_id: movie_info.id,
-        imdb_id: movie_info.imdb_id
-      }
-    })
+    if (options.list_view_update) {
+      this.event.emit('render:list-view:update', {
+        lib_id: movie_file.media_lib_id,
+        movie: {
+          id: movie_info.id,
+          name_cn: movie_info.name_cn,
+          name_en: movie_info.name_en,
+          year: movie_info.year,
+          language: movie_info.language,
+          movie_id: movie_info.id,
+          imdb_id: movie_info.imdb_id
+        }
+      })
+    }
   }
   /**
    * 获取可能的目录电影信息
    * @param filePath 目录
    * @returns 目录信息
    */
-  scanDirInfo(filePath: string) {
+  scanDirInfo(filePath: string): scanedDirInfo {
     let files = fs.readdirSync(filePath);
     let fileCount = 0
     let videoCount = 0
@@ -247,10 +299,10 @@ class MovieScan {
   }
   /**
    * 判断是否是单个电影文件目录
-   * @param path 目录路径
+   * @param scanedDirInfo 扫描结果
    * @returns true|false  是|否
    */
-  isSingleMovieDir(scanedDirInfo: any) {
+  isSingleMovieDir(scanedDirInfo: scanedDirInfo): boolean {
     // 有视频文件及封面
     if (scanedDirInfo.hasPoster && scanedDirInfo.videoCount > 0) {
       return true
@@ -263,10 +315,10 @@ class MovieScan {
   }
   /**
    * 判断是否存在NFO文件
-   * @param path 目录路径
+   * @param scanedDirInfo 扫描结果
    * @returns true|false  是|否
    */
-  isHasNFO(scanedDirInfo: any) {
+  isHasNFO(scanedDirInfo: scanedDirInfo): boolean {
     // 有NFO文件
     if (scanedDirInfo.nfoCount > 0) {
       return true
@@ -275,10 +327,10 @@ class MovieScan {
   }
   /**
    * 判断是否是多个电影文件目录
-   * @param path 目录路径
+   * @param scanedDirInfo 扫描结果
    * @returns true|false  是|否
    */
-  isMultiMovieDir(scanedDirInfo: any) {
+  isMultiMovieDir(scanedDirInfo: scanedDirInfo): boolean {
     if (scanedDirInfo.videoCount > 1 && scanedDirInfo.dirCount === 0) {
       return true
     }
@@ -286,10 +338,10 @@ class MovieScan {
   }
   /**
    * 是否蓝光原盘目录
-   * @param scanedDirInfo 
+   * @param scanedDirInfo 扫描结果
    * @returns 
    */
-  isBDMVDir(scanedDirInfo: any) {
+  isBDMVDir(scanedDirInfo: scanedDirInfo): boolean {
     if (scanedDirInfo.videoCount === 0 && scanedDirInfo.dirCount > 0) {
       let conut = 0
       for (let dir of scanedDirInfo.dirPaths) {
@@ -305,10 +357,24 @@ class MovieScan {
     }
     return false
   }
-  async extractMovieInfoFromNFO(nfo_path: string, scanInfo: any) {
+  /**
+   * 从NFO文件中获取电影信息
+   * @param nfo_path NFO文件路径
+   * @param scanInfo 提取的信息
+   */
+  async extractMovieInfoFromNFO(nfo_path: string, scanInfo: ScanItemResult): Promise<void> {
     console.log('存在NFO文件', `${nfo_path}`);
     let media_nfo = await new MediaNFO().loadFromFile(nfo_path)
-    let movie_info = {} as any
+    let movie_info = {} as MovieFields & {
+      videos: {
+        file: [
+          {
+            _: string
+            $: MovieFileFields
+          }
+        ]
+      }
+    }
     for (let prop of media_nfo._xml) {
       for (let propkey in prop) {
         if (propkey === 'Metadata') {
@@ -328,22 +394,39 @@ class MovieScan {
           poster: movie_info.poster,
           language: movie_info.language,
           imdb_id: movie_info.imdb_id,
+          imdb_sid: movie_info.imdb_sid,
           imdb_url: movie_info.imdb_url,
+          genres: movie_info.genres,
+          country: movie_info.country,
+          spoken_language: movie_info.spoken_language,
+          original_title: movie_info.original_title,
+          original_language: movie_info.original_language,
           imdb_votes: movie_info.imdb_votes,
           imdb_rating: movie_info.imdb_rating,
           year: movie_info.year,
           release_date: movie_info.release_date,
           duration: movie_info.duration,
-        } as MovieFields, {
-          filePath: (path.dirname(nfo_path) + attr.path).replace(/\\/g, '/'),
+          is_scraped: true,
+          is_scraped_at: new Date(),
+        }, {
+          path: (path.dirname(nfo_path) + attr.path).replace(/\\/g, '/'),
           media_lib_id: scanInfo.media_lib_id,
           resource_type: attr.resource_type || 'single',
-          name: movie_info.name_cn,
+        }, {
+          'fetch_movie': false,
+          'generate_nfo': false,
+          'list_view_update': false
         })
       }
     }
   }
-  async scan(file_path: any, media_lib_id: any, is_top: boolean = false) {
+  /**
+   * 扫描电影文件夹
+   * @param file_path 目标文件夹路径
+   * @param media_lib_id 媒体库ID
+   * @param is_top 是否是顶级文件夹
+   */
+  async scan(file_path: string, media_lib_id: string, is_top: boolean = false) {
     const file_stat = fs.statSync(file_path)
     let files = [] as string[]
     if (file_stat.isDirectory()) {
@@ -364,6 +447,8 @@ class MovieScan {
             this.extractMovieInfoFromNFO(nfo_file, {
               media_lib_id,
               scanPath: filePath,
+              filePath: filePath,
+              movieName: baseName(filePath),
               type: 'movie',
               scanedDirInfo
             })
@@ -462,6 +547,7 @@ class MovieScan {
             scanedDirInfo
           });
         } else {
+          console.log(`扫描子目录： ${filePath}`);
           await this.scan(filePath, media_lib_id)
         }
       } else {
@@ -482,7 +568,7 @@ class MovieScan {
               hasPoster: false,
               filePaths: [filePath],
               dirPaths: [],
-              skip: false
+              skipMoreFile: false
             }
           });
         } else {
@@ -491,12 +577,12 @@ class MovieScan {
       }
     }
     if (is_top) {
-      libs.getById(media_lib_id).then((data: any) => {
-        libs.updateById(media_lib_id, {
-          ...data,
-          is_scaned: true,
-          scan_loading: false
-        })
+      console.log('目录扫描完成')
+      let lib_data = await libs.getById(media_lib_id)
+      libs.updateById(media_lib_id, {
+        ...lib_data,
+        is_scaned: true,
+        scan_loading: false
       })
       this.event.emit('render:list-view:scan-end', {
         lib_id: media_lib_id,

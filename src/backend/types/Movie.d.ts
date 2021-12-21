@@ -1,4 +1,7 @@
 import { CastInfo } from "./Cast"
+/**
+ * 电影信息
+ */
 export type MovieInfo = {
     /**
      * 电影中文名称
@@ -53,6 +56,10 @@ export type MovieInfo = {
      */
     backdrop: string;
     /**
+     * 幕布地址
+     */
+    backdrop_url?: string
+    /**
      * 电影题材
      */
     genres: string
@@ -85,6 +92,9 @@ export type MovieInfo = {
      */
     imdb_votes: number
 }
+/**
+ * 电影字段
+ */
 export type MovieFields = {
     /**
      * 电影ID
@@ -98,13 +108,16 @@ export type MovieFields = {
      * 刮削时间
      */
     is_scraped_at: Date
-    /**
-     * 幕布地址
-     */
-    backdrop_url?: string
 } & Omit<MovieInfo, "casts" | "crews">
 
+/**
+ * 电影文件字段
+ */
 export type MovieFileFields = {
+    /**
+     * 记录ID
+     */
+    id?: number
     /**
      * 媒体库ID
      */
@@ -117,4 +130,64 @@ export type MovieFileFields = {
      * 资源类型
      */
     resource_type?: 'single' | 'origin-disk'
+}
+
+/**
+ * 电影信息入库后的多种动作
+ */
+export type MovieFetchOptions = {
+    /**
+     * 采集电影信息
+     */
+    'fetch_movie': boolean,
+    /**
+     * 生成NFO文件
+     */
+    'generate_nfo': boolean,
+    /**
+     * 更新客户端列表
+     */
+    'list_view_update': boolean
+}
+
+/**
+ * 目录扫描信息
+ */
+export type scanedDirInfo = {
+    /**
+     * 文件数
+     */
+    fileCount: number,
+    /**
+     * 视频数
+     */
+    videoCount: number,
+    /**
+     * 目录数
+     */
+    dirCount: number,
+    /**
+     * 是否有海报
+     */
+    hasPoster: boolean,
+    /**
+     * NFO文件路径
+     */
+    nfoPaths?: string[],
+    /**
+     * NFO文件数量
+     */
+    nfoCount?: number,
+    /**
+     * 文件路径
+     */
+    filePaths: string[],
+    /**
+     * 目录路径
+     */
+    dirPaths: string[],
+    /**
+     * 文件数过多，超过100个
+     */
+    skipMoreFile: boolean
 }

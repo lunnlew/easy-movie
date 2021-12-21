@@ -4,6 +4,7 @@
 import EventEmitter from 'events'
 import application from '../libs/application'
 import { ApplicationType } from './Application'
+import { scanedDirInfo } from '@/types/Movie'
 
 /**
  * 单项扫描结果
@@ -52,36 +53,7 @@ type ScanItemResult = {
     /**
      * 扫描的文件夹信息
      */
-    scanedDirInfo: {
-        /**
-         * 文件数
-         */
-        fileCount?: number
-        /**
-         * 视频文件数
-         */
-        videoCount?: number
-        /**
-         * 子目录数
-         */
-        dirCount?: number,
-        /**
-         * 是否有海报
-         */
-        hasPoster?: boolean,
-        /**
-         * 跳过
-         */
-        skip?: boolean
-        /**
-         * 扫描的文件结果
-         */
-        filePaths?: string[],
-        /**
-         * 扫描的目录结果
-         */
-        dirPaths?: string[],
-    }
+    scanedDirInfo: scanedDirInfo
     /**
      * 扫描识别的类型
      */
