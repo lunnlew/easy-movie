@@ -5,6 +5,7 @@ import path from 'path'
 import fs from 'fs'
 import { CastEventEmitterType } from '@/types/CastEventEmitterType'
 import Downloader from '../utils/downloader'
+import { home_dir } from '../preference'
 
 /**
  * 演员相关消息事件
@@ -92,17 +93,11 @@ export default class CastEventEmitter implements CastEventEmitterType {
             console.log('cast:download-avator', payload)
             let { id, imdb_id, imdb_sid, path: file_path, resource_type, avatar } = payload
 
-            let avatar_path = file_path.replace(/\\/ig, '/')
-            let avatar_dir
-            if (resource_type === 'origin-disk') {
-                avatar_dir = avatar_dir + `/.avatar/`
-            } else {
-                avatar_dir = path.dirname(avatar_path) + `/.avatar/`
-            }
+            let avatar_dir = home_dir + `/.avatar/`
             if (!fs.existsSync(avatar_dir)) {
                 fs.mkdirSync(avatar_dir)
             }
-            avatar_path = avatar_dir + `sid-${imdb_sid}-imdb-${imdb_id}.jpg`
+            let avatar_path = avatar_dir + `sid-${imdb_sid}-imdb-${imdb_id}.jpg`
             if (avatar) {
                 if (!fs.existsSync(avatar_path)) {
                     new Downloader().download(avatar, avatar_path).catch(err => {

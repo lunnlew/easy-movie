@@ -3,7 +3,7 @@ import movie from '../database/movie'
 import { buildResult, buildErrResult, getFirstChar } from '../utils'
 import fs from 'fs'
 import path from 'path'
-import { __fix_dirname } from '../preference'
+import { home_dir, __fix_dirname } from '../preference'
 import application from '../libs/application';
 import movie_files from '../database/movie_files'
 import actors from '../database/actors'
@@ -150,20 +150,17 @@ const movieActorAvatar = async (req: any, res: any, next: any) => {
             })
             res.sendStatus(404);
         } else {
-            let f = ''
-            if (movie_data.resource_type == 'single') {
-                f = path.resolve(path.dirname(movie_data.path) + '/.avatar/', data.avatar)
-            } else if (movie_data.resource_type == 'origin-disk') {
-                f = path.resolve(movie_data.path + '/.avatar/', data.avatar)
-            }
+            let f = path.resolve(home_dir + '/.avatar/', data.avatar)
             if (fs.existsSync(f)) {
                 res.setHeader('Content-Type', 'image/png');
                 fs.createReadStream(f).pipe(res);
             } else {
-                application.knex('actors').where({
-                    id: actor_id
-                }).update({
-                    avatar: ''
+                data.avatar_url && application.event.emit('cast:download-avator', {
+                    imdb_id: data.imdb_id,
+                    imdb_sid: data.imdb_sid,
+                    id: data.id,
+                    path: movie_data.path,
+                    avatar: data.avatar_url
                 })
                 res.sendStatus(404);
             }
