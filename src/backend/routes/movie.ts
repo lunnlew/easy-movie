@@ -103,11 +103,15 @@ const moviePoster = async (req: any, res: any, next: any) => {
             } else if (movie_data.resource_type == 'origin-disk') {
                 f = path.resolve(movie_data.path, movie_data.poster)
             }
-            console.log(f)
             if (fs.existsSync(f)) {
                 res.setHeader('Content-Type', 'image/png');
                 fs.createReadStream(f).pipe(res);
             } else {
+                application.knex('movies').where({
+                    id: movie_data.id
+                }).update({
+                    poster: ''
+                })
                 res.sendStatus(404);
             }
         }
@@ -152,11 +156,15 @@ const movieActorAvatar = async (req: any, res: any, next: any) => {
             } else if (movie_data.resource_type == 'origin-disk') {
                 f = path.resolve(movie_data.path + '/.avatar/', data.avatar)
             }
-            console.log(f)
             if (fs.existsSync(f)) {
                 res.setHeader('Content-Type', 'image/png');
                 fs.createReadStream(f).pipe(res);
             } else {
+                application.knex('actors').where({
+                    id: actor_id
+                }).update({
+                    avatar: ''
+                })
                 res.sendStatus(404);
             }
         }
@@ -196,11 +204,15 @@ const movieBackdrop = async (req: any, res: any, next: any) => {
             } else if (movie_data.resource_type == 'origin-disk') {
                 f = path.resolve(movie_data.path, movie_data.backdrop)
             }
-            console.log(f)
             if (fs.existsSync(f)) {
                 res.setHeader('Content-Type', 'image/png');
                 fs.createReadStream(f).pipe(res);
             } else {
+                application.knex('movies').where({
+                    id: movie_data.id
+                }).update({
+                    backdrop: ''
+                })
                 res.sendStatus(404);
             }
         }
