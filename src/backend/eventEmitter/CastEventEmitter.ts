@@ -42,7 +42,7 @@ export default class CastEventEmitter implements CastEventEmitterType {
             })
             let new_actor: CastFields = {
                 is_scraped: true,
-                is_scraped_at: new Date(),
+                is_scraped_at: Date.now(),
                 name_cn: payload.name_cn,
                 name_en: payload.name_en,
                 imdb_sid: payload.imdb_sid,

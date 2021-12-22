@@ -159,8 +159,7 @@ class MovieScan {
       media_lib_id: media_lib_id,
       resource_type: resource_type || 'single',
       type: 'movie',
-      movie_id: movie_id,
-      create_time: new Date(),
+      movie_id: movie_id
     }
     let res = await movieFile.save(new_file_info).catch(err => {
       console.log('MovieScan save file err', err)
@@ -417,7 +416,7 @@ class MovieScan {
       release_date: movie_info.release_date,
       duration: movie_info.duration,
       is_scraped: true,
-      is_scraped_at: new Date(),
+      is_scraped_at: Date.now(),
     }
 
     // 电影信息入库
@@ -466,7 +465,7 @@ class MovieScan {
       for (let person of movie_info.casts.person) {
         let attr = person.$
         console.log('发现演职员', attr.name_cn);
-        
+
         // 演职员信息入库
         let actor = await application.knex('actors').select(['id', 'imdb_sid']).where({
           imdb_sid: attr.imdb_sid
@@ -490,7 +489,7 @@ class MovieScan {
             also_known_as: attr.also_known_as,
             desc: attr.desc,
             is_scraped: true,
-            is_scraped_at: new Date(),
+            is_scraped_at: Date.now(),
           })
           actor_id = ids[0]
         }

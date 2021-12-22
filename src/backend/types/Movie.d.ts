@@ -107,7 +107,7 @@ export type MovieFields = {
     /**
      * 刮削时间
      */
-    is_scraped_at: Date
+    is_scraped_at: number
 } & Omit<MovieInfo, "casts" | "crews">
 
 /**

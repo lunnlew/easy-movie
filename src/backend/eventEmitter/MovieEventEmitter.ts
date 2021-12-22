@@ -77,7 +77,7 @@ export default class MovieEventEmitter implements MovieEventEmitterType {
             })
             let new_movie: MovieFields = {
                 is_scraped: true,
-                is_scraped_at: new Date(),
+                is_scraped_at: Date.now(),
                 name_cn: payload.name_cn,
                 name_en: payload.name_en,
                 year: payload.year,

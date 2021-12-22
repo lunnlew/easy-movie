@@ -92,5 +92,5 @@ export type CastFields = {
     /**
      * 刮削时间
      */
-    is_scraped_at: Date
+    is_scraped_at: number
 } & CastInfo
