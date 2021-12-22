@@ -71,6 +71,10 @@ export type CastInfo = {
      * 职位
      */
     job?: string
+    /**
+     * 演员简介
+     */
+    desc?: string
 }
 
 /**

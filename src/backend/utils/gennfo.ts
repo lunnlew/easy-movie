@@ -60,13 +60,15 @@ export default class gennfo {
                 imdb_id: v.imdb_id || '',
                 imdb_sid: v.imdb_sid || '',
                 imdb_url: v.imdb_url || '',
+                imdb_rating: v.imdb_rating || 0,
+                imdb_votes: v.imdb_votes || 0,
                 gender: v.gender || 0,
+                desc: v.desc || '',
                 job: v.job || 'Actor',
                 character: v.character || '',
                 department: v.department || '',
                 place_of_birth: v.place_of_birth || '',
-                imdb_rating: v.imdb_rating || 0,
-                imdb_votes: v.imdb_votes || 0
+                also_known_as: v.also_known_as || ''
             })))
             .write()
     }

@@ -10,6 +10,7 @@ import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDi
 import { GlobalEventEmitterType } from '@/types/EventEmitter';
 import { MovieFetchOptions, MovieFields, MovieFileFields, scanedDirInfo } from '@/types/Movie';
 import { ScanItemResult } from '@/types/ScanEventEmitterType';
+import { CastInfo } from '@/types/Cast';
 
 const path = require('path');
 const fs = require('fs');
@@ -128,7 +129,7 @@ class MovieScan {
       movie_info.id = ids[0]
     }
 
-    return movie_info.id
+    return movie_info.id || 0
   }
   /**
    * 保存电影文件信息
@@ -141,7 +142,7 @@ class MovieScan {
   async save_movie_file_info(filePath: string, movie_id: number, media_lib_id: string, resource_type: string): Promise<number> {
     if (!filePath) {
       console.log('未指定要保存的文件路径，跳过')
-      return
+      return 0
     }
     let file_info: MovieFileFields = await movieFile.getByPath(filePath).catch(err => {
       console.log('MovieScan getByPath err', err)
@@ -149,7 +150,7 @@ class MovieScan {
     })
     if (file_info.id) {
       console.log('已存在该路径记录，不做处理', filePath);
-      return
+      return file_info.id
     }
     // 保存新的文件记录
     let new_file_info = {
@@ -164,7 +165,7 @@ class MovieScan {
     let res = await movieFile.save(new_file_info).catch(err => {
       console.log('MovieScan save file err', err)
     })
-    return res[0]
+    return res[0] || 0
   }
 
   /**
@@ -177,7 +178,7 @@ class MovieScan {
     fetch_movie: true,
     generate_nfo: true,
     list_view_update: true,
-  }): Promise<void> {
+  }): Promise<number> {
 
     // 文件信息入库
     let movie_file_id = await this.save_movie_file_info(
@@ -243,6 +244,8 @@ class MovieScan {
         }
       })
     }
+
+    return movie_info_id
   }
   /**
    * 获取可能的目录电影信息
@@ -373,6 +376,14 @@ class MovieScan {
             $: MovieFileFields
           }
         ]
+      },
+      casts: {
+        person: [
+          {
+            _: string
+            $: CastInfo
+          }
+        ]
       }
     }
     for (let prop of media_nfo._xml) {
@@ -383,41 +394,126 @@ class MovieScan {
         movie_info[propkey] = prop[propkey]
       }
     }
+
+    // 新的影视信息
+    let new_movie_info = {
+      name_cn: movie_info.name_cn,
+      name_en: movie_info.name_en,
+      summary: movie_info.summary,
+      backdrop: movie_info.backdrop,
+      poster: movie_info.poster,
+      language: movie_info.language,
+      imdb_id: movie_info.imdb_id,
+      imdb_sid: movie_info.imdb_sid,
+      imdb_url: movie_info.imdb_url,
+      genres: movie_info.genres,
+      country: movie_info.country,
+      spoken_language: movie_info.spoken_language,
+      original_title: movie_info.original_title,
+      original_language: movie_info.original_language,
+      imdb_votes: movie_info.imdb_votes,
+      imdb_rating: movie_info.imdb_rating,
+      year: movie_info.year,
+      release_date: movie_info.release_date,
+      duration: movie_info.duration,
+      is_scraped: true,
+      is_scraped_at: new Date(),
+    }
+
+    // 电影信息入库
+    let movie_info_id = await this.save_movie_base_info(new_movie_info, '')
+    if (!movie_info_id) {
+      console.log('电影信息入库失败', `${nfo_path}`);
+      return
+    }
+
+    // 文件信息入库
     if (Array.isArray(movie_info.videos.file)) {
       for (let video of movie_info.videos.file) {
         let attr = video.$
-        await this.save_movie_info({
-          name_cn: movie_info.name_cn,
-          name_en: movie_info.name_en,
-          summary: movie_info.summary,
-          backdrop: movie_info.backdrop,
-          poster: movie_info.poster,
-          language: movie_info.language,
-          imdb_id: movie_info.imdb_id,
-          imdb_sid: movie_info.imdb_sid,
-          imdb_url: movie_info.imdb_url,
-          genres: movie_info.genres,
-          country: movie_info.country,
-          spoken_language: movie_info.spoken_language,
-          original_title: movie_info.original_title,
-          original_language: movie_info.original_language,
-          imdb_votes: movie_info.imdb_votes,
-          imdb_rating: movie_info.imdb_rating,
-          year: movie_info.year,
-          release_date: movie_info.release_date,
-          duration: movie_info.duration,
-          is_scraped: true,
-          is_scraped_at: new Date(),
-        }, {
+        console.log('发现文件', attr.path);
+
+        let movie_file = {
           path: (path.dirname(nfo_path) + attr.path).replace(/\\/g, '/'),
           media_lib_id: scanInfo.media_lib_id,
           resource_type: attr.resource_type || 'single',
-        }, {
-          'fetch_movie': false,
-          'generate_nfo': false,
-          'list_view_update': false
+        }
+
+        // 文件信息入库
+        let movie_file_id = await this.save_movie_file_info(
+          movie_file.path,
+          movie_info_id,
+          movie_file.media_lib_id,
+          movie_file.resource_type
+        )
+
+        if (!movie_file_id) {
+          console.log('文件信息入库失败', `${attr.path}`);
+          return
+        }
+
+        // 更新电影-文件关联关系
+        await movieFile.update(movie_file_id, {
+          movie_id: movie_info_id
         })
+
+        console.log('文件信息入库成功', `${attr.path}`);
       }
+    }
+
+    // 演职员信息入库
+    if (Array.isArray(movie_info.casts.person)) {
+      for (let person of movie_info.casts.person) {
+        let attr = person.$
+        console.log('发现演职员', attr.name_cn);
+        
+        // 演职员信息入库
+        let actor = await application.knex('actors').select(['id', 'imdb_sid']).where({
+          imdb_sid: attr.imdb_sid
+        }).first()
+        let actor_id = actor.id
+        if (!actor) {
+          let ids = await application.knex('actors').insert({
+            imdb_id: attr.imdb_id,
+            imdb_sid: attr.imdb_sid,
+            imdb_rating: attr.imdb_rating,
+            imdb_votes: attr.imdb_votes,
+            name_cn: attr.name_cn,
+            name_en: attr.name_en,
+            avatar: attr.avatar,
+            avatar_url: attr.avatar_url,
+            imdb_url: attr.imdb_url,
+            gender: attr.gender,
+            birthday: attr.birthday,
+            deathday: attr.deathday,
+            place_of_birth: attr.place_of_birth,
+            also_known_as: attr.also_known_as,
+            desc: attr.desc,
+            is_scraped: true,
+            is_scraped_at: new Date(),
+          })
+          actor_id = ids[0]
+        }
+
+        // 更新电影-演职员关联关系
+        let actor_movie = await application.knex('actor_movie').where({
+          movie_id: movie_info_id,
+          actor_id: actor_id,
+        }).first()
+
+        if (!actor_movie) {
+          await application.knex('actor_movie').insert({
+            movie_id: movie_info_id,
+            actor_id: actor_id,
+            department: attr.department,
+            job: attr.job,
+            character: attr.character,
+          })
+        }
+
+        console.log('演职员信息入库成功', `${attr.name_cn}`);
+      }
+
     }
   }
   /**
