@@ -173,6 +173,8 @@ export default async function (knex: Knex) {
         table.string('imdb_id').comment('演职员imdb_id');
         table.string('imdb_sid').comment('演职员imdb_sid');
         table.string('imdb_url').comment('演职员imdb_url');
+        table.string('imdb_rating').comment('IMDB评分');
+        table.string('imdb_votes').comment('IMDB评分人数');
         table.string('douban_id').comment('演职员douban_id');
         table.string('birthday').comment('演职员生日');
         table.string('deathday').comment('演职员忌日');

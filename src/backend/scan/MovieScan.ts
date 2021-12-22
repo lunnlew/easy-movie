@@ -148,7 +148,7 @@ class MovieScan {
       console.log('MovieScan getByPath err', err)
       return {}
     })
-    if (file_info.id) {
+    if (file_info && file_info.id) {
       console.log('已存在该路径记录，不做处理', filePath);
       return file_info.id
     }
@@ -470,7 +470,7 @@ class MovieScan {
         let actor = await application.knex('actors').select(['id', 'imdb_sid']).where({
           imdb_sid: attr.imdb_sid
         }).first()
-        let actor_id = actor.id
+        let actor_id = actor ? actor.id : 0
         if (!actor) {
           let ids = await application.knex('actors').insert({
             imdb_id: attr.imdb_id,
