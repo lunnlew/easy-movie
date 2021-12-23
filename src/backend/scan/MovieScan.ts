@@ -492,6 +492,7 @@ class MovieScan {
             is_scraped_at: Date.now(),
           })
           actor_id = ids[0]
+          console.log('演职员信息入库成功', `${attr.name_cn}`);
         }
 
         // 更新电影-演职员关联关系
@@ -509,8 +510,6 @@ class MovieScan {
             character: attr.character,
           })
         }
-
-        console.log('演职员信息入库成功', `${attr.name_cn}`);
       }
 
     }
