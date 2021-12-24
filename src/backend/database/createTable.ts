@@ -83,12 +83,16 @@ export default async function (knex: Knex) {
     await knex.schema.createTable('movie_files', (table) => {
         table.increments('id').comment('自增ID');
         table.string('name').comment('文件名称');
+        table.string('ext').comment('文件后缀');
         table.text('path').comment('文件路径');
         table.string('type').comment('文件类型');
-        table.string('resolution').comment('文件分辨率');
-        table.string('size').comment('文件大小');
-        table.string('duration').comment('文件时长');
+        table.integer('size').comment('文件大小');
+        table.string('atime').comment('创建日期');
+        table.string('mtime').comment('修改日期');
+        table.string('ctime').comment('更改日期');
+        table.integer('duration').comment('文件时长');
         table.string('subtitle').comment('文件字幕');
+        table.string('resolution').comment('文件分辨率');
         table.string('watched').comment('是否已观看');
         table.string('movie_id').comment('电影ID');
         table.string('serie_id').comment('电影系列ID');

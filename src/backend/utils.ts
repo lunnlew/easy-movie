@@ -117,6 +117,11 @@ export function baseName(filePath: string) {
     return path.basename(filePath);
 }
 
+export function extname(filePath: string) {
+    return path.extname(filePath);
+}
+
+
 /**
  * 获取影片名称
  * @param name

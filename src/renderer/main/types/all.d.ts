@@ -71,6 +71,22 @@ export type MovieInfo = {
      * 存储库id
      */
     media_lib_id: string;
+
+    name?: string;
+
+    path?: string;
+
+    ext?: string;
+
+    size?: number;
+
+    atime?: number;
+
+    ctime?: number;
+
+    mtime?: number;
+
+    resource_type?: string;
 }
 
 

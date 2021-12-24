@@ -13,11 +13,7 @@
             >
               <template #placeholder>
                 <div class="image-slot">
-                  <img
-                    class="el-image__inner"
-                    :src="empty_poster"
-                    :alt="movieInfo.name_cn"
-                  />
+                  <img class="el-image__inner" :src="empty_poster" :alt="movieInfo.name_cn" />
                 </div>
               </template>
             </el-image>
@@ -27,9 +23,10 @@
       <div class="movie-right">
         <div class="movie-name">
           {{ movieInfo.name_cn }}
-          <span class="movie-year" v-if="movieInfo.year"
-            >({{ movieInfo.year }})</span
-          >
+          <span
+            class="movie-year"
+            v-if="movieInfo.year"
+          >({{ movieInfo.year }})</span>
           <span class="lib-name">位置：{{ libName }}</span>
         </div>
         <div class="movie-body">
@@ -90,11 +87,7 @@
                 >
                   <template #placeholder>
                     <div class="image-slot">
-                      <img
-                        class="el-image__inner"
-                        :src="empty_poster"
-                        :alt="item.name_cn"
-                      />
+                      <img class="el-image__inner" :src="empty_poster" :alt="item.name_cn" />
                     </div>
                   </template>
                 </el-image>
@@ -104,6 +97,14 @@
         </div>
       </div>
     </div>
+    <el-descriptions :column="6" class="file_description" :title="'文件信息(' + movieInfo.name + ')'">
+      <el-descriptions-item label="文件类别：">{{ fmtResourseType(movieInfo.resource_type) }}</el-descriptions-item>
+      <el-descriptions-item label="文件大小：">{{ fmtSize(movieInfo.size) }}</el-descriptions-item>
+      <el-descriptions-item label="文件后缀：">{{ movieInfo.ext }}</el-descriptions-item>
+      <el-descriptions-item label="创建日期：">{{ fmtTime(movieInfo.mtime) }}</el-descriptions-item>
+      <el-descriptions-item label="修改日期：">{{ fmtTime(movieInfo.ctime) }}</el-descriptions-item>
+      <el-descriptions-item label="访问日期：">{{ fmtTime(movieInfo.atime) }}</el-descriptions-item>
+    </el-descriptions>
     <!-- <tv-series></tv-series> -->
   </div>
 </template>
@@ -117,7 +118,7 @@ import { MovieInfo } from "@/types/all";
 import fmt_genres from "@/utils/genres";
 import fmt_contry from "@/utils/contries";
 import fmt_lang from "@/utils/langs";
-import { setImgUrlPrex } from "@/utils/util";
+import { setImgUrlPrex, fmtSize, fmtTime, fmtResourseType } from "@/utils/util";
 export default defineComponent({
   name: "MovieDetail",
   // components: { TvSeries },
@@ -207,6 +208,9 @@ export default defineComponent({
       cardBodyStyle,
       libName,
       setImgUrlPrex,
+      fmtSize,
+      fmtTime,
+      fmtResourseType
     };
   },
 });
@@ -319,6 +323,15 @@ export default defineComponent({
     ::v-deep(.el-divider__text) {
       border-radius: 2px;
     }
+  }
+}
+
+.file_description {
+  color: #fff;
+  margin-top: 30px;
+  ::v-deep(.el-descriptions__body) {
+    color: #fff;
+    background-color: inherit;
   }
 }
 </style>

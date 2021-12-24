@@ -6,7 +6,7 @@ import movie from '../database/movie'
 import MediaNFO from "../libs/mediaNFO"
 import movieFile from '../database/movie_files'
 import libs from '../database/libs'
-import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance, getFirstChar, endsWithNFO } from '../utils'
+import { endsWithVideo, baseName, parseMovieName, longestCommonPrefix, minEditDistance, getFirstChar, endsWithNFO, extname } from '../utils'
 import { GlobalEventEmitterType } from '@/types/EventEmitter';
 import { MovieFetchOptions, MovieFields, MovieFileFields, scanedDirInfo } from '@/types/Movie';
 import { ScanItemResult } from '@/types/ScanEventEmitterType';
@@ -152,10 +152,16 @@ class MovieScan {
       console.log('已存在该路径记录，不做处理', filePath);
       return file_info.id
     }
+    let stat = fs.statSync(filePath)
     // 保存新的文件记录
     let new_file_info = {
       path: filePath,
+      size: stat.size || 0,
+      atime: stat.atime,
+      mtime: stat.mtime,
+      ctime: stat.ctime,
       name: baseName(filePath),
+      ext: extname(filePath),
       media_lib_id: media_lib_id,
       resource_type: resource_type || 'single',
       type: 'movie',

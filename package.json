@@ -45,6 +45,7 @@
     "github-url-to-object": "^4.0.6",
     "knex": "^0.95.14",
     "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.29.1",
     "moviedb-promise": "^3.1.12",
     "pinyin-pro": "^3.4.0",
     "sqlite3": "^5.0.2",

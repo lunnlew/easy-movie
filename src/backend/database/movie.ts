@@ -13,12 +13,12 @@ class movie {
         this.tableName = 'movies'
     }
     async getByName(name: any) {
-        return this.knex.select(['movies.*', 'movie_files.path', 'movie_files.resource_type', 'movie_files.id as fid', 'movie_files.media_lib_id']).from('movie_files').join('movies', function () {
+        return this.knex.select(['movies.*', 'movie_files.*', 'movie_files.id as fid', 'movies.id as id']).from('movie_files').join('movies', function () {
             this.on('movie_files.movie_id', '=', 'movies.id')
         }).where('movies.name_cn', name).first()
     }
     async getById(id: any) {
-        return this.knex.select(['movies.*', 'movie_files.path', 'movie_files.resource_type', 'movie_files.id as fid', 'movie_files.media_lib_id']).from('movie_files').join('movies', function () {
+        return this.knex.select(['movies.*', 'movie_files.*', 'movie_files.id as fid', 'movies.id as id']).from('movie_files').join('movies', function () {
             this.on('movie_files.movie_id', '=', 'movies.id')
         }).where('movies.id', id).first()
     }
